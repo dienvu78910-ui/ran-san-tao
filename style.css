@@ -23,3 +23,9 @@ button:hover{filter:brightness(1.1)}
 .rank ol{margin:0;padding-left:22px}.rank li{padding:4px 0;border-bottom:2px dashed #d9cfe6}
 .rank li span{float:right;font-weight:800;color:var(--tomato)}
 .status{font-size:.8rem;margin:10px 0 0}
+
+#perkList{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+#perkList button{width:150px;padding:12px 8px;background:#fff;color:var(--ink);box-shadow:3px 3px 0 var(--mint)}
+#perkList button:hover{background:var(--sun)}
+#perkList b{display:block;font-family:Bungee,Impact,sans-serif;font-weight:400;margin-bottom:4px}
+#perkList small{font-weight:600}

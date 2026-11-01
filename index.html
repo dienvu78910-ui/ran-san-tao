@@ -20,8 +20,12 @@
     </div>
     <div class="board">
       <canvas id="cv" width="600" height="400" aria-label="Đấu trường nhà bếp"></canvas>
+      <div id="perks" class="overlay" hidden>
+        <p>Đợt này xong rồi! Chọn một bí kíp:</p>
+        <div id="perkList"></div>
+      </div>
       <div id="overlay" class="overlay">
-        <p id="msg">Rau củ đang nổi loạn! Bảo vệ căn bếp của bạn.</p>
+        <p id="msg">Rau củ đang nổi loạn! Hạ gục chúng, chọn bí kíp, đánh bại trùm ở đợt 5.</p>
         <form id="saveForm" hidden>
           <input id="name" maxlength="12" placeholder="Tên của bạn" required>
           <button>Lưu điểm</button>
