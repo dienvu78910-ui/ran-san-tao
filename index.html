@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rắn Săn Táo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+  <section class="game">
+    <h1>Rắn Săn Táo</h1>
+    <div class="hud"><span>Điểm: <b id="score">0</b></span><span>Kỷ lục máy: <b id="best">0</b></span></div>
+    <div class="board">
+      <canvas id="cv" width="400" height="400" aria-label="Khu vực chơi"></canvas>
+      <div id="overlay" class="overlay">
+        <p id="msg">Nhấn Space hoặc chạm để bắt đầu</p>
+        <form id="saveForm" hidden>
+          <input id="name" maxlength="12" placeholder="Tên của bạn" required>
+          <button>Lưu điểm</button>
+        </form>
+        <button id="startBtn" type="button">Chơi</button>
+      </div>
+    </div>
+    <p class="hint">Mũi tên / WASD để rẽ, vuốt trên điện thoại, Space để tạm dừng.</p>
+  </section>
+  <aside class="rank">
+    <h2>Top 5 trên Cloud</h2>
+    <ol id="list"><li>Đang tải...</li></ol>
+    <p id="status" class="status"></p>
+  </aside>
+</main>
+<script type="module" src="script.js"></script>
+</body>
+</html>
