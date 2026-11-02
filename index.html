@@ -13,35 +13,26 @@
 <main class="app">
   <section class="game">
     <h1>Lốp Trưởng Đại Chiến</h1>
-    <div class="hud">
-      <span id="hp">❤️❤️❤️❤️❤️</span>
-      <span>Đợt <b id="wave">1</b></span>
-      <span>Điểm <b id="score">0</b></span>
-      <span id="combo"></span>
-    </div>
-    <p id="gear" class="gear"></p>
     <div class="board">
       <div id="cv" class="cv3d" aria-label="Đấu trường 3D"></div>
-      <div id="banner" class="banner"></div><div id="hurt" class="hurt"></div><div id="bossbar" class="bossbar" hidden><i></i></div>
+      <div id="hud" class="hud" hidden>
+        <div class="hpbar"><i id="hpf"></i><span id="hpt"></span></div>
+        <div class="xpbar"><i id="xpf"></i></div>
+        <div class="stats"><span id="lvl">Lv 1</span><span id="tm">0:00</span><span id="kl">☠ 0</span><span id="cn">💰 +0</span></div>
+      </div>
+      <div id="slots" class="slots"></div>
+      <div id="banner" class="banner"></div><div id="hurt" class="hurt"></div>
+      <div id="bossbar" class="bossbar" hidden><i></i></div>
       <canvas id="mini" class="mini" width="120" height="88"></canvas>
-      <div id="perks" class="overlay" hidden>
-        <p>Hạ xong một đợt tình địch! Chọn một bí kíp:</p>
-        <div id="perkList"></div>
-      </div>
-      <div id="overlay" class="overlay">
-        <p id="msg">Bạn thích crush đã lâu mà vẫn chưa có danh phận. Cầm lốp xe, đánh bại tình địch và giành lấy danh phận!</p>
-        <form id="saveForm" hidden>
-          <input id="name" maxlength="12" placeholder="Tên của bạn" required>
-          <button>Lưu điểm</button>
-        </form>
-        <button id="startBtn" type="button">Xông pha</button>
+      <div id="lv" class="overlay" hidden><p id="lvt" class="big"></p><div id="lvc" class="cards"></div></div>
+      <div id="menu" class="overlay"></div>
+      <div id="end" class="overlay" hidden>
+        <p id="msg" class="big"></p><p id="rew"></p>
+        <form id="saveForm" hidden><input id="name" maxlength="12" placeholder="Tên của bạn" required><button>Lưu điểm lên bảng xếp hạng</button></form>
+        <div id="endBtns" class="btns"></div>
       </div>
     </div>
-    <div class="pad">
-      <button id="atkBtn" type="button">Vung lốp</button>
-      <button id="dashBtn" type="button">Lướt</button>
-    </div>
-    <p class="hint">WASD / mũi tên: di chuyển. Chuột trái hoặc J: vung lốp theo hướng chuột. Shift hoặc K: lướt né đòn. Điện thoại: chạm để di chuyển, dùng 2 nút.</p>
+    <p class="hint">WASD / mũi tên (hoặc kéo ngón tay) để di chuyển. Vũ khí tự động tấn công. Nhặt kinh nghiệm xanh để lên cấp, chọn kỹ năng, tiến hóa vũ khí và hạ trùm cuối.</p>
   </section>
   <aside class="rank">
     <h2>Top 5 người có danh phận</h2>

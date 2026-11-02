@@ -87,21 +87,21 @@ function drawMini() {
 // ---------- Nhân vật 3D ----------
 const R = {}, PM = {shoe:M(0xffffff, .5), glove:M(0xf1c9a0, .6), pad:M(0x9aa3b5, .35, .7), band:M(0xe8453c, .6), glass:M(0x111111, .15, .5),
   jk:M(0x4a78b8, .7), sh:Object.assign(M(0xa8774a, .45, .35), {transparent:true}), rim:M(0xa3a9b5, .3, .9)};
-function buildPlayer() {
+function buildPlayer(cfg) {
   const root = new THREE.Group(), body = new THREE.Group(); root.add(body);
-  const skin = M(0xf1c9a0, .55), cream = M(0xefeadf, .85), jeans = M(0x2f3b57, .8), hairM = M(0x1c1a1f, .35), blk = M(0x16161b, .3, .3);
+  const skin = M(0xf1c9a0, .55), cream = M(cfg.shirt, .85), jeans = M(0x2f3b57, .8), hairM = M(cfg.hair, .35), blk = M(0x16161b, .3, .3);
   R.legs = [-1, 1].map(s => { const g = new THREE.Group(); g.position.set(s * .3, 1, 0); body.add(g); mk(CY(.26, .24, .9), jeans, 0, -.45, 0, g); mk(BX(.5, .28, .85), PM.shoe, 0, -.95, .12, g); return g; });
   R.wings = [-1, 1].map(s => { const w = mk(BX(.7, .04, .45), M(0xffffff, .5), s * .55, -.8, -.1, R.legs[s < 0 ? 0 : 1]); w.rotation.z = s * .5; return w; });
   mk(new THREE.CapsuleGeometry(.6, .7,6,14), cream, 0, 1.85, 0, body).scale.set(1, 1, .78);
   const lc = document.createElement("canvas"); lc.width = lc.height = 64; const lx = lc.getContext("2d");
-  lx.fillStyle = "#2b1b3d"; lx.fillRect(0, 0, 64, 64); lx.fillStyle = "#fff"; lx.font = "800 46px sans-serif"; lx.textAlign = "center"; lx.fillText("E", 32, 50);
+  lx.fillStyle = "#2b1b3d"; lx.fillRect(0, 0, 64, 64); lx.fillStyle = "#fff"; lx.font = "800 46px sans-serif"; lx.textAlign = "center"; lx.fillText(cfg.letter, 32, 50);
   const lt = new THREE.CanvasTexture(lc); lt.colorSpace = THREE.SRGBColorSpace; mk(new THREE.PlaneGeometry(.5, .5), new THREE.MeshStandardMaterial({map:lt, roughness:.8}), 0, 1.95, .49, body);
   R.jk = new THREE.Group(); body.add(R.jk); [-1, 1].forEach(s => mk(BX(.32, 1.2, 1), PM.jk, s * .5, 1.8, .03, R.jk));
   R.pads = [-1, 1].map(s => mk(SP(.32), PM.pad.clone(), s * .72, 2.45, 0, body));
   R.cape = mk(BX(1.1, 1.5, .06), M(0xe8453c, .7), 0, 1.9, -.55, body); R.badge = mk(SP(.1), M(0xe8453c), .3, 1.7, .5, body);
   mk(SP(.55, 28, 18), skin, 0, 2.95, 0, body); [-1, 1].forEach(s => { mk(SP(.07, 10, 8), blk, s * .2, 2.93, .5, body); mk(SP(.13, 10, 8), skin, s * .55, 2.93, 0, body); const b = mk(BX(.2, .04, .04), blk, s * .2, 3.1, .5, body); b.rotation.z = s * .12; });
   mk(SP(.06, 8, 8), skin, 0, 2.85, .56, body);
-  mk(new THREE.SphereGeometry(.6, 24, 14, 0, Math.PI * 2, 0, Math.PI * .52), hairM, 0, 3, -.03, body); const fr = mk(BX(.95, .13, .3), hairM, 0, 3.3, .42, body); fr.rotation.x = .35;
+  mk(new THREE.SphereGeometry(.6, 24, 14, 0, Math.PI * 2, 0, Math.PI * .52), hairM, 0, 3, -.03, body); const fr = mk(BX(.95, .13, .3), hairM, 0, 3.3, .42, body); fr.rotation.x = .35; if (cfg.pony) { mk(SP(.3, 12, 10), hairM, 0, 2.75, -.68, body); mk(SP(.2, 10, 8), hairM, 0, 2.3, -.8, body); }
   mk(new THREE.TorusGeometry(.62, .09, 10, 28), blk, 0, 2.38, 0, body).rotation.x = Math.PI / 2;
   [-1, 1].forEach(s => mk(CY(.22, .22, .18), blk, s * .68, 2.38, 0, body).rotation.z = Math.PI / 2);
   R.glasses = mk(BX(.8, .2, .1), PM.glass, 0, 2.95, .53, body);
@@ -109,227 +109,309 @@ function buildPlayer() {
   R.tails = new THREE.Group(); body.add(R.tails); [-1, 1].forEach(s => mk(BX(.12, .04, .8), PM.band, s * .12, 3.15, -.85, R.tails));
   R.shield = mk(CY(.7, .7, .12, 22), PM.sh, -.98, 1.7, .3, body); R.shield.rotation.z = Math.PI / 2;
   mk(CY(.15, .13, 1.1), cream, .8 * -1, 1.7, .15, body).rotation.x = .3;
-  R.body = body;
+  R.body = body; if (cfg.big) root.scale.setScalar(1.18);
   const w = R.weapon = new THREE.Group(); w.position.y = 2.1; root.add(w);
   mk(CY(.17, .15, 1.6), cream, 0, 0, .9, w).rotation.x = Math.PI / 2; R.hand = mk(SP(.25), PM.glove, 0, 0, 1.75, w);
-  const tg = R.tireG = new THREE.Group(); tg.position.z = 2.5; tg.rotation.y = Math.PI / 2; w.add(tg);
-  const sp = R.tireSpin = new THREE.Group(); tg.add(sp);
-  mk(new THREE.TorusGeometry(.85, .38, 14, 32), M(0x1c1c22, .9), 0, 0, 0, sp); R.rimM = PM.rim.clone();
-  mk(CY(.62, .62, .5, 24), R.rimM, 0, 0, 0, sp).rotation.x = Math.PI / 2; mk(CY(.2, .2, .6, 12), M(0x6c717c, .3, .9), 0, 0, 0, sp).rotation.x = Math.PI / 2;
-  R.studs = new THREE.Group(); sp.add(R.studs); for (let i = 0; i < 14; i++) { const t = i / 14 * 6.283; mk(SP(.1, 8, 6), M(0xd9dde6, .2, .9), Math.cos(t) * 1.25, Math.sin(t) * 1.25, 0, R.studs); }
-  R.aura = mk(new THREE.TorusGeometry(.9, .52, 10, 28), new THREE.MeshBasicMaterial({color:0xff8a1f, transparent:true, opacity:.35}), 0, 0, 0, sp); R.aura.castShadow = false;
-  R.tire2 = sp.clone(); R.tire2.position.z = -.85; tg.add(R.tire2); R.studs2 = R.tire2.children.find(c => c.type === "Group"); R.aura2 = R.tire2.children[R.tire2.children.length - 1];
-  const tm = new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:.5, side:THREE.DoubleSide}); R.trail = new THREE.Mesh(new THREE.RingGeometry(1, 3, 2), tm); R.trail.rotation.x = -Math.PI / 2; R.trail.position.y = .15; R.trail.visible = false; scene.add(R.trail);
   outline(root); scene.add(root); return root;
 }
-const ECFG = {nhan:{c:0x4a90d9, h:0x6b4a2f, s:.9}, hot:{c:0x26262b, h:0x3a2616, s:.95}, gym:{c:0xe8453c, h:0x2b2b2b, s:1.1}, boss:{c:0x1d1d28, h:0x9a9aa5, s:2.1}};
-function buildFoe(t, mats) {
-  const c = ECFG[t], g = new THREE.Group(), M2 = (col, r = .65, m = 0) => { const x = M(col, r, m); mats.push(x); return x; };
-  const skin = M2(0xf1c9a0, .55), shirt = M2(c.c, .7), pants = M2(0x33384d, .8), hair = M2(c.h, .5), dark = M(0x111118, .3), w = t === "gym" ? 1.35 : t === "boss" ? 1.2 : 1;
-  const legs = [-1, 1].map(s => { const l = new THREE.Group(); l.position.set(s * .25, .75, 0); g.add(l); mk(BX(.3, .8, .35), pants, 0, -.4, 0, l); return l; });
-  mk(new THREE.CapsuleGeometry(.45, .5, 6, 12), shirt, 0, 1.45, 0, g).scale.set(w, 1, .8);
-  [-1, 1].forEach(s => { const a = mk(CY(.13, .12, .9), shirt, s * .62 * w, 1.4, 0, g); a.rotation.z = s * .15; });
-  mk(SP(.45, 22, 14), skin, 0, 2.3, 0, g); mk(new THREE.SphereGeometry(.48, 20, 12, 0, Math.PI * 2, 0, Math.PI * .52), hair, 0, 2.36, -.02, g);
-  [-1, 1].forEach(s => { mk(SP(.1, 10, 8), M(0xffffff, .3), s * .18, 2.32, .38, g); mk(SP(.05, 8, 8), dark, s * .18, 2.32, .46, g); mk(BX(.22, .05, .05), dark, s * .18, 2.5, .43, g).rotation.z = s * .45; });
-  if (t === "nhan") { mk(BX(.3, .5, .05), dark, .7, 1.5, .45, g); mk(BX(.24, .42, .02), new THREE.MeshStandardMaterial({color:0x9fe3ff, emissive:0x5fb8e8, emissiveIntensity:.9}), .7, 1.5, .48, g); }
-  if (t === "hot") { [-.2, 0, .2].forEach(x => mk(new THREE.ConeGeometry(.12, .4, 8), hair, x, 2.85, 0, g)); mk(BX(.7, .16, .1), dark, 0, 2.33, .44, g); }
-  if (t === "gym") { [-1, 1].forEach(s => mk(SP(.28), skin, s * .85, 1.6, 0, g)); mk(new THREE.TorusGeometry(.46, .04, 8, 20), M2(0xffffff), 0, 2.52, 0, g).rotation.x = Math.PI / 2; }
-  if (t === "boss") { mk(BX(.14, .6, .05), M2(0xe8453c), 0, 1.5, .38, g); mk(new THREE.TorusGeometry(.3, .03, 8, 20), M2(0xffd25e, .3, .8), 0, 1.85, .2, g).rotation.x = Math.PI / 2; mk(SP(.2), M2(0xffd25e, .3, .8), -.9, 1.1, .1, g); }
-  g.scale.setScalar(c.s); g.userData.legs = legs; outline(g); return g;
-}
+// ---------- Dữ liệu và cấu hình (kiểu Survivor) ----------
+const fmt = s => Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
+const SV0 = {coins:0, chars:["lop"], sel:"lop", up:{hp:0, dmg:0, spd:0, mag:0, xp:0, rev:0}, best:0, gift:"", mis:{day:"", k:0, t:0, b:0, c:[0, 0, 0]}};
+const SV = Object.assign({}, SV0, JSON.parse(localStorage.getItem("lopSave") || "{}")); SV.up = Object.assign({}, SV0.up, SV.up); SV.mis = Object.assign({}, SV0.mis, SV.mis);
+const save = () => localStorage.setItem("lopSave", JSON.stringify(SV)), today = () => new Date().toISOString().slice(0, 10);
+if (SV.mis.day !== today()) SV.mis = {day:today(), k:0, t:0, b:0, c:[0, 0, 0]};
+const CH = {
+  lop:{n:"Lốp Trưởng", d:"Chàng trai yêu đơn phương. Khởi đầu: Lốp xoay.", w:"orbit", hair:0x1c1a1f, shirt:0xefeadf, letter:"E", cost:0},
+  ban:{n:"Bạn Thân", d:"Nhanh nhẹn +12% tốc độ. Khởi đầu: Tên lửa tình yêu.", w:"heart", hair:0x6b3a1f, shirt:0xff8fa3, letter:"B", spd:1.12, pony:1, cost:300},
+  hot:{n:"Hot Boy", d:"Chí mạng +15%. Khởi đầu: Sấm sét.", w:"bolt", hair:0xd9b44a, shirt:0x2b2b36, letter:"H", crit:.15, cost:800},
+  gym:{n:"Gym Bro", d:"Trâu bò +40% máu. Khởi đầu: Sóng xung.", w:"wave", hair:0x2b2b2b, shirt:0xe8453c, letter:"G", hp:1.4, big:1, cost:1500}
+};
+const WP = {
+  orbit:{n:"Lốp xoay", ic:"💫", d:"Lốp bay quanh bạn, nghiền nát tình địch.", evo:"Vòng lốp lửa", need:"arm"},
+  throw:{n:"Phi lốp", ic:"🎯", d:"Ném lốp xuyên qua hàng loạt kẻ địch.", evo:"Lốp quái vật", need:"dmg"},
+  heart:{n:"Tên lửa tình yêu", ic:"💘", d:"Trái tim tự dẫn hướng, nổ lan.", evo:"Mưa tình yêu", need:"cdr"},
+  bolt:{n:"Sấm sét", ic:"⚡", d:"Sét đánh ngẫu nhiên vào kẻ địch.", evo:"Thiên lôi", need:"crit"},
+  wave:{n:"Sóng xung", ic:"💥", d:"Sóng nổ đẩy lùi mọi thứ quanh bạn.", evo:"Động đất", need:"hp"}
+};
+const PS = {
+  hp:{n:"Áo giáp", ic:"🛡️", d:"+20 máu tối đa, hồi đầy 20"}, spd:{n:"Giày chạy", ic:"👟", d:"+8% tốc độ chạy"}, mag:{n:"Nam châm", ic:"🧲", d:"+30% tầm hút kinh nghiệm"},
+  dmg:{n:"Găng tay", ic:"🥊", d:"+12% sát thương"}, crit:{n:"Kính râm", ic:"🕶️", d:"+8% chí mạng"}, cdr:{n:"Băng đô", ic:"⏱️", d:"-8% hồi chiêu"}, arm:{n:"Áo khoác", ic:"🧥", d:"-7% sát thương nhận"}
+};
+const UPG = {hp:["Máu gốc", "+10% máu mỗi cấp", 10], dmg:["Sức mạnh", "+8% sát thương", 10], spd:["Tốc độ", "+4% tốc độ chạy", 10], mag:["Nam châm", "+15% tầm hút", 10], xp:["Học nhanh", "+8% kinh nghiệm", 10], rev:["Hồi sinh", "Thêm 1 lần hồi sinh miễn phí", 2]};
+const MIS = [["Hạ 150 tình địch", () => SV.mis.k, 150, 60], ["Sống sót 4 phút trong một ván", () => Math.floor(SV.mis.t), 240, 80], ["Đánh bại 1 trùm", () => SV.mis.b, 1, 100]];
+const ECFG = {
+  nhan:{c:0x4a90d9, h:0x6b4a2f, s:.85, hp:3, sp:3.4, r:.55, dmg:6, xp:1}, hot:{c:0x26262b, h:0x3a2616, s:.92, hp:6, sp:4, r:.6, dmg:9, xp:3, dash:1},
+  gym:{c:0xe8453c, h:0x2b2b2b, s:1.15, hp:22, sp:2.1, r:.9, dmg:14, xp:8}, boss:{c:0x1d1d28, h:0x9a9aa5, s:2.3, hp:700, sp:2.3, r:1.9, dmg:26, xp:40, dash:1, boss:1}
+};
+const NAMES = ["Bạn thân của crush", "Hot boy trường bên", "Hội tập gym", "Đồng nghiệp của crush"];
 
-// ---------- Trạng thái game ----------
-const TYPES = {nhan:{hp:1, sp:4.7, r:.65, pts:10}, hot:{hp:2, sp:3.3, r:.7, pts:20, dash:1}, gym:{hp:4, sp:2.4, r:.9, pts:40}, boss:{hp:22, sp:2, r:1.9, pts:300, dash:1, boss:1}};
-const GEAR = {rng:"Lốp to", cd:"Găng tay", dmg:"Lốp độn chì", max:"Áo giáp", dcd:"Giày lướt", spd:"Băng đô", crit:"Kính râm", jk:"Áo khoác", sh:"Khiên", form:"Lốp tiến hóa"};
-const PERKS = [
-  {k:"rng", d:"Tầm đánh +20%. Lốp to ra.", f:()=>P.rng*=1.2}, {k:"cd", d:"Vung nhanh hơn. Đổi găng tay.", f:()=>P.cd*=0.8},
-  {k:"dmg", d:"Sát thương +1. Lốp có đinh, mâm vàng, lửa.", f:()=>P.dmg++}, {k:"max", d:"+1 tim, hồi 1 tim. Giáp vai, áo choàng.", f:()=>{P.max++; P.hp=Math.min(P.max,P.hp+1);}},
-  {k:"dcd", d:"Lướt hồi nhanh hơn. Giày đổi màu, có cánh.", f:()=>P.dcd*=0.7}, {k:"spd", d:"Chạy nhanh +12%. Băng đô bay phấp phới.", f:()=>P.spd*=1.12},
-  {k:"crit", d:"Chí mạng +12% (đòn x2). Đeo kính râm.", f:()=>P.crit+=.12}, {k:"jk", d:"Bất tử lâu hơn sau khi bị đánh. Khoác áo ngoài.", f:()=>P.invT+=.4},
-  {k:"sh", d:"Khiên chặn 1 đòn mỗi đợt.", f:()=>{P.shMax++; P.shield=P.shMax;}}, {k:"form", d:"Quét rộng hơn, đẩy lùi mạnh. Lốp đổi hình.", f:()=>{}}
-];
-const NAMES = ["Bạn thân của crush", "Hot boy trường bên", "Hội tập gym", "Đồng nghiệp của crush", "Anh khóa trên", "Fan nhắn tin 24/7"];
-const keys = {}, ndc = new THREE.Vector2(), ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hitPt = new THREE.Vector3();
-let touchMode = false, target = null, P, E = [], FX = [], PT = [], wave, score, combo, comboT, left, spawnT, bossQ, bannerT = 0, state = "idle", last = 0, freeze = 0, shake = 0, hurtT = 0, clock = 0;
-let best = +localStorage.getItem("chefBest") || 0;
-const playerMesh = buildPlayer(); const camT = {x:0, z:7};
-
-let AC;
-function snd(f, d = .08, type = "square", v = .04, slide = 0) {
-  try { AC = AC || new AudioContext(); const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime;
-    o.type = type; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(Math.max(40, f + slide), t + d);
-    g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.001, t + d); o.connect(g); g.connect(AC.destination); o.start(); o.stop(t + d); } catch {}
+// ---------- Mô hình, hiệu ứng dùng chung ----------
+const shadowMat = new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:.25}), shadowGeo = new THREE.CircleGeometry(.7, 16);
+function ol(m) { m.geometry.computeBoundingSphere(); const o = new THREE.Mesh(m.geometry, OUT); o.scale.setScalar(1 + .055 / m.geometry.boundingSphere.radius); o.castShadow = false; m.add(o); }
+function buildFoe(type, mats) {
+  const c = ECFG[type], g = new THREE.Group(), M2 = (col, r = .65, m = 0) => { const x = M(col, r, m); mats.push(x); return x; };
+  const skin = M2(0xf1c9a0, .55), shirt = M2(c.c, .7), pants = M2(0x33384d, .8), hair = M2(c.h, .5), dark = M(0x111118, .3), w = type === "gym" ? 1.35 : type === "boss" ? 1.2 : 1;
+  g.userData.legs = [-1, 1].map(s => { const l = new THREE.Group(); l.position.set(s * .25, .75, 0); g.add(l); mk(BX(.3, .8, .35), pants, 0, -.4, 0, l); return l; });
+  const tor = mk(new THREE.CapsuleGeometry(.45, .5, 5, 10), shirt, 0, 1.45, 0, g); tor.scale.set(w, 1, .8); const hd = mk(SP(.45, 14, 10), skin, 0, 2.3, 0, g);
+  mk(new THREE.SphereGeometry(.48, 14, 8, 0, Math.PI * 2, 0, Math.PI * .52), hair, 0, 2.36, -.02, g);
+  [-1, 1].forEach(s => { mk(SP(.1, 8, 6), M(0xffffff, .3), s * .18, 2.32, .38, g); mk(SP(.05, 6, 6), dark, s * .18, 2.32, .46, g); mk(BX(.22, .05, .05), dark, s * .18, 2.5, .43, g).rotation.z = s * .45; });
+  if (type === "nhan") mk(BX(.3, .5, .05), new THREE.MeshStandardMaterial({color:0x9fe3ff, emissive:0x5fb8e8, emissiveIntensity:.9}), .7, 1.5, .45, g);
+  if (type === "hot") { [-.2, 0, .2].forEach(x => mk(new THREE.ConeGeometry(.12, .4, 6), hair, x, 2.85, 0, g)); mk(BX(.7, .16, .1), dark, 0, 2.33, .44, g); }
+  if (type === "gym") { [-1, 1].forEach(s => mk(SP(.28, 8, 6), skin, s * .85, 1.6, 0, g)); mk(new THREE.TorusGeometry(.46, .04, 6, 14), M2(0xffffff), 0, 2.52, 0, g).rotation.x = Math.PI / 2; }
+  if (type === "boss") { mk(BX(.14, .6, .05), M2(0xe8453c), 0, 1.5, .38, g); mk(new THREE.TorusGeometry(.3, .03, 6, 14), M2(0xffd25e, .3, .8), 0, 1.85, .2, g).rotation.x = Math.PI / 2; mk(SP(.2, 8, 6), M2(0xffd25e, .3, .8), -.9, 1.1, .1, g); outline(g); }
+  else { ol(tor); ol(hd); g.traverse(m => { if (m.isMesh) m.castShadow = false; }); }
+  const sh = new THREE.Mesh(shadowGeo, shadowMat); sh.rotation.x = -Math.PI / 2; sh.position.y = .03; g.add(sh); g.scale.setScalar(c.s); return g;
 }
-const pGeo = BX(.2, .2, .2), pMats = {};
-function burst(x, z, col, n, sp = 7) {
-  const m = pMats[col] = pMats[col] || new THREE.MeshBasicMaterial({color:col});
-  for (let i = 0; i < n && PT.length < 220; i++) { const a = Math.random() * 6.28, v = sp * (.3 + Math.random()), mesh = new THREE.Mesh(pGeo, m); mesh.position.set(x, 1.2, z); scene.add(mesh);
-    PT.push({mesh, vx:Math.cos(a) * v, vz:Math.sin(a) * v, vy:3 + Math.random() * 5, t:.4 + Math.random() * .4}); }
+function tireMesh(evo, s = 1) {
+  const g = new THREE.Group(), sp = new THREE.Group(); g.add(sp); mk(new THREE.TorusGeometry(.55, .26, 8, 18), M(0x1c1c22, .9), 0, 0, 0, sp).castShadow = false;
+  mk(CY(.38, .38, .34, 12), M(evo ? 0xffd25e : 0xa3a9b5, .3, .9), 0, 0, 0, sp).rotation.x = Math.PI / 2;
+  if (evo) sp.add(new THREE.Mesh(new THREE.TorusGeometry(.62, .36, 6, 14), new THREE.MeshBasicMaterial({color:0xff8a1f, transparent:true, opacity:.4})));
+  g.userData.sp = sp; g.scale.setScalar(s); return g;
 }
-function floatText(x, y, z, txt, col) { const el = document.createElement("div"); el.className = "ft"; el.textContent = txt; el.style.color = col; box.parentElement.append(el); FX.push({el, p:new THREE.Vector3(x, y, z), t:.9}); }
-
-function reset() {
-  P = {x:0, z:7, hp:5, max:5, spd:8.75, rng:4, cd:.34, dmg:1, dcd:1, inv:0, atk:0, swing:0, sw:.2, sa:0, aim:0, face:0, dash:0, dashCd:0, dx:1, dz:0, t:0, mv:false, hit:true,
-       crit:0, invT:1, shMax:0, shield:0, lv:{rng:0, cd:0, dmg:0, max:0, dcd:0, spd:0, crit:0, jk:0, sh:0, form:0}};
-  E.forEach(e => scene.remove(e.mesh)); PT.forEach(p => scene.remove(p.mesh)); FX.forEach(f => f.el.remove());
-  E = []; FX = []; PT = []; wave = 0; score = 0; combo = 0; comboT = 0; nextWave(); updateGear();
-}
-function nextWave() {
-  wave++; P.shield = P.shMax; left = Math.min(34, 4 + wave * 3); spawnT = .6; bossQ = wave % 5 === 0;
-  const b = $("banner"); b.textContent = bossQ ? "Đại gia siêu xe xuất hiện!" : NAMES[(wave - 1) % NAMES.length]; bannerT = 1.8; snd(300, .25, "triangle", .06, 300);
-}
-function spawn() {
-  let t = "nhan"; if (bossQ) { t = "boss"; bossQ = false; } else { const r = Math.random(); t = wave >= 3 && r < .25 ? "gym" : wave >= 2 && r < .6 ? "hot" : "nhan"; }
-  let p = [P.x + 18, P.z]; for (let i = 0; i < 8; i++) { const an = Math.random() * 6.283, ds = 17 + Math.random() * 4; p = [clamp(P.x + Math.cos(an) * ds, -MAXX - 2, MAXX + 2), clamp(P.z + Math.sin(an) * ds, -MAXZ - 2, MAXZ + 2)]; if (Math.hypot(p[0] - P.x, p[1] - P.z) >= 14) break; }
-  const hp = TYPES[t].hp + (t === "boss" ? wave * 2 : 0), mats = [], mesh = buildFoe(t, mats); scene.add(mesh);
-  E.push({...TYPES[t], t, hp, mhp:hp, x:p[0], z:p[1], h:0, w:Math.random() * 6, dashT:1 + Math.random() * 2, boost:0, mesh, mats}); if (t !== "boss") left--;
-}
-function start() { reset(); state = "run"; $("overlay").hidden = true; $("saveForm").hidden = true; $("perks").hidden = true; snd(440, .15, "triangle", .05, 400); }
-function inputDir() {
-  let x = (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0), z = (keys.s || keys.arrowdown ? 1 : 0) - (keys.w || keys.arrowup ? 1 : 0);
-  if (!x && !z && target) { const dx = target.x - P.x, dz = target.z - P.z, d = Math.hypot(dx, dz); if (d > .5) { x = dx / d; z = dz / d; } }
-  const m = Math.hypot(x, z); return m ? {x:x / m, z:z / m} : {x:0, z:0};
-}
-function nearest() { let b = null, bd = 1e9; for (const e of E) { const d = Math.hypot(e.x - P.x, e.z - P.z); if (d < bd) { bd = d; b = e; } } return b; }
-function worldPt(v2) { ray.setFromCamera(v2, cam); return ray.ray.intersectPlane(plane, hitPt) ? hitPt.clone() : null; }
-function aimAngle() {
-  const n = nearest(); if (touchMode && n) return Math.atan2(n.z - P.z, n.x - P.x);
-  const w = worldPt(ndc); return w ? Math.atan2(w.z - P.z, w.x - P.x) : P.aim;
-}
-function attack() {
-  if (state !== "run" || P.atk > 0) return;
-  P.atk = P.cd; P.sw = Math.min(.2, P.cd * .7); P.swing = P.sw; P.sa = aimAngle(); P.hit = false; snd(220, .09, "sawtooth", .03, -120);
-  const W = 1.3 + .2 * P.lv.form; R.trail.geometry.dispose(); R.trail.geometry = new THREE.RingGeometry(1, P.rng * .95, 28, 1, -P.sa - W, 2 * W);
-}
-function doHit() {
-  const W = 1.3 + .2 * P.lv.form;
-  for (const e of E) {
-    const dx = e.x - P.x, dz = e.z - P.z, d = Math.hypot(dx, dz) || 1; let da = Math.abs(Math.atan2(dz, dx) - P.sa); if (da > Math.PI) da = 6.283 - da;
-    if (d < P.rng + e.r && da < W) {
-      const crit = Math.random() < P.crit, dmg = P.dmg * (crit ? 2 : 1); e.hp -= dmg; e.h = .12; const kb = e.boss ? .5 : 1.9 + .5 * P.lv.form; e.x += dx / d * kb; e.z += dz / d * kb;
-      burst(e.x, e.z, ecol(e), 8); floatText(e.x, 3 * e.mesh.scale.x, e.z, (crit ? "CHÍ MẠNG -" : "-") + dmg, crit ? "#ffd25e" : "#fff");
-      freeze = Math.max(freeze, .05); shake = Math.max(shake, 4); snd(140, .1, "square", .06, -60); if (e.hp <= 0) kill(e);
-    }
-  }
-  E = E.filter(e => { if (e.hp <= 0) { scene.remove(e.mesh); return false; } return true; });
-}
-function ecol(e) { return {nhan:0x4a90d9, hot:0x555566, gym:0xe8453c, boss:0xffd25e}[e.t]; }
-function kill(e) {
-  combo++; comboT = 2; const gain = e.pts * (1 + Math.floor(combo / 3)); score += gain;
-  burst(e.x, e.z, ecol(e), e.boss ? 50 : 20, e.boss ? 13 : 8); floatText(e.x, 3.4 * e.mesh.scale.x, e.z, "+" + gain, "#ffb0a8");
-  shake = Math.max(shake, e.boss ? 14 : 6); freeze = e.boss ? .15 : .07; snd(520 + combo * 25, .14, "triangle", .06, 300);
-}
-function dash() {
-  if (state !== "run" || P.dashCd > 0) return; const d = inputDir(); if (d.x || d.z) { P.dx = d.x; P.dz = d.z; }
-  P.dash = .16; P.dashCd = P.dcd; P.inv = Math.max(P.inv, .3); snd(180, .15, "sine", .06, 500);
-}
-function update(dt) {
-  clock += dt; P.aim = aimAngle(); const d = inputDir(); if (d.x || d.z) { P.dx = d.x; P.dz = d.z; }
-  P.mv = !!(d.x || d.z) || P.dash > 0; P.t += P.mv ? dt : dt * .2;
-  const sp = P.dash > 0 ? 26 : P.spd, mv = P.dash > 0 ? {x:P.dx, z:P.dz} : d;
-  P.x = clamp(P.x + mv.x * sp * dt, -MAXX, MAXX); P.z = clamp(P.z + mv.z * sp * dt, -MAXZ, MAXZ); pushOut(P, .6);
-  if (P.dash > 0) burst(P.x, P.z, P.lv.dcd >= 3 ? 0xff9a30 : 0xe9dcc2, 2, 3);
-  for (const k of ["inv", "atk", "swing", "dash", "dashCd"]) P[k] = Math.max(0, P[k] - dt);
-  if (P.swing > 0 && P.lv.form >= 3) burst(P.x + Math.cos(P.sa) * 3, P.z + Math.sin(P.sa) * 3, 0xffb03a, 1, 4);
-  if (P.swing > 0 && !P.hit && 1 - P.swing / P.sw >= .35) { P.hit = true; doHit(); }
-  comboT -= dt; if (comboT <= 0) combo = 0;
-  if ((left > 0 || bossQ) && (spawnT -= dt) <= 0) { spawn(); spawnT = Math.max(.35, .9 - wave * .05); }
-  for (const e of E) {
-    e.h = Math.max(0, e.h - dt); e.w += dt * 9;
-    if (e.dash && (e.dashT -= dt) <= 0) { e.boost = .4; e.dashT = (e.boss ? 3 : 2) + Math.random() * 1.5; snd(120, .2, "sawtooth", .03, 200); }
-    e.boost = Math.max(0, e.boost - dt);
-    const dx = P.x - e.x, dz = P.z - e.z, dist = Math.hypot(dx, dz) || 1, s = e.sp * (e.boost > 0 ? 4 : 1) * (1 + wave * .03);
-    e.x += dx / dist * s * dt; e.z += dz / dist * s * dt; pushOut(e, e.r * .8);
-    if (dist < e.r + .65 && P.inv <= 0 && P.dash <= 0) {
-      P.inv = P.invT;
-      if (P.shield > 0) { P.shield--; shake = 6; snd(320, .15, "square", .06, -120); burst(P.x, P.z, 0xc7ccd6, 14); floatText(P.x, 4, P.z, "Chặn!", "#7fd6c2"); }
-      else { P.hp--; combo = 0; hurtT = .4; shake = 10; freeze = .08; snd(90, .25, "sawtooth", .08, -40); burst(P.x, P.z, 0xe8453c, 14); }
-      P.x = clamp(P.x - dx / dist * 2.2, -MAXX, MAXX); P.z = clamp(P.z - dz / dist * 2.2, -MAXZ, MAXZ); pushOut(P, .6); if (P.hp <= 0) return over();
-    }
-  }
-  PT.forEach(p => { p.t -= dt; p.mesh.position.x += p.vx * dt; p.mesh.position.z += p.vz * dt; p.vy -= 18 * dt; p.mesh.position.y = Math.max(.1, p.mesh.position.y + p.vy * dt); if (p.t <= 0) scene.remove(p.mesh); });
-  PT = PT.filter(p => p.t > 0); FX.forEach(f => { f.t -= dt; f.p.y += 1.5 * dt; if (f.t <= 0) f.el.remove(); }); FX = FX.filter(f => f.t > 0);
-  bannerT -= dt; hurtT = Math.max(0, hurtT - dt);
-  if (left === 0 && !bossQ && E.length === 0) { state = "perk"; showPerks(); }
-}
+const heartGeo = (() => { const s = new THREE.Shape(); s.moveTo(0, -.3); s.bezierCurveTo(-.6, .1, -.4, .6, 0, .35); s.bezierCurveTo(.4, .6, .6, .1, 0, -.3); return new THREE.ExtrudeGeometry(s, {depth:.18, bevelEnabled:true, bevelSize:.04, bevelThickness:.04, bevelSegments:2}); })();
+const heartMat = new THREE.MeshStandardMaterial({color:0xff4d8d, emissive:0xaa1144, emissiveIntensity:.6, roughness:.3});
+const gemGeo = new THREE.OctahedronGeometry(.24), gemMats = [0x4cc9f0, 0x55d6a1, 0xe8453c].map(c => new THREE.MeshStandardMaterial({color:c, emissive:c, emissiveIntensity:.5, roughness:.25}));
 function applyGear() {
-  const L = P.lv; PM.shoe.color.set([0xffffff, 0xe8453c, 0xffd25e, 0xffd25e][L.dcd]); R.wings.forEach(w => w.visible = L.dcd >= 2);
+  const pl = (P && P.pl) || {}, c = k => Math.min(pl[k] || 0, 3), L = {dcd:c("spd"), cd:c("dmg"), max:c("hp"), spd:c("cdr"), crit:c("crit"), jk:c("arm")};
+  PM.shoe.color.set([0xffffff, 0xe8453c, 0xffd25e, 0xffd25e][L.dcd]); R.wings.forEach(w => w.visible = L.dcd >= 2);
   PM.glove.color.set([0xf1c9a0, 0xe8453c, 0xc92b2b, 0xffd25e][L.cd]); R.hand.scale.setScalar(1 + L.cd * .2);
-  R.tireG.scale.setScalar((.9 + (P.rng - 4) / 10) * [1, 1.18, 1.18, 1.4][L.form]); R.tire2.visible = L.form >= 2;
-  R.rimM.color.set(L.dmg >= 2 ? 0xffd25e : L.form >= 3 ? 0xe8453c : 0xa3a9b5); R.studs.visible = R.studs2.visible = L.dmg >= 1; R.aura.visible = R.aura2.visible = L.dmg >= 3;
   R.pads.forEach(p => { p.visible = L.max >= 1; p.material.color.set(L.max >= 3 ? 0xffd25e : 0x9aa3b5); }); R.cape.visible = L.max >= 2; R.badge.visible = L.max >= 3;
   PM.band.color.set(L.spd >= 3 ? 0xffd25e : 0xe8453c); R.band.visible = L.spd >= 1; R.tails.visible = L.spd >= 2;
   R.glasses.visible = L.crit >= 1; PM.glass.color.set(L.crit >= 2 ? 0x3b2a66 : 0x111111); PM.glass.emissive.set(L.crit >= 3 ? 0x6a5010 : 0);
-  R.jk.visible = L.jk >= 1; PM.jk.color.set(L.jk >= 2 ? 0x1f1f26 : 0x4a78b8); R.shield.visible = L.sh >= 1; PM.sh.color.set([0xa8774a, 0xa8774a, 0xaab3c2, 0xffd25e][L.sh]);
+  R.jk.visible = L.jk >= 1; PM.jk.color.set(L.jk >= 2 ? 0x1f1f26 : 0x4a78b8); R.shield.visible = false;
 }
-function updateGear() {
-  const parts = Object.keys(GEAR).filter(k => P.lv[k]).map(k => `${GEAR[k]} Lv${P.lv[k]}`);
-  $("gear").textContent = parts.length ? "Trang bị: " + parts.join(" • ") : "Trang bị: chưa có. Hạ gục tình địch để nhận bí kíp."; applyGear();
+let playerMesh = null;
+function setChar(id) { if (playerMesh) scene.remove(playerMesh); playerMesh = buildPlayer(CH[id]); applyGear(); }
+const pGeo = BX(.2, .2, .2), pMats = {};
+function burst(x, z, col, n, sp = 7) {
+  const m = pMats[col] = pMats[col] || new THREE.MeshBasicMaterial({color:col});
+  for (let i = 0; i < n && PT.length < 160; i++) { const a = Math.random() * 6.28, v = sp * (.3 + Math.random()), mesh = new THREE.Mesh(pGeo, m); mesh.position.set(x, 1.2, z); scene.add(mesh); PT.push({mesh, vx:Math.cos(a) * v, vz:Math.sin(a) * v, vy:3 + Math.random() * 5, t:.4 + Math.random() * .3}); }
 }
-function showPerks() {
-  const bx = $("perkList"); bx.replaceChildren();
-  PERKS.filter(p => P.lv[p.k] < 3).sort(() => Math.random() - .5).slice(0, 3).forEach(p => {
-    const b = document.createElement("button"), t = document.createElement("b"), s = document.createElement("small");
-    t.textContent = `${GEAR[p.k]} Lv${P.lv[p.k]} → Lv${P.lv[p.k] + 1}`; s.textContent = p.d; b.append(t, s);
-    b.onclick = () => { p.f(); P.lv[p.k]++; updateGear(); $("perks").hidden = true; state = "run"; nextWave(); snd(660, .15, "triangle", .06, 300); }; bx.append(b);
-  });
-  $("perks").hidden = false; snd(500, .2, "triangle", .05, 400);
-}
-function title(s) { return s < 200 ? "Người dưng" : s < 600 ? "Bạn thân" : s < 1500 ? "Người đặc biệt" : s < 3000 ? "Crush đã gật đầu" : "Có danh phận chính thức"; }
-function over() {
-  state = "over"; const nb = score > best; if (nb) { best = score; localStorage.setItem("chefBest", best); }
-  $("msg").textContent = `Danh phận: ${title(score)}. Gục ở đợt ${wave} với ${score} điểm.` + (nb ? " Kỷ lục mới!" : ` Kỷ lục máy: ${best}, thử vượt nhé.`);
-  $("saveForm").hidden = score === 0; $("startBtn").textContent = "Đấu lại"; $("overlay").hidden = false;
+function floatText(x, y, z, txt, col) { if (FX.length > 16) return; const el = document.createElement("div"); el.className = "ft"; el.textContent = txt; el.style.color = col; box.parentElement.append(el); FX.push({el, p:new THREE.Vector3(x, y, z), t:.8}); }
+function ring(x, z, r, col, dur = .3) { const m = new THREE.Mesh(new THREE.RingGeometry(.9, 1, 40), new THREE.MeshBasicMaterial({color:col, transparent:true, opacity:.8, side:THREE.DoubleSide})); m.rotation.x = -Math.PI / 2; m.position.set(x, .25, z); scene.add(m); FM.push({mesh:m, t:0, dur, r1:r}); }
+function beam(x, z) { const m = new THREE.Mesh(CY(.25, .25, 14, 8), new THREE.MeshBasicMaterial({color:0xfff3a0, transparent:true, opacity:.9})); m.position.set(x, 7, z); scene.add(m); FM.push({mesh:m, t:0, dur:.18, r1:0}); }
+let AC;
+function snd(f, d = .08, type = "square", v = .03, slide = 0) {
+  try { AC = AC || new AudioContext(); const o = AC.createOscillator(), g = AC.createGain(), tt = AC.currentTime; o.type = type; o.frequency.setValueAtTime(f, tt); o.frequency.exponentialRampToValueAtTime(Math.max(40, f + slide), tt + d);
+    g.gain.setValueAtTime(v, tt); g.gain.exponentialRampToValueAtTime(.001, tt + d); o.connect(g); g.connect(AC.destination); o.start(); o.stop(tt + d); } catch {}
 }
 
-// ---------- Cập nhật hình ảnh 3D ----------
+// ---------- Trạng thái ----------
+let P = null, E = [], G = [], C = [], PJ = [], PT = [], FX = [], FM = [], state = "menu", t = 0, kills = 0, bossKills = 0, score = 0, lvq = 0, spawnT = 0, nextElite = 55, bi = 0, ri = 0, bannerT = 0, hurtT = 0, shake = 0, last = 0, tab = "char", won = false, jo = null;
+const keys = {}, camT = {x:0, z:7}, BOSSAT = [170, 330], RINGAT = [60, 140, 220, 300];
+const dmgM = () => 1 + SV.up.dmg * .08 + P.pl.dmg * .12, cdM = () => Math.max(.4, 1 - P.pl.cdr * .08), critC = () => (CH[SV.sel].crit || 0) + P.pl.crit * .08;
+const projCoins = () => Math.floor(kills * .4 + t / 6 + bossKills * 80 + (won ? 300 : 0));
+const banner = txt => { $("banner").textContent = txt; bannerT = 2; };
+function h(tag, props = {}, ...kids) { const e = document.createElement(tag); for (const [k, v] of Object.entries(props)) { if (k === "onclick") e.onclick = v; else if (k === "cls") e.className = v; else e.setAttribute(k, v); } e.append(...kids.flat()); return e; }
+
+function startRun() {
+  if (P) Object.values(P.ws).forEach(w => w.ms.forEach(m => scene.remove(m)));
+  [...E, ...G, ...C, ...PJ, ...PT, ...FM].forEach(o => scene.remove(o.mesh)); FX.forEach(f => f.el.remove()); E = []; G = []; C = []; PJ = []; PT = []; FX = []; FM = [];
+  const ch = CH[SV.sel], max = Math.round(100 * (ch.hp || 1) * (1 + SV.up.hp * .1)); P = null; setChar(SV.sel);
+  P = {x:0, z:7, fx:1, fz:0, hp:max, max, inv:0, t:0, mv:false, xp:0, lvl:1, need:6, rev:SV.up.rev, paid:false, ws:{}, pl:{hp:0, spd:0, mag:0, dmg:0, crit:0, cdr:0, arm:0}};
+  t = 0; kills = 0; bossKills = 0; lvq = 0; spawnT = .5; nextElite = 55; bi = 0; ri = 0; won = false; addWeapon(ch.w); applyGear(); renderSlots();
+  state = "run"; ["menu", "end", "lv"].forEach(i => $(i).hidden = true); $("hud").hidden = false; banner("Chương 1: Sống sót 6 phút!"); snd(440, .15, "triangle", .05, 400);
+}
+function addWeapon(id) { P.ws[id] = {lv:1, evo:false, cd:.4, ang:0, ms:[], sig:""}; }
+function renderSlots() {
+  $("slots").replaceChildren(...Object.entries(P.ws).map(([id, w]) => h("span", {}, WP[id].ic + (w.evo ? "★" : w.lv))), ...Object.entries(P.pl).filter(([, v]) => v).map(([id, v]) => h("span", {cls:"p"}, PS[id].ic + v)));
+}
+function spawnE(type, o = {}) {
+  const cfg = ECFG[type]; let p = [P.x + 18, P.z];
+  for (let i = 0; i < 8; i++) { const an = o.an !== undefined ? o.an : Math.random() * 6.283, ds = o.ds || 17 + Math.random() * 4; p = [clamp(P.x + Math.cos(an) * ds, -MAXX - 2, MAXX + 2), clamp(P.z + Math.sin(an) * ds, -MAXZ - 2, MAXZ + 2)]; if (o.an !== undefined || Math.hypot(p[0] - P.x, p[1] - P.z) >= 13) break; }
+  const mats = [], mesh = buildFoe(type, mats); if (o.elite) mesh.scale.multiplyScalar(1.35); scene.add(mesh);
+  const hp = Math.round(cfg.hp * (type === "boss" ? (o.final ? 2.4 : 1) * (1 + t / 200) : 1 + t / 80) * (o.elite ? 4 : 1));
+  E.push({...cfg, type, hp, mhp:hp, r:cfg.r * (o.elite ? 1.3 : 1), x:p[0], z:p[1], h:0, w:Math.random() * 6, dt2:1 + Math.random() * 2, boost:0, mesh, mats, elite:!!o.elite, final:!!o.final, dead:false, em:-1});
+}
+function spawnTick(dt) {
+  const cap = Math.min(70, 16 + (t / 4 | 0));
+  if ((spawnT -= dt) <= 0 && E.length < cap) { spawnT = 1 / (1.6 + t / 40); for (let i = 0, n = 1 + (t > 90) + (t > 200); i < n; i++) { const r = Math.random(); spawnE(t > 100 && r < .18 ? "gym" : t > 40 && r < .4 ? "hot" : "nhan"); } }
+  if (t >= nextElite) { nextElite += 70; spawnE("gym", {elite:true}); banner("Tinh anh xuất hiện! Hạ nó để nhận rương"); }
+  if (ri < RINGAT.length && t >= RINGAT[ri]) { ri++; for (let i = 0; i < 24; i++) spawnE("nhan", {an:i / 24 * 6.283, ds:11}); banner("Vòng vây tình địch!"); snd(150, .3, "sawtooth", .05, -60); }
+  if (bi < BOSSAT.length && t >= BOSSAT[bi]) { spawnE("boss", {final:bi === 1}); banner(bi === 1 ? "TRÙM CUỐI: Đại gia siêu xe!" : "Trùm xuất hiện!"); bi++; }
+}
+function nearest() { let b = null, bd = 1e9; for (const e of E) { if (e.dead) continue; const d = Math.hypot(e.x - P.x, e.z - P.z); if (d < bd) { bd = d; b = e; } } return b; }
+function dmg(e, base, kb = 0, fx = 0, fz = 0) {
+  if (e.dead) return; const c = Math.random() < critC(), d = Math.round(base * dmgM() * (c ? 2 : 1)); e.hp -= d; e.h = .08;
+  if (kb) { const dx = e.x - fx, dz = e.z - fz, l = Math.hypot(dx, dz) || 1, k = e.boss ? kb * .12 : kb; e.x += dx / l * k; e.z += dz / l * k; }
+  if (c || e.boss || Math.random() < .2) floatText(e.x, 2.8 * e.mesh.scale.x, e.z, String(d), c ? "#ffd25e" : "#fff");
+  if (e.hp <= 0) die(e);
+}
+function die(e) {
+  e.dead = true; scene.remove(e.mesh); kills++; burst(e.x, e.z, ({nhan:0x4a90d9, hot:0x555566, gym:0xe8453c, boss:0xffd25e})[e.type], e.boss ? 40 : 6, e.boss ? 12 : 6);
+  const n = e.boss ? 8 : 1; for (let i = 0; i < n; i++) dropGem(e.x + (Math.random() - .5) * 2 * (n > 1), e.z + (Math.random() - .5) * 2 * (n > 1), e.xp / n * (e.elite ? 3 : 1));
+  if (e.elite || e.boss) { const m = new THREE.Group(); mk(BX(1.1, .7, .8), M(0x8a5a3a, .6), 0, .35, 0, m); mk(BX(1.15, .2, .85), M(0xffd25e, .3, .8), 0, .8, 0, m); mk(BX(.2, .8, .86), M(0xffd25e, .3, .8), 0, .4, 0, m); m.position.set(e.x, 0, e.z); scene.add(m); C.push({x:e.x, z:e.z, mesh:m}); }
+  if (e.boss) { bossKills++; shake = 14; snd(300, .5, "triangle", .08, 400); if (e.final) { won = true; endRun(true); } } else if (Math.random() < .3) snd(480 + Math.random() * 200, .08, "triangle", .02, 200);
+}
+function dropGem(x, z, v) {
+  if (G.length > 150) { P.xp += v * (1 + SV.up.xp * .08); return; }
+  const k = v >= 8 ? 2 : v >= 3 ? 1 : 0, m = new THREE.Mesh(gemGeo, gemMats[k]); m.scale.setScalar(1 + k * .5); m.position.set(x, .7, z); scene.add(m); G.push({x, z, v, mesh:m, mag:false});
+}
+
+// ---------- Vũ khí tự động ----------
+function wOrbit(w, dt) {
+  const l = w.lv, cnt = 2 + (l >> 1) + (w.evo ? 2 : 0), R0 = 3.2 + (w.evo ? .8 : 0), sig = cnt + "" + w.evo;
+  if (w.sig !== sig) { w.ms.forEach(m => scene.remove(m)); w.ms = Array.from({length:cnt}, () => { const m = tireMesh(w.evo); scene.add(m); return m; }); w.sig = sig; }
+  w.ang += dt * (2.6 + l * .25); const d0 = Math.round((8 + 4 * l) * (w.evo ? 2.2 : 1));
+  w.ms.forEach((m, i) => { const a = w.ang + i * 6.283 / cnt, x = P.x + Math.cos(a) * R0, z = P.z + Math.sin(a) * R0; m.position.set(x, 1.3, z); m.userData.sp.rotation.z += dt * 8; m.rotation.y = -a;
+    for (const e of E) if (!e.dead && t - (e["o" + i] || 0) > .4 && Math.hypot(e.x - x, e.z - z) < e.r + .9) { e["o" + i] = t; dmg(e, d0, .6, x, z); } });
+}
+function wThrow(w, dt) {
+  w.cd -= dt; if (w.cd > 0) return; const tg = nearest(); if (!tg) return; const l = w.lv, cnt = 1 + (l >= 3) + (l >= 5) + (w.evo ? 2 : 0); w.cd = (1.5 - .12 * l) * cdM(); const a0 = Math.atan2(tg.z - P.z, tg.x - P.x);
+  for (let i = 0; i < cnt; i++) { const a = a0 + (i - (cnt - 1) / 2) * .28, m = tireMesh(w.evo, w.evo ? 1.7 : 1.1); m.position.set(P.x, 1.1, P.z); scene.add(m);
+    PJ.push({k:"tire", x:P.x, z:P.z, vx:Math.cos(a) * 14, vz:Math.sin(a) * 14, life:1.5, d:Math.round((14 + 5 * l) * (w.evo ? 2 : 1)), pierce:w.evo ? 99 : 3 + l, hit:new Set(), mesh:m, r:w.evo ? 1.3 : .8}); }
+  snd(200, .1, "square", .03, -80);
+}
+function wHeart(w, dt) {
+  w.cd -= dt; if (w.cd > 0 || !E.length) return; const l = w.lv, cnt = 1 + ((l + 1) >> 1) + (w.evo ? 3 : 0); w.cd = (1.7 - .1 * l) * cdM();
+  for (let i = 0; i < cnt; i++) { const m = new THREE.Mesh(heartGeo, heartMat), a = Math.random() * 6.283; m.scale.setScalar(w.evo ? 1.3 : 1); m.position.set(P.x, 1.4, P.z); scene.add(m);
+    PJ.push({k:"heart", x:P.x, z:P.z, vx:Math.cos(a) * 8, vz:Math.sin(a) * 8, life:3, d:Math.round((16 + 6 * l) * (w.evo ? 1.8 : 1)), rad:2 + (w.evo ? 1.5 : 0), mesh:m, tgt:null}); }
+  snd(520, .1, "triangle", .03, 200);
+}
+function wBolt(w, dt) {
+  w.cd -= dt; if (w.cd > 0 || !E.length) return; const l = w.lv, cnt = 1 + (l >> 1) + (w.evo ? 3 : 0), d0 = Math.round((22 + 8 * l) * (w.evo ? 1.8 : 1)), rr = w.evo ? 2.4 : 1.6; w.cd = (2 - .15 * l) * cdM();
+  const pool = E.filter(e => !e.dead && Math.hypot(e.x - P.x, e.z - P.z) < 14);
+  for (let i = 0; i < cnt && pool.length; i++) { const e = pool.splice(Math.floor(Math.random() * pool.length), 1)[0], x = e.x, z = e.z; beam(x, z); ring(x, z, rr, 0xffe14d); for (const o of E) if (!o.dead && Math.hypot(o.x - x, o.z - z) < rr + o.r) dmg(o, d0, .4, x, z); }
+  snd(700, .12, "sawtooth", .04, -400);
+}
+function wWave(w, dt) {
+  w.cd -= dt; if (w.cd > 0 || !E.length) return; const l = w.lv, Rm = (4 + .7 * l) * (w.evo ? 1.5 : 1), d0 = Math.round((18 + 7 * l) * (w.evo ? 2 : 1)); w.cd = (3 - .25 * l) * cdM();
+  ring(P.x, P.z, Rm, 0xff7a3d, .35); if (w.evo) ring(P.x, P.z, Rm * .65, 0xffd25e, .5);
+  for (const e of E) if (!e.dead && Math.hypot(e.x - P.x, e.z - P.z) < Rm + e.r) dmg(e, d0, 2.5, P.x, P.z); shake = Math.max(shake, 5); snd(110, .25, "sawtooth", .06, -50);
+}
+const WF = {orbit:wOrbit, throw:wThrow, heart:wHeart, bolt:wBolt, wave:wWave};
+function explode(p) { ring(p.x, p.z, p.rad, 0xff4d8d); for (const e of E) if (!e.dead && Math.hypot(e.x - p.x, e.z - p.z) < p.rad + e.r) dmg(e, p.d, 1.2, p.x, p.z); snd(160, .15, "square", .05, -70); p.life = 0; }
+
+// ---------- Cập nhật ----------
+function inputDir() {
+  let x = (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0), z = (keys.s || keys.arrowdown ? 1 : 0) - (keys.w || keys.arrowup ? 1 : 0);
+  if (jo) { x += jo.dx; z += jo.dz; } const m = Math.hypot(x, z); return m > 1 ? {x:x / m, z:z / m} : {x, z};
+}
+function update(dt) {
+  t += dt; const d = inputDir(); P.mv = Math.hypot(d.x, d.z) > .05; P.t += P.mv ? dt : dt * .2; if (P.mv) { P.fx = d.x; P.fz = d.z; }
+  const sp = 8.2 * (CH[SV.sel].spd || 1) * (1 + SV.up.spd * .04 + P.pl.spd * .08);
+  P.x = clamp(P.x + d.x * sp * dt, -MAXX, MAXX); P.z = clamp(P.z + d.z * sp * dt, -MAXZ, MAXZ); pushOut(P, .6);
+  P.inv = Math.max(0, P.inv - dt); P.hp = Math.min(P.max, P.hp + dt * .4); spawnTick(dt);
+  for (const [id, w] of Object.entries(P.ws)) WF[id](w, dt);
+  for (const e of E) {
+    if (e.dead) continue; e.h = Math.max(0, e.h - dt); e.w += dt * 9;
+    if (e.dash && (e.dt2 -= dt) <= 0) { e.boost = .4; e.dt2 = (e.boss ? 3 : 2.2) + Math.random() * 1.5; }
+    e.boost = Math.max(0, e.boost - dt); const dx = P.x - e.x, dz = P.z - e.z, dist = Math.hypot(dx, dz) || 1, s = e.sp * (e.boost > 0 ? 3.5 : 1) * (1 + t / 400);
+    e.x += dx / dist * s * dt; e.z += dz / dist * s * dt;
+    for (const o of E) { if (o === e || o.dead) continue; const ax = e.x - o.x, az = e.z - o.z, ad = Math.hypot(ax, az), mn = (e.r + o.r) * .8; if (ad < mn && ad > .001) { e.x += ax / ad * (mn - ad) * .5; e.z += az / ad * (mn - ad) * .5; } }
+    pushOut(e, e.r * .8);
+    if (dist < e.r + .6 && P.inv <= 0) {
+      const dm = Math.max(1, Math.round(e.dmg * (1 - P.pl.arm * .07))); P.hp -= dm; P.inv = .45; hurtT = .3; shake = Math.max(shake, 6); snd(90, .2, "sawtooth", .06, -40); burst(P.x, P.z, 0xe8453c, 8); floatText(P.x, 4, P.z, "-" + dm, "#ff8a8a");
+      if (P.hp <= 0) return playerDown();
+    }
+  }
+  for (const p of PJ) {
+    p.life -= dt;
+    if (p.k === "heart") { if (!p.tgt || p.tgt.dead) { let b = null, bd = 1e9; for (const e of E) if (!e.dead) { const dd = Math.hypot(e.x - p.x, e.z - p.z); if (dd < bd) { bd = dd; b = e; } } p.tgt = b; }
+      if (p.tgt) { const a = Math.atan2(p.tgt.z - p.z, p.tgt.x - p.x); p.vx += (Math.cos(a) * 11 - p.vx) * Math.min(1, dt * 5); p.vz += (Math.sin(a) * 11 - p.vz) * Math.min(1, dt * 5); } }
+    p.x += p.vx * dt; p.z += p.vz * dt; p.mesh.position.x = p.x; p.mesh.position.z = p.z;
+    if (p.k === "tire") { p.mesh.userData.sp.rotation.z += dt * 14; for (const e of E) if (!e.dead && !p.hit.has(e) && Math.hypot(e.x - p.x, e.z - p.z) < e.r + p.r) { p.hit.add(e); dmg(e, p.d, 1.2, p.x, p.z); if (--p.pierce <= 0) p.life = 0; } }
+    else { p.mesh.rotation.y += dt * 6; if (p.life > 0) for (const e of E) if (!e.dead && Math.hypot(e.x - p.x, e.z - p.z) < e.r + .6) { explode(p); break; } }
+    if (Math.abs(p.x) > 40 || Math.abs(p.z) > 32) p.life = 0;
+  }
+  PJ = PJ.filter(p => { if (p.life > 0) return true; scene.remove(p.mesh); return false; });
+  const pr = 3.2 * (1 + SV.up.mag * .15 + P.pl.mag * .3);
+  for (const g of G) { const dx = P.x - g.x, dz = P.z - g.z, dd = Math.hypot(dx, dz); if (dd < pr) g.mag = true; if (g.mag) { const s = 17 * dt; g.x += dx / (dd || 1) * s; g.z += dz / (dd || 1) * s; }
+    g.mesh.position.set(g.x, .7 + Math.sin(t * 4 + g.v) * .1, g.z); g.mesh.rotation.y += dt * 2; if (dd < .7) { g.dead = true; scene.remove(g.mesh); P.xp += g.v * (1 + SV.up.xp * .08); } }
+  G = G.filter(g => !g.dead);
+  for (const c of C) { c.mesh.rotation.y += dt; if (Math.hypot(P.x - c.x, P.z - c.z) < 1.6) { c.dead = true; scene.remove(c.mesh); lvq++; banner("Rương kho báu!"); snd(660, .3, "triangle", .06, 500); } }
+  C = C.filter(c => !c.dead);
+  PT.forEach(p => { p.t -= dt; p.mesh.position.x += p.vx * dt; p.mesh.position.z += p.vz * dt; p.vy -= 18 * dt; p.mesh.position.y = Math.max(.1, p.mesh.position.y + p.vy * dt); if (p.t <= 0) scene.remove(p.mesh); }); PT = PT.filter(p => p.t > 0);
+  FM.forEach(f => { f.t += dt; const k = Math.min(1, f.t / f.dur); if (f.r1) f.mesh.scale.setScalar(Math.max(.1, f.r1 * (1 - (1 - k) * (1 - k)))); f.mesh.material.opacity = (1 - k) * .85; if (k >= 1) scene.remove(f.mesh); }); FM = FM.filter(f => f.t < f.dur);
+  FX.forEach(f => { f.t -= dt; f.p.y += 1.5 * dt; if (f.t <= 0) f.el.remove(); }); FX = FX.filter(f => f.t > 0);
+  E = E.filter(e => !e.dead); bannerT -= dt; hurtT = Math.max(0, hurtT - dt);
+  while (P.xp >= P.need) { P.xp -= P.need; P.lvl++; P.need = Math.floor(5 + P.lvl * 4.4); lvq++; }
+  if (lvq > 0 && state === "run") openLevelUp(); if (t >= 360 && !won && bi >= 2 && !E.some(e => e.boss)) { won = true; endRun(true); }
+}
+function playerDown() {
+  if (P.rev > 0) { P.rev--; revive(.6, "Hồi sinh miễn phí!"); } else endRun(false);
+}
+function revive(f, msg) { P.hp = Math.round(P.max * f); P.inv = 2.5; ring(P.x, P.z, 10, 0xffffff, .5); E.forEach(e => { if (!e.boss) { e.dead = true; scene.remove(e.mesh); } }); E = E.filter(e => !e.dead); banner(msg); snd(500, .4, "triangle", .07, 500); }
+
+// ---------- Lên cấp, chọn kỹ năng ----------
+function options() {
+  const o = [], ev = [];
+  for (const [id, w] of Object.entries(P.ws)) { if (w.lv < 5) o.push({k:"w", id, ic:WP[id].ic, t:`${WP[id].n} Lv${w.lv} → Lv${w.lv + 1}`, d:WP[id].d}); else if (!w.evo && P.pl[WP[id].need] > 0) ev.push({k:"e", id, ic:"⭐", t:`TIẾN HÓA: ${WP[id].evo}`, d:`${WP[id].n} đạt sức mạnh tối đa`}); }
+  if (Object.keys(P.ws).length < 4) for (const id in WP) if (!P.ws[id]) o.push({k:"w", id, ic:WP[id].ic, t:`Mới: ${WP[id].n}`, d:WP[id].d});
+  for (const id in PS) if (P.pl[id] < 5) o.push({k:"p", id, ic:PS[id].ic, t:`${PS[id].n} Lv${P.pl[id]} → Lv${P.pl[id] + 1}`, d:PS[id].d});
+  return [...ev, ...o.sort(() => Math.random() - .5)].slice(0, 3);
+}
+function openLevelUp() {
+  const op = options(); if (!op.length) { lvq = 0; P.hp = Math.min(P.max, P.hp + P.max * .3); return; }
+  state = "lv"; $("lvt").textContent = `Lên cấp ${P.lvl}! Chọn 1 kỹ năng`;
+  $("lvc").replaceChildren(...op.map(o => h("button", {cls:"card", onclick:() => choose(o)}, h("i", {}, o.ic), h("b", {}, o.t), h("small", {}, o.d)))); $("lv").hidden = false; snd(600, .25, "triangle", .06, 500);
+}
+function choose(o) {
+  if (o.k === "w") { if (P.ws[o.id]) P.ws[o.id].lv++; else addWeapon(o.id); } else if (o.k === "e") { P.ws[o.id].evo = true; P.ws[o.id].lv = 5; banner("TIẾN HÓA: " + WP[o.id].evo + "!"); shake = 8; }
+  else { P.pl[o.id]++; if (o.id === "hp") { P.max += 20; P.hp = Math.min(P.max, P.hp + 20); } applyGear(); }
+  renderSlots(); lvq--; $("lv").hidden = true; state = "run"; if (lvq > 0) openLevelUp();
+}
+
+// ---------- Kết thúc ván ----------
+function endRun(win) {
+  state = "end"; $("hud").hidden = true; const gain = projCoins(); P.gain = gain;
+  score = Math.min(99999, kills * 10 + Math.floor(t) * 5 + bossKills * 500 + (win ? 3000 : 0));
+  SV.coins += gain; SV.best = Math.max(SV.best, Math.floor(t)); SV.mis.k += kills; SV.mis.t = Math.max(SV.mis.t, t); SV.mis.b += bossKills; save();
+  $("msg").textContent = win ? "CHIẾN THẮNG! Bạn đã giành được danh phận!" : `Thất bại sau ${fmt(t)}`;
+  $("rew").textContent = `☠ ${kills} kẻ địch   ⏱ ${fmt(t)}   Điểm ${score}   💰 +${gain} xu (tổng ${SV.coins})`; $("saveForm").hidden = score === 0;
+  const b = [];
+  if (!win && !P.paid && SV.coins >= 100) b.push(h("button", {onclick:() => { SV.coins -= 100; P.paid = true; save(); $("end").hidden = true; $("hud").hidden = false; state = "run"; revive(.5, "Hồi sinh!"); }}, "Hồi sinh (💰100)"));
+  b.push(h("button", {cls:"play", onclick:startRun}, "Chơi lại"), h("button", {onclick:() => { renderMenu(); $("end").hidden = true; $("menu").hidden = false; state = "menu"; }}, "Trang chủ"));
+  $("endBtns").replaceChildren(...b); $("end").hidden = false; loadBoard();
+}
+
+// ---------- Trang chủ ----------
+function renderMenu() {
+  const m = $("menu"), tabs = [["char", "Nhân vật"], ["shop", "Nâng cấp"], ["mis", "Nhiệm vụ" + (SV.gift !== today() ? " 🎁" : "")]];
+  m.replaceChildren(h("div", {cls:"top"}, h("b", {}, "💰 " + SV.coins), h("span", {}, "Kỷ lục sống sót: " + fmt(SV.best))), h("h2", {}, "Lốp Trưởng Đại Chiến"), h("p", {cls:"sub"}, "Chương 1: sống sót 6 phút và hạ trùm cuối"),
+    h("div", {cls:"tabs"}, ...tabs.map(([k, n]) => h("button", {cls:tab === k ? "on" : "", onclick:() => { tab = k; renderMenu(); }}, n))), h("div", {cls:"tabc"}, ...tabBody()), h("button", {cls:"play", onclick:startRun}, "▶ CHƠI"));
+}
+function tabBody() {
+  if (tab === "char") return Object.entries(CH).map(([id, c]) => { const own = SV.chars.includes(id), sel = SV.sel === id;
+    return h("div", {cls:"row" + (sel ? " sel" : "")}, h("span", {cls:"sw", style:`background:#${c.shirt.toString(16).padStart(6, "0")}`}, c.letter), h("div", {cls:"tx"}, h("b", {}, c.n), h("small", {}, c.d)),
+      h("button", {onclick:() => { if (own) SV.sel = id; else if (SV.coins >= c.cost) { SV.coins -= c.cost; SV.chars.push(id); SV.sel = id; } else return; save(); setChar(SV.sel); renderMenu(); }}, sel ? "Đang chọn" : own ? "Chọn" : "💰 " + c.cost)); });
+  if (tab === "shop") return Object.entries(UPG).map(([id, [n, d, mx]]) => { const lv = SV.up[id], cost = (id === "rev" ? 600 : 80) * (lv + 1);
+    return h("div", {cls:"row"}, h("div", {cls:"tx"}, h("b", {}, `${n} Lv${lv}/${mx}`), h("small", {}, d)), h("button", {onclick:() => { if (lv >= mx || SV.coins < cost) return; SV.coins -= cost; SV.up[id]++; save(); renderMenu(); }}, lv >= mx ? "Tối đa" : "💰 " + cost)); });
+  const gift = SV.gift !== today();
+  return [h("div", {cls:"row"}, h("div", {cls:"tx"}, h("b", {}, "🎁 Quà mỗi ngày"), h("small", {}, "Quay lại mỗi ngày để nhận xu")), h("button", {onclick:() => { if (!gift) return; SV.gift = today(); SV.coins += 100; save(); renderMenu(); }}, gift ? "Nhận 100 xu" : "Đã nhận")),
+    ...MIS.map(([n, f, g, r], i) => { const v = Math.min(f(), g), ok = f() >= g, got = SV.mis.c[i];
+      return h("div", {cls:"row"}, h("div", {cls:"tx"}, h("b", {}, n), h("small", {}, `${v}/${g}`)), h("button", {onclick:() => { if (!ok || got) return; SV.mis.c[i] = 1; SV.coins += r; save(); renderMenu(); }}, got ? "Đã nhận" : ok ? `Nhận 💰${r}` : `💰${r}`)); })];
+}
+
+// ---------- Hình ảnh mỗi khung ----------
 let faceA = 0;
 function syncVisuals(dt) {
-  const L = P.lv, bob = P.mv ? Math.sin(P.t * 16) * .07 : Math.sin(P.t * 3) * .03, lg = P.mv ? Math.sin(P.t * 16) * .7 : 0;
+  if (!P) return; const bob = P.mv ? Math.sin(P.t * 16) * .07 : Math.sin(P.t * 3) * .03, lg = P.mv ? Math.sin(P.t * 16) * .7 : 0;
   playerMesh.position.set(P.x, 0, P.z); playerMesh.visible = !(P.inv > 0 && Math.floor(P.inv * 14) % 2);
-  let dA = P.aim - faceA; dA = Math.atan2(Math.sin(dA), Math.cos(dA)); faceA += dA * Math.min(1, dt * 14);
-  R.body.rotation.y = Math.PI / 2 - faceA; R.body.position.y = bob; R.legs[0].rotation.x = lg; R.legs[1].rotation.x = -lg;
-  let a = P.aim; if (P.swing > 0) { const p = 1 - P.swing / P.sw, W = 1.3 + .2 * L.form; a = P.sa - W + 2 * W * (p * p * (3 - 2 * p)); R.tireSpin.rotation.z += dt * 30; R.trail.visible = true; R.trail.position.set(P.x, .15, P.z); } else R.trail.visible = false;
-  R.weapon.rotation.y = Math.PI / 2 - a; R.cape.rotation.x = .15 + Math.sin(P.t * 10) * .1; R.tails.rotation.y = Math.sin(P.t * 12) * .25;
-  PM.sh.opacity = P.shield > 0 ? 1 : .3; R.trail.material.color.set(L.dmg >= 3 ? 0xffa030 : 0xffffff);
-  for (const e of E) {
-    const dx = P.x - e.x, dz = P.z - e.z; e.mesh.position.set(e.x, Math.abs(Math.sin(e.w)) * .14, e.z); e.mesh.rotation.y = Math.atan2(dx, dz);
-    e.mesh.userData.legs.forEach((l, i) => l.rotation.x = Math.sin(e.w * 1.2) * (i ? -.6 : .6)); const hot = e.h > 0 ? 0xffffff : e.boost > 0 ? 0xff5a00 : 0;
-    e.mats.forEach(m => { m.emissive.set(hot); m.emissiveIntensity = .7; });
-  }
+  let dA = Math.atan2(P.fz, P.fx) - faceA; dA = Math.atan2(Math.sin(dA), Math.cos(dA)); faceA += dA * Math.min(1, dt * 12);
+  R.body.rotation.y = Math.PI / 2 - faceA; R.body.position.y = bob; R.legs[0].rotation.x = lg; R.legs[1].rotation.x = -lg; R.weapon.rotation.y = Math.PI / 2 - faceA;
+  R.cape.rotation.x = .15 + Math.sin(P.t * 10) * .1; R.tails.rotation.y = Math.sin(P.t * 12) * .25;
+  for (const e of E) { e.mesh.position.set(e.x, Math.abs(Math.sin(e.w)) * .14, e.z); e.mesh.rotation.y = Math.atan2(P.x - e.x, P.z - e.z); e.mesh.userData.legs.forEach((l, i) => l.rotation.x = Math.sin(e.w * 1.2) * (i ? -.6 : .6));
+    const want = e.h > 0 ? 0xffffff : e.boost > 0 ? 0xff5a00 : e.elite ? 0x661010 : 0; if (e.em !== want) { e.em = want; e.mats.forEach(m => { m.emissive.set(want); m.emissiveIntensity = .7; }); } }
   FX.forEach(f => { const v = f.p.clone().project(cam); f.el.style.left = (v.x * .5 + .5) * 100 + "%"; f.el.style.top = (-v.y * .5 + .5) * 100 + "%"; f.el.style.opacity = Math.min(1, f.t * 2); });
   const bs = E.find(e => e.boss); $("bossbar").hidden = !bs; if (bs) $("bossbar").firstElementChild.style.width = Math.max(0, bs.hp / bs.mhp * 100) + "%";
-  $("banner").style.opacity = bannerT > 0 && state === "run" ? Math.min(1, bannerT) : 0; $("hurt").style.opacity = hurtT * 1.6;
-  $("hp").textContent = "❤️".repeat(Math.max(0, P.hp)) + "🖤".repeat(P.max - Math.max(0, P.hp)) + "🛡️".repeat(P.shield); $("wave").textContent = wave; $("score").textContent = score;
-  $("combo").textContent = combo >= 2 ? `Combo x${1 + Math.floor(combo / 3)} (${combo})` : "";
+  $("banner").style.opacity = bannerT > 0 && state !== "menu" ? Math.min(1, bannerT) : 0; $("hurt").style.opacity = hurtT * 1.8;
+  $("hpf").style.width = Math.max(0, P.hp / P.max * 100) + "%"; $("hpt").textContent = Math.max(0, Math.ceil(P.hp)) + "/" + P.max; $("xpf").style.width = Math.min(100, P.xp / P.need * 100) + "%";
+  $("lvl").textContent = "Lv " + P.lvl; $("tm").textContent = fmt(t); $("kl").textContent = "☠ " + kills; $("cn").textContent = "💰 +" + projCoins();
 }
-function frame(t) {
-  const dt = Math.min(.05, (t - last) / 1000); last = t;
-  if (state === "run") { if (freeze > 0) freeze -= dt; else update(dt); }
-  shake = Math.max(0, shake - dt * 40); syncVisuals(dt); drawMini();
-  const k = Math.min(1, dt * 6); camT.x += (clamp(P.x, -MAXX + 11, MAXX - 11) - camT.x) * k; camT.z += (clamp(P.z, -MAXZ + 7, MAXZ - 7) - camT.z) * k;
-  sun.position.set(P.x + 8, 18, P.z + 8); sun.target.position.set(P.x, 0, P.z); sun.target.updateMatrixWorld();
+function frame(tt) {
+  const dt = Math.min(.05, (tt - last) / 1000); last = tt; if (state === "run") update(dt); if (P) syncVisuals(dt);
+  shake = Math.max(0, shake - dt * 40); const px = P ? P.x : 0, pz = P ? P.z : 7, k = Math.min(1, dt * 6);
+  camT.x += (clamp(px, -MAXX + 11, MAXX - 11) - camT.x) * k; camT.z += (clamp(pz, -MAXZ + 7, MAXZ - 7) - camT.z) * k;
+  sun.position.set(px + 8, 18, pz + 8); sun.target.position.set(px, 0, pz); sun.target.updateMatrixWorld();
   cam.position.set(camT.x + (Math.random() - .5) * shake * .04, 19 + (Math.random() - .5) * shake * .04, camT.z + 14.5); cam.lookAt(camT.x, 0, camT.z - 1);
-  renderer.render(scene, cam); requestAnimationFrame(frame);
+  renderer.render(scene, cam); drawMini(); requestAnimationFrame(frame);
 }
-
-// ---------- Điều khiển ----------
-addEventListener("keydown", e => {
-  if (e.target.tagName === "INPUT") return; const k = e.key.toLowerCase();
-  if (k === "enter" && (state === "idle" || state === "over")) return start(); if (state !== "run") return;
-  if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
-  if (k === "j" || k === " ") attack(); else if (k === "k" || k === "shift") dash(); else keys[k] = true;
-});
+addEventListener("keydown", e => { if (e.target.tagName === "INPUT") return; const k = e.key.toLowerCase(); if (k === "enter" && (state === "menu" || state === "end")) return startRun(); if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault(); keys[k] = true; });
 addEventListener("keyup", e => { keys[e.key.toLowerCase()] = false; });
-const setNdc = e => { const r = renderer.domElement.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); };
-box.addEventListener("mousemove", e => { touchMode = false; setNdc(e); });
-box.addEventListener("mousedown", e => { touchMode = false; setNdc(e); attack(); });
-box.addEventListener("touchstart", e => { touchMode = true; setNdc(e.touches[0]); target = worldPt(ndc); }, {passive:true});
-box.addEventListener("touchmove", e => { setNdc(e.touches[0]); target = worldPt(ndc); }, {passive:true});
-box.addEventListener("touchend", () => { target = null; });
-$("atkBtn").addEventListener("pointerdown", e => { e.preventDefault(); touchMode = e.pointerType === "touch"; attack(); });
-$("dashBtn").addEventListener("pointerdown", e => { e.preventDefault(); dash(); });
-$("startBtn").onclick = start;
+box.addEventListener("touchstart", e => { const q = e.touches[0]; jo = {x:q.clientX, y:q.clientY, dx:0, dz:0}; }, {passive:true});
+box.addEventListener("touchmove", e => { if (!jo) return; const q = e.touches[0], dx = q.clientX - jo.x, dy = q.clientY - jo.y, l = Math.hypot(dx, dy); jo.dx = l > 8 ? dx / Math.max(l, 50) : 0; jo.dz = l > 8 ? dy / Math.max(l, 50) : 0; }, {passive:true});
+box.addEventListener("touchend", () => { jo = null; });
 
 // ---------- Bảng xếp hạng ----------
 async function loadBoard() {
@@ -351,4 +433,5 @@ $("saveForm").addEventListener("submit", async e => {
   loadBoard();
 });
 
-reset(); state = "idle"; bannerT = 0; loadBoard(); requestAnimationFrame(frame);
+window.__d = {get P() { return P; }, get E() { return E; }, get state() { return state; }, startRun, lvUp: () => { P.xp = P.need; }};
+setChar(SV.sel); renderMenu(); loadBoard(); requestAnimationFrame(frame);
