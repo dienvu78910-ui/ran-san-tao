@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 </head>
 <body>
 <main class="app">
@@ -20,7 +21,8 @@
     </div>
     <p id="gear" class="gear"></p>
     <div class="board">
-      <canvas id="cv" width="600" height="400" aria-label="Đấu trường tình địch"></canvas>
+      <div id="cv" class="cv3d" aria-label="Đấu trường 3D"></div>
+      <div id="banner" class="banner"></div><div id="hurt" class="hurt"></div><div id="bossbar" class="bossbar" hidden><i></i></div>
       <div id="perks" class="overlay" hidden>
         <p>Hạ xong một đợt tình địch! Chọn một bí kíp:</p>
         <div id="perkList"></div>
