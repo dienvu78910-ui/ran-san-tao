@@ -164,14 +164,22 @@ function over() {
 }
 
 // ---------- Vẽ ----------
+function shade(c, a) {
+  const n = parseInt(c.slice(1), 16), f = v => Math.max(0, Math.min(255, Math.round(a > 0 ? v + (255 - v) * a : v * (1 + a))));
+  return `rgb(${f(n >> 16)},${f(n >> 8 & 255)},${f(n & 255)})`;
+}
 function ell(x, y, rx, ry, c, o) {
-  ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill();
+  if (c[0] === "#" && c.length === 7 && rx > 2.5) {
+    const g = ctx.createRadialGradient(x - rx * .35, y - ry * .4, Math.min(rx, ry) * .1, x, y, Math.max(rx, ry));
+    g.addColorStop(0, shade(c, .4)); g.addColorStop(.55, c); g.addColorStop(1, shade(c, -.35)); ctx.fillStyle = g;
+  } else ctx.fillStyle = c;
+  ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill();
   if (o) { ctx.lineWidth = 2; ctx.strokeStyle = INK; ctx.stroke(); }
 }
 function chef() {
   const L = P.lv, f = Math.cos(P.aim) < 0 ? -1 : 1, bob = P.mv ? Math.sin(P.t * 16) * 1.6 : Math.sin(P.t * 3) * .8, lg = P.mv ? Math.sin(P.t * 16) * 5 : 0;
   const SK = "#f1c9a0", gold = "#ffd25e";
-  ctx.save(); ctx.translate(P.x, P.y); ctx.scale(1.3, 1.3); ctx.globalAlpha = P.inv > 0 && Math.floor(P.inv * 14) % 2 ? .4 : (P.dash > 0 ? .65 : 1);
+  ctx.save(); ctx.translate(P.x, P.y); { const ps = 1.3 * (.88 + .24 * P.y / H); ctx.scale(ps, ps); } ctx.globalAlpha = P.inv > 0 && Math.floor(P.inv * 14) % 2 ? .4 : (P.dash > 0 ? .65 : 1);
   ell(0, 17, 15, 5, "rgba(43,27,61,.2)");
   if (P.dash > 0 && L.dcd >= 3) { ell(-f * 16, 10, 13, 7, "rgba(255,140,40,.75)"); ell(-f * 24, 11, 8, 4, "rgba(255,220,90,.7)"); }
   ctx.save(); ctx.scale(f, 1);
@@ -201,6 +209,8 @@ function chef() {
   ell(0, -22 + bob, 9.2, 9.8, SK, 1);
   ctx.fillStyle = "#1c1a1f"; ctx.beginPath(); ctx.ellipse(0, -26 + bob, 10, 7, 0, Math.PI, 0); ctx.fill(); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(-9.6, -26 + bob); ctx.lineTo(9.6, -26 + bob); ctx.lineTo(8.5, -20.5 + bob); ctx.lineTo(4.5, -23.5 + bob); ctx.lineTo(1, -20 + bob); ctx.lineTo(-3, -23.5 + bob); ctx.lineTo(-6.5, -20.5 + bob); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, -26 + bob, 7.5, Math.PI * 1.15, Math.PI * 1.5); ctx.stroke();
+  ctx.strokeStyle = INK; ctx.lineWidth = 2;
   if (L.spd >= 1) { ctx.fillStyle = L.spd >= 3 ? gold : "#e8453c"; ctx.fillRect(-9.8, -27 + bob, 19.6, 3.4); ctx.strokeRect(-9.8, -27 + bob, 19.6, 3.4);
     if (L.spd >= 2) for (let i = 0; i < (L.spd >= 3 ? 2 : 1); i++) { ctx.beginPath(); ctx.moveTo(-9, -25.5 + bob); ctx.quadraticCurveTo(-17, -24 + i * 4 + Math.sin(P.t * 12 + i) * 3 + bob, -23 - i * 3, -21 + i * 5 + Math.sin(P.t * 12 + i) * 4 + bob); ctx.lineTo(-9, -23 + bob); ctx.fill(); } }
   ctx.strokeStyle = INK; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(1, -22.5 + bob); ctx.lineTo(6.5, -23.2 + bob); ctx.moveTo(-1.5, -22.8 + bob); ctx.lineTo(-6.5, -23.5 + bob); ctx.stroke();
@@ -223,7 +233,9 @@ function chef() {
   if (L.form >= 2) { ell(-11, 0, 15, 15, "#1b1b20", 1); ell(-11, 0, 7, 7, "#7a7f8a", 1); }
   if (L.dmg >= 3) ell(0, 0, 23, 23, "rgba(255,150,40,.45)");
   if (L.dmg >= 3) { ctx.fillStyle = "#c7ccd6"; for (let i = 0; i < 8; i++) { const t = i / 8 * 6.283; ctx.beginPath(); ctx.moveTo(Math.cos(t - .16) * 16, Math.sin(t - .16) * 16); ctx.lineTo(Math.cos(t) * 23, Math.sin(t) * 23); ctx.lineTo(Math.cos(t + .16) * 16, Math.sin(t + .16) * 16); ctx.fill(); } }
+  ell(3, 3, 17, 17, "#0e0e14");
   ell(0, 0, 17, 17, "#25252b", 1);
+  ctx.strokeStyle = "rgba(255,255,255,.28)"; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(0, 0, 14.5, 3.5, 4.6); ctx.stroke();
   ctx.strokeStyle = "#4b4b55"; ctx.lineWidth = L.form ? 3.4 : 2; ctx.beginPath();
   for (let i = 0; i < 14; i++) { const t = i / 14 * 6.283; ctx.moveTo(Math.cos(t) * 13.5, Math.sin(t) * 13.5); ctx.lineTo(Math.cos(t) * 16, Math.sin(t) * 16); } ctx.stroke();
   if (L.dmg >= 1) for (let i = 0; i < 12; i++) { const t = i / 12 * 6.283 + .13; ell(Math.cos(t) * 15, Math.sin(t) * 15, 1.5, 1.5, "#d9dde6"); }
@@ -239,7 +251,7 @@ function eyes(e, y, sp) {
   ctx.moveTo(-sp - 4, y - 6); ctx.lineTo(-sp + 3, y - 3); ctx.moveTo(sp + 4, y - 6); ctx.lineTo(sp - 3, y - 3); ctx.stroke();
 }
 function foe(e) {
-  const s = e.r / 14 * (1 + Math.sin(e.w) * .07), fl = e.h > 0, C = c => fl ? "#fff" : c, sk = fl ? "#fff" : "#f1c9a0", lg = Math.sin(e.w) * 3;
+  const s = e.r / 14 * (1 + Math.sin(e.w) * .07) * (.88 + .24 * e.y / H), fl = e.h > 0, C = c => fl ? "#fff" : c, sk = fl ? "#fff" : "#f1c9a0", lg = Math.sin(e.w) * 3;
   ctx.save(); ctx.translate(e.x, e.y); ell(0, e.r, e.r, e.r / 3, "rgba(43,27,61,.2)"); ctx.scale(s, s); ctx.lineWidth = 2; ctx.strokeStyle = INK;
   if (e.boost > 0) ell(0, 0, 17, 18, "rgba(255,160,40,.5)");
   ell(-4, 13 + lg * .3, 3.6, 5, C("#33384d"), 1); ell(4, 13 - lg * .3, 3.6, 5, C("#33384d"), 1);
@@ -271,6 +283,7 @@ function draw() {
   if (shake > 0) ctx.translate((Math.random() - .5) * shake, (Math.random() - .5) * shake);
   for (let x = 0; x < W / 40; x++) for (let y = 0; y < H / 40; y++) { ctx.fillStyle = (x + y) % 2 ? "#fff7e0" : "#ffe9b8"; ctx.fillRect(x * 40, y * 40, 40, 40); }
   ctx.strokeStyle = "rgba(43,27,61,.07)"; ctx.lineWidth = 1; ctx.strokeRect(.5, .5, W - 1, H - 1);
+  if (P) { const lg = ctx.createRadialGradient(P.x, P.y, 10, P.x, P.y, 210); lg.addColorStop(0, "rgba(255,255,255,.4)"); lg.addColorStop(1, "rgba(255,255,255,0)"); ctx.fillStyle = lg; ctx.fillRect(0, 0, W, H); }
   if (P) {
     [...E, {p:1, y:P.y}].sort((a, b) => a.y - b.y).forEach(o => o.p ? chef() : foe(o));
     PT.forEach(p => { ctx.globalAlpha = Math.min(1, p.t * 3); ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, p.s, p.s); }); ctx.globalAlpha = 1;
