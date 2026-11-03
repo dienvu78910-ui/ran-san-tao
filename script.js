@@ -1,5 +1,9 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -12,16 +16,24 @@ const db = cloud ? getFirestore(initializeApp(firebaseConfig)) : null;
 
 // ---------- Engine 3D ----------
 const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
 box.append(renderer.domElement);
 const scene = new THREE.Scene(); scene.background = new THREE.Color(0xbfe3f2); scene.fog = new THREE.Fog(0xdcefe6, 45, 95);
 const cam = new THREE.PerspectiveCamera(42, 1.5, .1, 100);
-function resize() { const w = box.clientWidth, h = box.clientHeight; renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+let composer = null, bloom = null;
+function resize() { const w = box.clientWidth, h = box.clientHeight; renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); if (composer) { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(w, h); } }
 new ResizeObserver(resize).observe(box); resize();
 const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
 scene.add(new THREE.HemisphereLight(0xffffff, 0x7a6a8a, .6));
 const sun = new THREE.DirectionalLight(0xfff2dd, 2.4); sun.position.set(8, 18, 8); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
 Object.assign(sun.shadow.camera, {left:-22, right:22, top:16, bottom:-16, near:1, far:50}); sun.shadow.bias = -.0004; scene.add(sun, sun.target); const fill = new THREE.DirectionalLight(0x9fc4ff, .7); fill.position.set(-8, 10, -6); scene.add(fill);
+function noiseCanvas(size, amount, seed = 1) {
+  const c = document.createElement("canvas"); c.width = c.height = size; const x = c.getContext("2d"); const d = x.createImageData(size, size);
+  let r = seed; const rnd = () => (r = (r * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < d.data.length; i += 4) { const v = 128 + (rnd() - .5) * amount; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+  x.putImageData(d, 0, 0); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+}
+const BUMP_ASPHALT = noiseCanvas(256, 90, 7), BUMP_CONCRETE = noiseCanvas(256, 60, 11), BUMP_METAL = noiseCanvas(128, 40, 3);
 const M = (c, r = .6, m = 0) => new THREE.MeshStandardMaterial({color:c, roughness:r, metalness:m});
 const SP = (r, w = 18, h = 12) => new THREE.SphereGeometry(r, w, h), CY = (a, b, h, s = 18) => new THREE.CylinderGeometry(a, b, h, s), BX = (a, b, c) => new THREE.BoxGeometry(a, b, c);
 function mk(geo, mat, x = 0, y = 0, z = 0, p) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; if (p) p.add(m); return m; }
@@ -51,7 +63,7 @@ const groundTex = (() => {
   [-16.75, 16.75].forEach(z => { x.moveTo(px(-26), pz(z)); x.lineTo(px(26), pz(z)); }); [-23.25, 23.25].forEach(u => { x.moveTo(px(u), pz(-19)); x.lineTo(px(u), pz(19)); }); x.stroke();
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
 })();
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(64, 48), M(0xffffff, .8)); ground.material.map = groundTex; ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(64, 48), M(0xffffff, .8)); ground.material.map = groundTex; ground.material.bumpMap = BUMP_CONCRETE; ground.material.bumpScale = .6; ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
 const outer = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), M(0x7cc576, 1)); outer.rotation.x = -Math.PI / 2; outer.position.y = -.02; outer.receiveShadow = true; scene.add(outer);
 [[0, -22, 61, .5], [0, 22, 61, .5], [-30, 0, .5, 45], [30, 0, .5, 45]].forEach(([x, z, w, d]) => { const b = mk(BX(w, .9, d), M(0xf6efe0, .7), x, .45, z, scene); b.receiveShadow = true; });
 const leafM = [M(0x4caf50, .8), M(0x66bb6a, .8)], trunkM = M(0x8a5a3a, .9);
@@ -74,7 +86,7 @@ function winTex(bg) { const c = document.createElement("canvas"); c.width = 64; 
   for (let i = 0; i < 4; i++) for (let j = 0; j < 8; j++) { x.fillStyle = Math.random() < .35 ? "#ffe08a" : "#7fb2d6"; x.fillRect(6 + i * 15, 6 + j * 15, 9, 9); }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; }
 const bTex = ["#e8a29a", "#9ac7e8", "#f2d78a", "#b9a6e0", "#a6dcb8"].map(winTex);
-function building(x, z, w, h, d, i) { const b = mk(BX(w, h, d), new THREE.MeshStandardMaterial({map:bTex[Math.abs(i) % 5], roughness:.85}), x, h / 2, z, scene); b.receiveShadow = true; mk(BX(w + .4, .5, d + .4), M(0x3a3a4a), x, h + .25, z, scene); }
+function building(x, z, w, h, d, i) { const b = mk(BX(w, h, d), new THREE.MeshStandardMaterial({map:bTex[Math.abs(i) % 5], roughness:.8, bumpMap:BUMP_CONCRETE, bumpScale:1.2}), x, h / 2, z, scene); b.receiveShadow = true; mk(BX(w + .4, .5, d + .4), M(0x3a3a4a), x, h + .25, z, scene); }
 for (let x = -40; x <= 40; x += 9) building(x, -34 - Math.abs(x) % 3, 8, 9 + Math.abs(x * 3) % 7, 7, x / 9 | 0);
 for (let z = -26; z <= 26; z += 9) { building(-38, z, 7, 8 + Math.abs(z * 2) % 6, 8, (z / 9 | 0) + 7); building(38, z, 7, 8 + Math.abs(z * 5) % 6, 8, (z / 9 | 0) + 9); }
 const miniC = $("mini"), mx = miniC.getContext("2d");
@@ -297,7 +309,7 @@ function wWave(w, dt) {
 }
 
 // ---------- Vũ khí mới: súng, cung, máy tính, dép, chảo (mô hình chi tiết hơn) ----------
-const METAL = M(0x3a3f4a, .35, .85), WOOD = M(0x7a4a2a, .65), ALU = M(0xc9ced6, .25, .9), CASE = M(0xb9c0cc, .3, .85), DARK = M(0x2a2a30, .5, .2);
+const METAL = new THREE.MeshPhysicalMaterial({color:0x3a3f4a, roughness:.32, metalness:.9, bumpMap:BUMP_METAL, bumpScale:.4, clearcoat:.4, clearcoatRoughness:.2}), WOOD = new THREE.MeshPhysicalMaterial({color:0x7a4a2a, roughness:.55, bumpMap:BUMP_CONCRETE, bumpScale:.3, clearcoat:.2}), ALU = new THREE.MeshPhysicalMaterial({color:0xc9ced6, roughness:.22, metalness:.95, bumpMap:BUMP_METAL, bumpScale:.3}), CASE = new THREE.MeshPhysicalMaterial({color:0xb9c0cc, roughness:.3, metalness:.6, clearcoat:.6, clearcoatRoughness:.15}), DARK = M(0x2a2a30, .5, .2);
 const RUB = M(0xe8a04d, .5), STRAP = M(0xe8453c, .5), PANM = M(0x2a2a2e, .4, .3), PANIN = M(0x6b7078, .3, .7), HANDLE = M(0x3a2a1a, .6);
 function screenTex() {
   const c = document.createElement("canvas"); c.width = 256; c.height = 160; const x = c.getContext("2d");
@@ -500,7 +512,7 @@ function frame(tt) {
   camT.x += (clamp(px, -MAXX + 11, MAXX - 11) - camT.x) * k; camT.z += (clamp(pz, -MAXZ + 7, MAXZ - 7) - camT.z) * k;
   sun.position.set(px + 8, 18, pz + 8); sun.target.position.set(px, 0, pz); sun.target.updateMatrixWorld();
   cam.position.set(camT.x + (Math.random() - .5) * shake * .04, 19 + (Math.random() - .5) * shake * .04, camT.z + 14.5); cam.lookAt(camT.x, 0, camT.z - 1);
-  renderer.render(scene, cam); drawMini(); requestAnimationFrame(frame);
+  composer.render(); drawMini(); requestAnimationFrame(frame);
 }
 addEventListener("keydown", e => { if (e.target.tagName === "INPUT") return; const k = e.key.toLowerCase(); if (k === "enter" && (state === "menu" || state === "end")) return startRun(); if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault(); keys[k] = true; });
 addEventListener("keyup", e => { keys[e.key.toLowerCase()] = false; });
@@ -529,4 +541,7 @@ $("saveForm").addEventListener("submit", async e => {
 });
 
 window.__d = {get P() { return P; }, get E() { return E; }, get state() { return state; }, startRun, lvUp: () => { P.xp = P.need; }};
+composer = new EffectComposer(renderer); composer.addPass(new RenderPass(scene, cam));
+bloom = new UnrealBloomPass(new THREE.Vector2(box.clientWidth || 2, box.clientHeight || 2), .16, .5, .9); composer.addPass(bloom); composer.addPass(new OutputPass());
+resize();
 setChar(SV.sel); renderMenu(); loadBoard(); requestAnimationFrame(frame);
