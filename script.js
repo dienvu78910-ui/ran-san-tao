@@ -4,6 +4,8 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import * as SkeletonUtils from "three/addons/utils/SkeletonUtils.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -116,7 +118,7 @@ function drawMini() {
 const R = {}, PM = {shoe:M(0xffffff, .5), glove:M(0xf1c9a0, .6), pad:M(0x9aa3b5, .35, .7), band:M(0xe8453c, .6), glass:M(0x111111, .15, .5),
   jk:M(0x4a78b8, .7), sh:Object.assign(M(0xa8774a, .45, .35), {transparent:true}), rim:M(0xa3a9b5, .3, .9)};
 function buildPlayer(cfg) {
-  const root = new THREE.Group(), body = new THREE.Group(); root.add(body);
+  R.model = null; const root = new THREE.Group(), body = new THREE.Group(); root.add(body);
   const skin = M(0xf1c9a0, .55), cream = M(cfg.shirt, .85), jeans = M(0x2f3b57, .8), hairM = M(cfg.hair, .35), blk = M(0x16161b, .3, .3);
   R.legs = [-1, 1].map(s => { const g = new THREE.Group(); g.position.set(s * .3, 1, 0); body.add(g); mk(CY(.26, .24, .9), jeans, 0, -.45, 0, g); mk(BX(.5, .28, .85), PM.shoe, 0, -.95, .12, g); return g; });
   R.wings = [-1, 1].map(s => { const w = mk(BX(.7, .04, .45), M(0xffffff, .5), s * .55, -.8, -.1, R.legs[s < 0 ? 0 : 1]); w.rotation.z = s * .5; return w; });
@@ -164,7 +166,7 @@ const CH = {
   hot:{n:"Hot Boy", d:"Chí mạng +15%. Khởi đầu: Sấm sét.", w:"bolt", hair:0xd9b44a, shirt:0x2b2b36, letter:"H", crit:.15, cost:800},
   gym:{n:"Gym Bro", d:"Trâu bò +40% máu. Khởi đầu: Sóng xung.", w:"wave", hair:0x2b2b2b, shirt:0xe8453c, letter:"G", hp:1.4, big:1, cost:1500},
   bo:{n:"Bố", d:"Lực lưỡng, chịu đòn tốt +30% máu. Khởi đầu: Dép.", w:"slipper", hair:0x3b2a1e, shirt:0x5a7d52, letter:"B", beard:1, big:1, hp:1.3, cost:1200, rig:"bo"},
-  me:{n:"Mẹ", d:"Vung chảo rất mạnh +15% sát thương. Khởi đầu: Chảo.", w:"pan", hair:0x2a1a14, shirt:0xf2a7c0, letter:"M", bun:1, dm:1.15, cost:1000, rig:"me"},
+  me:{n:"Mẹ", d:"Vung chảo rất mạnh +15% sát thương. Khởi đầu: Chảo.", w:"pan", hair:0x2a1a14, shirt:0xf2a7c0, letter:"M", bun:1, dm:1.15, cost:1000, rig:"me", model:1},
   anh:{n:"Anh trai", d:"Tay đua nhanh nhẹn +8% tốc độ. Khởi đầu: Ném máy tính.", w:"laptop", hair:0x1a1a1a, shirt:0x3c6fb0, letter:"A", cap:0x2e5aa8, spd:1.08, cost:900, rig:"anh"}
 };
 const WP = {
@@ -284,7 +286,64 @@ function animateRig() {
   if (R.held) { const ofs = (R.held.userData.w || 1.4) * .4, fx = Math.cos(phi) * ofs, fy = Math.sin(phi) * ofs; R.held.position.set(fx, fy, 0); R.held.children.forEach(c => c.material.rotation = rr * ROT_SIGN); }
   R.rig.shadow = null;
 }
-function setChar(id) { if (playerMesh) scene.remove(playerMesh); playerMesh = buildPlayer(CH[id]); updateHeld(id, false); applyGear(); }
+
+// ---------- Mô hình Mẹ (GLB, xương Mixamo, animation WarriorIdle) ----------
+const MOM = {ok: false, scene: null, clip: null};
+new GLTFLoader().load("models/mom.glb", g => {
+  const sc0 = g.scene; sc0.traverse(o => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false; } });
+  const box = new THREE.Box3().setFromObject(sc0), size = box.getSize(new THREE.Vector3()), k = 4.6 / size.y;
+  sc0.scale.setScalar(k); sc0.updateMatrixWorld(true);
+  const b2 = new THREE.Box3().setFromObject(sc0); sc0.position.y = -b2.min.y;
+  MOM.scene = sc0; MOM.clip = g.animations.find(a => a.name === "WarriorIdle") || g.animations[0]; MOM.ok = !!MOM.clip;
+  if (SV.sel === "me") setChar("me");
+}, undefined, () => { MOM.ok = false; });
+const stub = () => ({visible: false, rotation: {x: 0, y: 0, z: 0}, position: {set() {}}, scale: {set() {}, setScalar() {}}, material: {color: {set() {}}, emissive: {set() {}}}, userData: {}});
+function buildModelPlayer(cfg) {
+  const root = new THREE.Group(), model = SkeletonUtils.clone(MOM.scene); root.add(model);
+  const mixer = new THREE.AnimationMixer(model); mixer.clipAction(MOM.clip).play();
+  const bn = {}; model.traverse(o => { if (o.isBone) { const nm = o.name.replace(/^mixamorig\d*:?/, "").replace(/_\d+$/, ""); if (/^(Hips|Spine|Spine1|Spine2|Neck|Head|(Left|Right)(Arm|ForeArm|Hand|UpLeg|Leg|Foot))$/.test(nm)) bn[nm] = o; } });
+  R.model = {root, model, mixer, bn, t: 0};
+  R.rig = null; R.spr = null; R.body = stub(); R.legs = [stub(), stub()]; R.arms = [stub(), stub()];
+  R.wings = [stub(), stub()]; R.pads = [stub(), stub()]; R.cape = stub(); R.badge = stub(); R.band = stub(); R.tails = stub();
+  R.glasses = stub(); R.jk = stub(); R.shield = stub(); R.hand = stub();
+  R.weapon = new THREE.Group(); root.add(R.weapon); R.held = null;
+  const bl = new THREE.Mesh(shadowGeo, shadowMat); bl.rotation.x = -Math.PI / 2; bl.position.y = .03; bl.scale.set(1.2, 1.2, 1); root.add(bl);
+  scene.add(root);
+  return root;
+}
+function placeHeld(wr, phi, d) {
+  const K = RIG_K, rr = d > 0 ? phi : phi - Math.PI;
+  R.weapon.position.set(wr[0] * K, wr[1] * K, .3); R.weapon.rotation.set(0, 0, 0);
+  if (R.held) { const ofs = (R.held.userData.w || 1.4) * .4; R.held.position.set(Math.cos(phi) * ofs, Math.sin(phi) * ofs, 0); R.held.children.forEach(c => c.material.rotation = rr); if (R.held.userData.face) R.held.userData.face(d < 0); }
+}
+const Q_X = new THREE.Vector3(1, 0, 0), Q_Z = new THREE.Vector3(0, 0, 1);
+const qRot = (ax, a) => new THREE.Quaternion().setFromAxisAngle(ax, a);
+function animateModel(dt) {
+  const M = R.model, bn = M.bn, d = P.fx < 0 ? -1 : 1, ph = P.t * 9, sn = Math.sin(ph), cs = Math.cos(ph);
+  M.mixer.update(dt);
+  const mul = (b, q) => { if (b) b.quaternion.multiply(q); };
+  if (P.mv) {
+    mul(bn.LeftUpLeg, qRot(Q_X, .45 * sn)); mul(bn.RightUpLeg, qRot(Q_X, -.45 * sn));
+    mul(bn.LeftLeg, qRot(Q_X, -.35 * Math.max(0, -cs))); mul(bn.RightLeg, qRot(Q_X, -.35 * Math.max(0, cs)));
+  }
+  // tay thuận (phía màn hình theo hướng nhìn): tư thế theo hành động
+  const dom = d > 0 ? "Right" : "Left", arm = bn[dom + "Arm"];
+  if (P.act) {
+    const p = Math.min(1, P.act.t / P.act.d), k = P.act.k;
+    if (k === "throw") mul(arm, qRot(Q_Z, d * (p < .45 ? lerp(.2, 1.4, p / .45) : lerp(1.4, -.4, (p - .45) / .55))));
+    else if (k === "swing") mul(arm, qRot(Q_Z, d * lerp(.2, 1.3, p)));
+    else mul(arm, qRot(Q_Z, d * (.2 + .8 * Math.sin(p * Math.PI))));
+  } else if (R.heldKind) mul(arm, qRot(Q_Z, d * .5));
+  M.model.updateMatrixWorld(true);
+  // vị trí tay cầm vũ khí, đưa về hệ của nhân vật
+  const hand = bn[dom + "Hand"], fore = bn[dom + "ForeArm"], v1 = new THREE.Vector3(), v2 = new THREE.Vector3();
+  if (hand && fore) {
+    hand.getWorldPosition(v1); fore.getWorldPosition(v2); M.root.worldToLocal(v1); M.root.worldToLocal(v2);
+    placeHeld([v1.x / RIG_K, v1.y / RIG_K], Math.atan2(v1.y - v2.y, v1.x - v2.x), d);
+  }
+  M.model.rotation.y = P.mv ? (d > 0 ? .35 : -.35) : 0;
+}
+function setChar(id) { if (playerMesh) scene.remove(playerMesh); playerMesh = (CH[id].model && MOM.ok) ? buildModelPlayer(CH[id]) : buildPlayer(CH[id]); updateHeld(id, false); applyGear(); }
 const pGeo = BX(.2, .2, .2), pMats = {};
 function burst(x, z, col, n, sp = 7) {
   const m = pMats[col] = pMats[col] || new THREE.MeshBasicMaterial({color:col});
@@ -570,6 +629,7 @@ function syncVisuals(dt) {
   R.body.rotation.y = Math.PI / 2 - faceA; R.body.position.y = bob;
   if (R.spr) { R.spr.position.y = bob; R.spr.userData.face(P.fx < 0); R.spr.children.forEach(c => c.material.rotation = P.mv ? .05 * Math.sin(P.t * 9) : 0); const ak = P.act ? Math.sin(Math.min(1, P.act.t / P.act.d) * Math.PI) : 0; R.spr.scale.set(1 + .03 * ak, 1 + .07 * ak, 1); }
   if (R.rig) animateRig();
+  if (R.model) animateModel(dt);
   if (R.held && R.held.userData.face) R.held.userData.face(P.fx < 0); R.legs[0].rotation.x = lg; R.legs[1].rotation.x = -lg; R.arms.forEach((a, i) => a.rotation.x = (i ? -lg : lg) * .5); R.weapon.rotation.y = Math.PI / 2 - faceA;
   R.cape.rotation.x = .15 + Math.sin(P.t * 10) * .1; R.tails.rotation.y = Math.sin(P.t * 12) * .25;
   for (const e of E) { e.mesh.position.set(e.x, Math.abs(Math.sin(e.w)) * .14, e.z); e.mesh.rotation.y = Math.atan2(P.x - e.x, P.z - e.z); e.mesh.userData.legs.forEach((l, i) => l.rotation.x = Math.sin(e.w * 1.2) * (i ? -.6 : .6));
