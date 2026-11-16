@@ -12,7 +12,7 @@ input,button{font:inherit;font-weight:800;border:3px solid var(--ink);border-rad
 button{background:var(--tomato);color:#fff;cursor:pointer}
 button:hover{filter:brightness(1.1)}
 :focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.hint{font-size:.85rem;margin:10px 0 0;max-width:62ch}
+.hint{font-size:.85rem;margin:12px 0 0;max-width:62ch;background:rgba(255,248,230,.92);border:2px solid #2b1b3d;border-radius:12px;padding:8px 12px;box-shadow:3px 3px 0 #2b1b3d}
 .hud{position:absolute;left:8px;right:8px;top:6px;z-index:2;pointer-events:none;display:flex;flex-direction:column;gap:4px;font-weight:800;color:#fff;text-shadow:0 2px 0 var(--ink)}
 .hud[hidden],.overlay[hidden],form[hidden]{display:none}
 .hpbar{position:relative;height:20px;width:55%;background:var(--ink);border:2px solid var(--ink);border-radius:10px;overflow:hidden}
@@ -42,3 +42,7 @@ button:hover{filter:brightness(1.1)}
 .mini{position:absolute;right:8px;bottom:8px;width:24%;height:auto;border:2px solid var(--ink);border-radius:8px;background:rgba(255,255,255,.55);z-index:2;pointer-events:none}
 .rank{flex:1 1 220px;max-width:300px;background:#fff;border:4px solid var(--ink);border-radius:14px;box-shadow:6px 6px 0 var(--ink);padding:16px;align-self:flex-start}
 .rank ol{margin:0;padding-left:22px}.rank li{padding:4px 0;border-bottom:2px dashed #d9cfe6}.rank li span{float:right;font-weight:800;color:var(--tomato)}.status{font-size:.8rem;margin:10px 0 0}
+/* cần điều khiển ảo (điện thoại) */
+.joy{position:absolute;display:none;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:3px solid rgba(255,255,255,.75);background:rgba(43,27,61,.25);pointer-events:none;z-index:3}
+.joyk{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.85);box-shadow:0 2px 0 var(--ink)}
+.cv3d{cursor:crosshair}
