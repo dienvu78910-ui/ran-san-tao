@@ -81,3 +81,5 @@ body.inbattle .pbtn{top:max(10px,env(safe-area-inset-top));right:max(12px,env(sa
 .wic{width:1.5em;height:1.5em;object-fit:contain;vertical-align:middle;margin-right:3px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))}
 .slots span{display:inline-flex;align-items:center}
 .card i .wic{width:56px;height:56px;margin:0}
+.rbtn{top:auto;bottom:max(150px,env(safe-area-inset-bottom));right:max(16px,env(safe-area-inset-right));width:64px;height:64px;font-size:1.7rem}
+body.inbattle .rbtn{top:auto;bottom:max(150px,calc(env(safe-area-inset-bottom) + 140px))}
