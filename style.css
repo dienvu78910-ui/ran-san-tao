@@ -47,3 +47,37 @@ button:hover{filter:brightness(1.1)}
 .joyk{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.85);box-shadow:0 2px 0 var(--ink)}
 .cv3d{cursor:crosshair}
 .chaps{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:2px 0 8px}.chaps button{background:#3b2d55;font-size:.78rem;padding:6px 10px}.chaps .on{background:var(--sun);color:var(--ink)}.chaps .lock{opacity:.55;cursor:not-allowed}
+/* viền tối quanh màn chơi, đậm nhạt theo chương */
+.board::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,transparent 52%,rgba(30,14,46,var(--vig,.3)) 100%)}
+/* nút tạm dừng cho màn hình cảm ứng */
+.pbtn{position:absolute;top:8px;right:8px;z-index:4;width:44px;height:44px;padding:0;border-radius:50%;background:rgba(43,27,61,.8);border:3px solid #fff;font-size:1.1rem;line-height:1;display:none}
+/* chế độ ứng dụng: điện thoại / APK, game phủ kín màn hình ngang */
+body.appmode{padding:0;display:block;background:#1d1230;overflow:hidden;height:100vh;height:100dvh}
+.appmode .app{max-width:none;gap:0;height:100%}
+.appmode h1,.appmode .hint,.appmode .rank{display:none}
+.appmode .game{max-width:none;flex:1 1 100%;height:100%}
+.appmode .board{border:0;border-radius:0;box-shadow:none;height:100%}
+.appmode .cv3d{aspect-ratio:auto;height:100%}
+.appmode .hud{left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top))}
+.appmode .hpbar{height:24px;width:42%}.appmode .hpbar span{line-height:20px;font-size:.85rem}
+.appmode .stats{font-size:1.05rem;padding-right:56px}
+.appmode .slots{left:max(10px,env(safe-area-inset-left));bottom:max(10px,env(safe-area-inset-bottom))}.appmode .slots span{font-size:1rem;padding:2px 8px}
+.appmode .mini{width:16%;right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom))}
+.appmode .pbtn{top:max(8px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right))}
+.appmode .overlay{padding:10px max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left))}.appmode #menu{justify-content:flex-start}
+.appmode .overlay h2{font-size:1.15rem;margin:0}.appmode .tabc{max-height:none;flex:1;min-height:90px}
+.appmode .card{min-width:130px}
+/* đang trong trận: khung game phủ kín màn hình */
+body.inbattle{overflow:hidden}
+body.inbattle .board{position:fixed;inset:0;z-index:50;width:100vw;height:100vh;height:100dvh;border:0;border-radius:0;box-shadow:none}
+body.inbattle .cv3d{aspect-ratio:auto;width:100%;height:100%}
+body.inbattle .hud{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));top:max(10px,env(safe-area-inset-top))}
+body.inbattle .hpbar{height:24px;width:min(42%,520px)}body.inbattle .hpbar span{line-height:20px;font-size:.85rem}
+body.inbattle .stats{font-size:1.05rem;padding-right:56px}
+body.inbattle .slots{left:max(12px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom))}
+body.inbattle .mini{width:min(16%,220px);right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom))}
+body.inbattle .pbtn{top:max(10px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right))}
+/* v10: biểu tượng vũ khí bằng ảnh */
+.wic{width:1.5em;height:1.5em;object-fit:contain;vertical-align:middle;margin-right:3px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))}
+.slots span{display:inline-flex;align-items:center}
+.card i .wic{width:56px;height:56px;margin:0}
