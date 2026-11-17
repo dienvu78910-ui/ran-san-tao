@@ -8,7 +8,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import * as SkeletonUtils from "three/addons/utils/SkeletonUtils.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 // Ảnh của game nằm trong assets/anh*.json (tách ra để mỗi tệp nhỏ hơn 25 MB khi đẩy lên GitHub)
-const IP = (await Promise.all(['./assets/anh1.json','./assets/anh2.json'].map(u => fetch(new URL(u, import.meta.url)).then(r => r.json())))).flat();
+const IP = (await Promise.all(['./anh1.json','./anh2.json'].map(u => fetch(new URL(u, import.meta.url)).then(r => r.json())))).flat();
 
 // Firebase chỉ được tải khi đã có cấu hình thật -> game vẫn chạy khi offline hoặc thiếu firebase-config.js
 const FB_VER = "10.12.2";
