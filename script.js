@@ -89,7 +89,7 @@ const PXD = {"ch":{"lop":{"uri":IP[866],"cw":64,"ch":64,"fh":58},"ban":{"uri":IP
 const PX_SKIN = {"lop": ["Gốc", "Áo dài Tết", "Hiệp sĩ Lốp Thép", "Thánh Gióng"], "ban": ["Gốc", "Áo dài Trắng", "Thần Tình Yêu", "Tiên Nữ Hoa Sen"], "hot": ["Gốc", "Ngôi Sao Ca Nhạc", "Ninja Đêm", "Lôi Thần"], "gym": ["Gốc", "Võ Sĩ Vovinam", "Đô Vật Làng", "Sơn Tinh"], "bo": ["Gốc", "Bố Đi Câu", "Bác Bảo Vệ", "Thổ Địa"], "me": ["Gốc", "Áo Bà Ba", "Đầu Bếp Trưởng", "Bà Chúa Bếp Lửa"], "anh": ["Gốc", "Tay Đua", "Lập Trình Viên", "Rồng Công Nghệ"]}, PX_TIER = ["Gốc", "Thường", "Sự kiện", "Huyền thoại"];
 // sheet pixel 4 hàng x 6 khung: đứng, chạy, tung chiêu, trúng đòn + gục. Mỗi động tác của game lấy khung từ đây.
 const PX_FM = (() => { const r = (row, cs) => cs.map(c => [row, c]), s = [0, 1, 2, 3, 4, 5];
-  return {walk:r(1, s), idle:r(0, s), atk:r(2, s), gun:r(2, [4, 4, 5, 5, 4, 5]), bow:r(2, [4, 4, 5, 5, 4, 5]), throw2:r(2, [0, 1, 4, 4, 5, 5]), hurt:r(3, [0, 1, 1, 2, 2, 2]),
+  return {walk:r(1, s), idle:r(0, s), atk:r(2, s), gun:r(2, [4, 4, 5, 5, 4, 5]), bow:r(2, [4, 4, 5, 5, 4, 5]), throw2:r(0, [1, 2, 3, 3, 4, 5]), hurt:r(3, [0, 1, 1, 2, 2, 2]),
     dead:r(3, [2, 3, 4, 4, 5, 5]), front:r(1, s), back:r(1, s), roll:r(1, [0, 2, 4, 0, 2, 4]), win:r(2, [2, 3, 3, 2, 4, 5])}; })();
 const PXC = {};
 for (const k of Object.keys(PX_SKIN)) { PXC[k] = [k, k + "_s1", k + "_s2", k + "_s3"].map((n, i) => { const d = PXD.ch[n];
@@ -465,6 +465,8 @@ function foeEyes(g, y, z, sp, s, angry, glow) {
 }
 // Yêu quái vẽ tay: mỗi loại 1 ảnh atlas, các khung là texture dùng chung nguồn ảnh (tải lên GPU 1 lần)
 const FOE_H = {nhan:2.8, hot:2.7, gym:3.8, boss:6.6, final:8, phuthuy:3.5, qua:2.4, batuoc:3.7, lon:2.5, nuhoang:7.4, vosi:3.4, ptv:3.2, sep:3.6, mi:2.8, robot:3, wifi:2.8, rua:7.2}, FOE_TEX = {};
+// v17: tỉ lệ quái theo nhân vật pixel (cao 3): quái thường thấp hơn người chơi, trùm ~1.7 lần
+Object.assign(FOE_H, {nhan:2.3, hot:2.3, gym:2.9, boss:5, final:5.8, phuthuy:2.5, qua:1.9, batuoc:2.8, lon:2, nuhoang:5.2, vosi:2.9, ptv:2.7, sep:2.8, mi:2.1, robot:2.5, wifi:2.3, rua:5.4});
 function foeTex(k) {
   if (FOE_TEX[k]) return FOE_TEX[k]; const A = FOEA[k], all = [];
   const base = new THREE.TextureLoader().load(A.uri, () => all.forEach(t => t.needsUpdate = true)); base.colorSpace = THREE.SRGBColorSpace; base.generateMipmaps = false; base.minFilter = THREE.LinearFilter; if (A.px) base.magFilter = base.minFilter = THREE.NearestFilter;
@@ -567,7 +569,7 @@ function buildAnim(root, key) {
   let tex;
   const tk = key + "_" + (A.sk || 0); tex = ANIM_TEX[tk]; if (!tex) { tex = ANIM_TEX[tk] = new THREE.TextureLoader().load(A.uri); tex.colorSpace = THREE.SRGBColorSpace; tex.generateMipmaps = false; tex.minFilter = THREE.LinearFilter; if (A.px) tex.magFilter = tex.minFilter = THREE.NearestFilter; }
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true, alphaTest:.05, depthWrite:false}));
-  const k = ANIM_H / A.fh; sp.scale.set(A.cw * k, A.ch * k, 1); sp.center.set(.5, 3 / A.ch); root.add(sp); // chân nằm cách đáy ô 3px
+  const k = (A.px ? 3 : ANIM_H) / A.fh; sp.scale.set(A.cw * k, A.ch * k, 1); sp.center.set(.5, 3 / A.ch); root.add(sp); // chân nằm cách đáy ô 3px
   const bl = new THREE.Mesh(shadowGeo, shadowMat); bl.rotation.x = -Math.PI / 2; bl.position.y = .03; root.add(bl);
   R.anim = {A, tex, sp, atk:-1, wt:0, it:0, lastAct:null}; setFrame("idle", 0, false);
   const V = DIR3["p_" + key]; if (V && SV.look !== "2d" && !A.v2) { // kiểu 3D mới: ảnh nhân vật 3 hướng, cử động bằng nhún/nghiêng
@@ -613,7 +615,7 @@ function animateAnimCore(dt, a, A, own) {
 // Điểm trên hình nhân vật (cao h, lệch ngang d theo hướng nhìn) quy ra toạ độ 3D: dùng để đạn, mũi tên, vật ném xuất phát đúng tay/nòng súng
 const _cu = new THREE.Vector3(), _cr = new THREE.Vector3(), _p1 = new THREE.Vector3(), _p2 = new THREE.Vector3();
 function handPt(h, d, left) {
-  const k = CH[SV.sel].big ? 1.18 : 1, sg = left ? -1 : 1; _cu.set(0, 1, 0).applyQuaternion(cam.quaternion); _cr.set(1, 0, 0).applyQuaternion(cam.quaternion);
+  const k = (CH[SV.sel].big ? 1.18 : 1) * (R.anim && R.anim.A.px ? .62 : 1), sg = left ? -1 : 1; _cu.set(0, 1, 0).applyQuaternion(cam.quaternion); _cr.set(1, 0, 0).applyQuaternion(cam.quaternion);
   return {x:P.x + (_cu.x * h + _cr.x * d * sg) * k, y:(_cu.y * h + _cr.y * d * sg) * k, z:P.z + (_cu.z * h + _cr.z * d * sg) * k};
 }
 // Góc trên màn hình của một hướng bay trong thế giới (để xoay ảnh đạn/mũi tên đúng chiều)
@@ -1445,70 +1447,126 @@ Object.assign(DG_SKILL, {lop:"Lốp Lăn Thần Tốc + Vòng Lốp Hộ Thể",
 function pxStart() { const m = PX_START[SV.sel]; if (m && WP[m] && !P.ws[m]) addWeapon(m); return m || null; }
 const wrapA = a => Math.atan2(Math.sin(a), Math.cos(a));
 const pxAim = () => { const tg = nearest(), dd = tg ? Math.hypot(tg.x - P.x, tg.z - P.z) : 1e9; return {tg, dd, a:tg && dd < 14 ? Math.atan2(tg.z - P.z, tg.x - P.x) : Math.atan2(P.fz || 0, P.fx || 1)}; };
-let PXW = null, pxSw = null; const PXQ = [];
+// ===================== v17: CẢM GIÁC ĐÁNH (hit-stop, giật camera, vung vũ khí thật, kỹ năng có cut-in) =====================
+let PXW = null, pxSw = null, HS = 0, SLOW = 0, ZOOM = 0; const PXQ = [];
+function juiceDt(d) { ZOOM = Math.max(0, ZOOM - d * 2.4); if (HS > 0) { HS -= d; return d * .03; } if (SLOW > 0) { SLOW -= d; return d * .3; } return d; }
+const hitStop = s => { HS = Math.max(HS, s); }, punch = z => { ZOOM = Math.max(ZOOM, z); };
+function flashScreen(col = "#fff", a = .5, ms = 200) {
+  const el = h("div", {cls:"jflash"}); el.style.background = col; el.style.opacity = a; box.parentElement.append(el);
+  requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transition = `opacity ${ms}ms ease-out`; el.style.opacity = 0; })); setTimeout(() => el.remove(), ms + 80);
+}
+// hiệu ứng chồng 2 lớp: lớp thường + lớp cộng sáng to hơn -> rực, có quầng
+function FXG(k, x, y, z, w, rot = 0, dur = .7, cy = .5, tint = 0xffffff) {
+  fxAnim(k, x, y, z, w, rot, dur, .5, tint, cy); fxAnim(k, x, y, z, w * 1.22, rot, dur * .85, .5, tint, cy);
+  const g = FM[FM.length - 1]; g.mesh.material.blending = THREE.AdditiveBlending; g.o2 = .6;
+}
+const ez = k => k * k * (3 - 2 * k), eOut = k => 1 - Math.pow(1 - k, 3), eIn = k => k * k * k;
+// quỹ đạo vung: góc lệch so với hướng ngắm (dương = giơ lên/ra sau), đẩy tới (đâm), khoảnh khắc trúng
+const SW = {
+  slash:{d:.3, imp:.42, f:k => k < .3 ? .9 + 1.4 * ez(k / .3) : k < .48 ? 2.3 - 3.9 * eOut((k - .3) / .18) : -1.6 + 2.5 * ez((k - .48) / .52), lg:k => k > .3 && k < .6 ? Math.sin((k - .3) / .3 * Math.PI) * .45 : 0},
+  heavy:{d:.56, imp:.62, f:k => k < .46 ? .9 + 2 * ez(k / .46) : k < .62 ? 2.9 - 3.9 * eIn((k - .46) / .16) : -1 + 1.9 * ez((k - .62) / .38), lg:k => k > .46 && k < .8 ? Math.sin((k - .46) / .34 * Math.PI) * .55 : k < .46 ? -.2 * ez(k / .46) : 0},
+  thrust:{d:.26, imp:.5, f:() => .12, p:k => k < .35 ? -.7 * ez(k / .35) : k < .55 ? -.7 + 2.5 * eOut((k - .35) / .2) : 1.8 * (1 - ez((k - .55) / .45)), lg:k => k > .35 && k < .7 ? .5 * Math.sin((k - .35) / .35 * Math.PI) : 0},
+  spin:{d:.34, imp:.3, f:k => .9 - 6.283 * eOut(k), lg:() => 0}
+};
 function pxMelee(id, c, w, dt) {
-  w.cd -= dt; if (w.cd > 0) return; const {tg, dd} = pxAim(), Rr = c.R * (1 + .04 * (w.lv - 1)) * (w.evo ? 1.25 : 1);
-  if (!DG.on && (!tg || dd > Rr + tg.r + .6)) { w.cd = .1; return; } // chế độ sinh tồn: tự chém khi có yêu quái trong tầm
-  w.cd = lvCd(c, w); const a = tg && dd < Rr * 2.6 ? Math.atan2(tg.z - P.z, tg.x - P.x) : Math.atan2(P.fz || 0, P.fx || 1), d0 = lvD(c, w), ca = Math.cos(a), sa = Math.sin(a);
+  w.cd -= dt; if (w.cd > 0 || pxSw) return; const {tg, dd} = pxAim(), Rr = c.R * (1 + .04 * (w.lv - 1)) * (w.evo ? 1.25 : 1);
+  if (!DG.on && (!tg || dd > Rr + tg.r + .6)) { w.cd = .1; return; }
+  w.cd = lvCd(c, w); const a = tg && dd < Rr * 2.6 ? Math.atan2(tg.z - P.z, tg.x - P.x) : Math.atan2(P.fz || 0, P.fx || 1), d0 = lvD(c, w);
+  const type = c.spin ? "spin" : c.thrust ? "thrust" : c.ground ? "heavy" : "slash", S = SW[type];
+  pxSw = {t:0, type, c, a, d:Math.max(type === "heavy" ? .42 : .17, Math.min(S.d, w.cd * 1.1)), fired:false, gt:0, hit:() => pxMeleeHit(c, a, Rr, d0, type)};
+  P.fx = Math.cos(a); P.fz = Math.sin(a); if (R.anim) R.anim.faceL = Math.cos(a) < 0;
+  snd(type === "heavy" ? 120 : 300, .07, "triangle", .025, type === "heavy" ? 80 : 200); // tiếng lấy đà
+}
+function pxMeleeHit(c, a, Rr, d0, type) {
+  const ca = Math.cos(a), sa = Math.sin(a), tint = c.tint || 0xffffff, k = "px_" + c.fx; let n = 0;
   for (const e of E) { if (e.dead) continue; const dx = e.x - P.x, dz = e.z - P.z, L = Math.hypot(dx, dz); if (L > Rr + e.r) continue;
     if (c.arc < 6 && Math.abs(wrapA(Math.atan2(dz, dx) - a)) > c.arc / 2 + e.r / Math.max(L, .5)) continue;
-    for (let k = 0; k < (c.hits || 1); k++) dmg(e, d0, c.kb, P.x, P.z); if (c.slow) e.slow = 1.2;
-    if (FM.length < 150) fxAnim("px_trung_don", e.x, 1.4, e.z, 1.7, Math.random() * 6, .25); }
-  const k = "px_" + c.fx, tint = c.tint || 0xffffff;
-  if (c.spin) fxAnim(k, P.x, 1.3, P.z, Rr * 2.1, 0, .3, .5, tint);
-  else if (c.ground) { const x = P.x + ca * Rr * .6, z = P.z + sa * Rr * .6; fxAnim(k, x, 0, z, Rr * 1.7, 0, .45, .5, tint, .3); shake = Math.max(shake, 4); }
-  else { const x = P.x + ca * Rr * .5, z = P.z + sa * Rr * .5; fxAnim(k, x, 1.5, z, Rr * (c.thrust ? 1.1 : 1.15), scrAng(x, 1.5, z, ca, sa) + (c.rot || 0), .26, .5, tint); }
+    const hp0 = e.hp; for (let i = 0; i < (c.hits || 1); i++) dmg(e, d0, c.kb * (type === "heavy" ? 1.4 : 1), P.x, P.z); if (c.slow) e.slow = 1.2; n++;
+    const dealt = Math.round(hp0 - Math.max(0, e.hp)); if (dealt > 0) floatText(e.x + (Math.random() - .5), 3.2, e.z, String(dealt), type === "heavy" ? "#ffb347" : "#fff");
+    if (FM.length < 170) { FXG("px_trung_don", e.x, 1.4, e.z, type === "heavy" ? 3.2 : 2.5, Math.random() * 6, .28); burst(e.x, e.z, 0xffffff, 4, 6); } }
+  if (type === "spin") FXG(k, P.x, 1.3, P.z, Rr * 2.4, 0, .32, .5, tint);
+  else if (type === "heavy") { const x = P.x + ca * Rr * .55, z = P.z + sa * Rr * .55; FXG(k, x, 0, z, Rr * 2.3, 0, .55, .3, tint); ring(x, z, Rr * 1.1, 0xffe0a0, .35); burst(x, z, 0xb59a78, 12, 8);
+    shake = Math.max(shake, 12); punch(.32); hitStop(.09); snd(70, .3, "sawtooth", .08, -30); }
+  else { const x = P.x + ca * Rr * .5, z = P.z + sa * Rr * .5; FXG(k, x, 1.5, z, Rr * (type === "thrust" ? 1.3 : 1.45), scrAng(x, 1.5, z, ca, sa) + (c.rot || 0), .28, .5, tint); }
+  if (n && type !== "heavy") { hitStop(type === "spin" ? .025 : .05); shake = Math.max(shake, 5); punch(.08); }
+  snd(type === "heavy" ? 90 : 700 + Math.random() * 200, .09, n ? "square" : "triangle", n ? .05 : .03, -400);
   if (c.bolt) E.filter(e => !e.dead && Math.hypot(e.x - P.x, e.z - P.z) < 8).sort(() => Math.random() - .5).slice(0, c.bolt).forEach(e => strike(e.x, e.z, 1.6, Math.round(d0 * .6), false));
-  if (c.qi) { const m = fxSprite("px_thuan_thien", 3, 3, 0); m.position.set(P.x, 1.5, P.z); scene.add(m); PXQ.push({x:P.x, z:P.z, vx:ca * 18, vz:sa * 18, life:.6, d:Math.round(d0 * .8), hit:new Set(), m, k:"px_thuan_thien", w:3, R:1.4}); }
-  pxSw = {t:0, d:c.spin ? .3 : c.thrust ? .2 : .22, c}; act("throw", .3, id, ca);
-  snd(c.ground ? 140 : 520 + Math.random() * 160, .08, c.ground ? "sawtooth" : "triangle", .04, c.ground ? -60 : -300);
+  if (c.qi) { const m = fxSprite("px_thuan_thien", 3, 3.4, 0); m.material.blending = THREE.AdditiveBlending; m.position.set(P.x, 1.5, P.z); scene.add(m); PXQ.push({x:P.x, z:P.z, vx:ca * 20, vz:sa * 20, life:.6, d:Math.round(d0 * .8), hit:new Set(), m, k:"px_thuan_thien", w:3.4, R:1.5}); }
 }
-// vật bay của kỹ năng/kiếm khí: chạy thẳng, xuyên qua, đổi khung hình liên tục
+// vật bay của kỹ năng / kiếm khí: bay thẳng, xuyên, để lại vệt
 function pxQTick(dt) {
   for (let i = PXQ.length - 1; i >= 0; i--) { const q = PXQ[i]; q.life -= dt; q.x += q.vx * dt; q.z += q.vz * dt;
     const fr = FXI[q.k], fi = q.loop ? (t * 14 | 0) % fr.length : Math.min(fr.length - 1, 2 + ((.6 - q.life) * 8 | 0)); q.m.material.map = fxTex(q.k, fi);
     const sx = scrAng(q.x, 1.5, q.z, q.vx, q.vz); q.m.material.rotation = q.mirror ? 0 : sx; q.m.scale.set(q.w * (q.mirror && Math.cos(sx) > 0 ? -1 : 1), q.w / fr[fi].a, 1); q.m.position.set(q.x, q.y || 1.5, q.z);
-    for (const e of E) if (!e.dead && !q.hit.has(e) && Math.hypot(e.x - q.x, e.z - q.z) < q.R + e.r) { q.hit.add(e); dmg(e, q.d, 2, q.x, q.z); if (FM.length < 150) fxAnim("px_trung_don", e.x, 1.4, e.z, 1.8, 0, .25); }
-    if (q.life <= 0 || (DG.on && !canStand(q.x, q.z, .2))) { scene.remove(q.m); PXQ.splice(i, 1); } }
+    if ((q.tr = (q.tr || 0) - dt) <= 0 && FM.length < 170) { q.tr = .04; const g = q.m.clone(); g.material = q.m.material.clone(); g.material.blending = THREE.AdditiveBlending; scene.add(g); FM.push({mesh:g, t:0, dur:.18, op:.45}); }
+    for (const e of E) if (!e.dead && !q.hit.has(e) && Math.hypot(e.x - q.x, e.z - q.z) < q.R + e.r) { q.hit.add(e); dmg(e, q.d, 2.5, q.x, q.z); hitStop(.03); shake = Math.max(shake, 5); if (FM.length < 170) FXG("px_trung_don", e.x, 1.4, e.z, 3, 0, .3); }
+    if (q.life <= 0 || (DG.on && !canStand(q.x, q.z, .2))) { if (q.boom) q.boom(q.x, q.z); scene.remove(q.m); PXQ.splice(i, 1); } }
 }
-// vũ khí cầm tay vẽ pixel: xoay theo hướng ngắm, vung khi chém
+// vũ khí trên tay: gắn ở bàn tay, xoay theo hướng ngắm; khi chém có lấy đà – chém – theo đà, có bóng mờ theo lưỡi
+const _hu = new THREE.Vector3(), _hr = new THREE.Vector3();
 function pxHeldTick(dt) {
-  const show = R.anim && R.anim.A.px;
   if (!PXW) { PXW = new THREE.Sprite(new THREE.SpriteMaterial({transparent:true, depthWrite:false, alphaTest:.05})); PXW.renderOrder = 6; scene.add(PXW); }
   if (state === "run") pxQTick(dt);
+  let ofs = null, push = 0, lunge = 0, strikeNow = false;
+  if (pxSw) { const S = SW[pxSw.type]; pxSw.t += dt; const k = Math.min(1, pxSw.t / pxSw.d); ofs = S.f(k); push = S.p ? S.p(k) : 0; lunge = S.lg(k);
+    strikeNow = k > S.imp - .2 && k < S.imp + .08; if (!pxSw.fired && k >= S.imp) { pxSw.fired = true; pxSw.hit(); } if (k >= 1) pxSw = null; }
+  const sp = R.anim && R.anim.sp, show = R.anim && R.anim.A.px;
   const run = state === "run" || state === "lv", id = run ? (DG.on ? P.hand[P.cur] : (Object.keys(P.ws).find(k => MW[k]) || CH[SV.sel].w)) : (PX_START[SV.sel] || CH[SV.sel].w);
-  const key = id && (PXHELD[id] || (NW[id] && NW[id].img));
-  if (!show || !key || !SPR[key] || P.empty > 0 || R.anim.dieT !== undefined) { PXW.visible = false; return; }
-  PXW.visible = true; const pos = playerMesh.position, a = run ? pxAim().a : (P.fx < 0 ? Math.PI : 0), ca = Math.cos(a), sa = Math.sin(a);
-  const r = scrAng(pos.x, 1.6, pos.z, ca, sa), left = Math.cos(r) < 0, c = MW[id], L = (c && c.len) || (id === "gun" ? 2.2 : 1.7);
-  let off = 0, push = 0;
-  if (pxSw) { pxSw.t += dt; const k = Math.min(1, pxSw.t / pxSw.d), e = 1 - (1 - k) * (1 - k); if (pxSw.c.spin) off = e * 6.283; else if (pxSw.c.thrust) push = Math.sin(k * Math.PI) * 1.2; else off = 1.3 - 2.6 * e; if (k >= 1) pxSw = null; }
-  else if (c) off = .35; // cầm vũ khí cận chiến hơi chếch lên
-  const tip = left ? r - off : r + off, S = SPR[key], g = .18;
-  PXW.material.map = sprMap(key, left); PXW.material.rotation = left ? tip - Math.PI : tip; PXW.center.set(left ? 1 - g : g, .5);
-  PXW.scale.set(L, L / S.a, 1); PXW.position.set(pos.x + ca * (.35 + push), 1.55 + (R.anim.sp.position.y || 0), pos.z + sa * (.35 + push) + .05);
+  const key = id && (PXHELD[id] || (NW[id] && NW[id].img)), c = MW[id];
+  if (!show || !key || !SPR[key] || P.empty > 0 || R.anim.dieT !== undefined) { PXW.visible = false; if (sp) { sp.position.x = sp.position.z = 0; } return; }
+  const pos = playerMesh.position, a = pxSw ? pxSw.a : run ? pxAim().a : (P.fx < 0 ? Math.PI : 0), ca = Math.cos(a), sa = Math.sin(a);
+  const r = scrAng(pos.x, 1.2, pos.z, ca, sa), left = Math.cos(r) < 0, side = left ? -1 : 1;
+  if (ofs === null) ofs = c ? (c.thrust ? .12 : .9) + Math.sin(t * 3) * .05 : 0; // tư thế cầm: vũ khí cận chiến dựng chếch lên, thở nhẹ
+  // thân người nhào theo nhát chém
+  if (sp) { sp.position.x = ca * lunge; sp.position.z = sa * lunge; sp.material.rotation = pxSw ? -side * (pxSw.type === "heavy" ? .18 : .1) * Math.sin(Math.min(1, pxSw.t / pxSw.d) * Math.PI) : sp.material.rotation; }
+  _hu.set(0, 1, 0).applyQuaternion(cam.quaternion); _hr.set(1, 0, 0).applyQuaternion(cam.quaternion);
+  const L = (c && c.len ? c.len * .78 : (id === "gun" ? 1.9 : 1.5)), S = SPR[key], g = .16, tip = left ? r - ofs : r + ofs, hy = 1.05 + (sp ? sp.position.y : 0);
+  const hx = pos.x + _hr.x * .42 * side + _hu.x * hy + ca * (lunge + push * .6), hz = pos.z + _hr.z * .42 * side + _hu.z * hy + sa * (lunge + push * .6);
+  PXW.visible = true; PXW.material.map = sprMap(key, left); PXW.material.rotation = left ? tip - Math.PI : tip; PXW.center.set(left ? 1 - g : g, .5);
+  PXW.scale.set(L, L / S.a, 1); PXW.position.set(hx, _hu.y * hy, hz + .05);
+  if (strikeNow && FM.length < 170) { const gh = new THREE.Sprite(PXW.material.clone()); gh.center.copy(PXW.center); gh.scale.copy(PXW.scale); gh.position.copy(PXW.position);
+    gh.material.blending = THREE.AdditiveBlending; gh.material.color.setHex(c && c.tint || 0xcfefff); gh.renderOrder = 5; scene.add(gh); FM.push({mesh:gh, t:0, dur:.13, op:.55}); }
 }
-// ---------- Kỹ năng: mỗi nhân vật tung 2 chiêu cùng lúc (tấn công + hỗ trợ) ----------
+// ---------- Kỹ năng: gồng chiêu (chậm thời gian + cut-in chân dung) rồi bung chiêu nhiều nhịp ----------
+const SKC = {lop:"#ff8a2a", ban:"#ff5fa8", hot:"#b05cff", gym:"#7dff5a", bo:"#ffd23f", me:"#ff5a3a", anh:"#3fe8ff"};
+function skillCutIn(id) {
+  const nm = (DG_SKILL[id] || "Kỹ năng").split(" + ");
+  const el = h("div", {cls:"cutin"}, h("div", {cls:"cb"}), h("img", {src:PXD.face[id] || "", alt:""}), h("div", {cls:"cn"}, h("small", {}, CH[id].n), h("b", {}, nm[0]), nm[1] ? h("i", {}, "+ " + nm[1]) : ""));
+  el.style.setProperty("--sc", SKC[id] || "#ffd25e"); box.parentElement.append(el); setTimeout(() => el.remove(), 1150);
+}
 function dgSkill() {
-  if (state !== "run" || !P || P.sk > 0) return; P.sk = P.skMax; const id = SV.sel, d0 = 30 + 12 * DG.floor, {tg, a} = pxAim(), ca = Math.cos(a), sa = Math.sin(a);
-  const tx = tg ? tg.x : P.x + ca * 5, tz = tg ? tg.z : P.z + sa * 5;
-  const area = (x, z, R, d, kb = 2, f) => { for (const e of E) if (!e.dead && Math.hypot(e.x - x, e.z - z) < R + e.r) { dmg(e, Math.round(d), kb, x, z); if (f) f(e); } };
-  const FX = (k, x, z, w, y = 0, cy = .1, dur = .8) => fxAnim("px_" + k, x, y, z, w, 0, dur, .5, 0xffffff, cy);
-  shake = Math.max(shake, 8); snd(220, .4, "sawtooth", .07, 300); banner(DG_SKILL[id] || "Kỹ năng!"); P.act = {k:"atk", t:0, d:.5, w:CH[id].w, ax:ca};
-  if (id === "lop") { [-.28, 0, .28].forEach(o => { const b = a + o, m = fxSprite("px_lop_kn1", 0, 2.8, 0); scene.add(m);
-      PXQ.push({x:P.x, z:P.z, vx:Math.cos(b) * 15, vz:Math.sin(b) * 15, life:1.1, d:d0, hit:new Set(), m, k:"px_lop_kn1", w:2.8, R:1.3, loop:1, mirror:1, y:1.2}); });
-    FX("lop_kn2", P.x, P.z, 6.5, 1.5, .5, .9); area(P.x, P.z, 4, d0 * .5, 3); P.inv = Math.max(P.inv, 2); P.shield = 1; }
-  else if (id === "ban") { FX("ban_kn1", tx, tz, 6.5, 0, .06, .9); area(tx, tz, 3.6, d0 * 1.1);
-    FX("ban_kn2", P.x, P.z, 4.6, 2.2, .5, .9); P.hp = Math.min(P.max, P.hp + 2); P.arm = P.armMax; P.inv = Math.max(P.inv, 1.5); }
-  else if (id === "hot") { E.filter(e => !e.dead && Math.hypot(e.x - P.x, e.z - P.z) < 14).sort((p, q) => Math.hypot(p.x - P.x, p.z - P.z) - Math.hypot(q.x - P.x, q.z - P.z)).slice(0, 6)
-      .forEach((e, i) => setTimeout(() => { if (e.dead || state !== "run") return; FX("hot_kn1", e.x, e.z, 3.4, 0, .06, .6); dmg(e, Math.round(d0 * 1.2), 1, e.x, e.z); e.slow = 1; snd(900, .08, "square", .03, -500); }, i * 90));
-    FX("hot_kn2", P.x, P.z, 5.5, 1.6, .5, .9); P.inv = Math.max(P.inv, 2.5); P.buff = 4; }
-  else if (id === "gym") { FX("gym_kn1", P.x, P.z, 9, 1, .5, .7); area(P.x, P.z, 6, d0 * 1.3, 4); FX("gym_kn2", P.x, P.z, 4.2, 0, .06, 1); P.arm = P.armMax; P.buff = 5; }
-  else if (id === "bo") { FX("bo_kn1", P.x, P.z, 8, 2, .5, .7); area(P.x, P.z, 7, d0 * .6, 3.5, e => e.slow = 3); FX("bo_kn2", tx, tz, 6.5, 0, .06, .9); area(tx, tz, 3.6, d0 * 1.1, 1.5); }
-  else if (id === "me") { FX("me_kn1", tx, tz, 5.8, 1.2, .5, .9); area(tx, tz, 4, d0, 0, e => { e.x += (tx - e.x) * .5; e.z += (tz - e.z) * .5; });
-    FX("me_kn2", P.x + ca * 3.5, P.z + sa * 3.5, 7, 0, .1, .9); for (const e of E) if (!e.dead && segDist(e.x, e.z, P.x, P.z, P.x + ca * 9, P.z + sa * 9) < 2.6 + e.r) dmg(e, Math.round(d0 * 1.2), 3, P.x, P.z); P.buff = 6; }
-  else if (id === "anh") { FX("anh_kn1", tx, tz, 6.5, 0, .15, .9); area(tx, tz, 3.8, d0 * 1.2, 1, e => e.slow = 2.5); FX("anh_kn2", P.x, P.z, 3.4, 0, .06, .9); P.en = P.enMax; }
+  if (state !== "run" || !P || P.sk > 0 || P.casting) return; P.sk = P.skMax; const id = SV.sel, col = SKC[id] || "#ffd25e", hex = parseInt(col.slice(1), 16);
+  P.casting = true; P.inv = Math.max(P.inv, 1.6); skillCutIn(id); SLOW = .55; punch(.35); hitStop(.05);
+  P.act = {k:"atk", t:0, d:.7, w:CH[id].w, ax:P.fx}; if (R.anim) { R.anim.row = "atk"; R.anim.atk = 0; }
+  ring(P.x, P.z, 4, hex, .5); ring(P.x, P.z, 2.2, 0xffffff, .3); burst(P.x, P.z, hex, 18, 3); FXG("px_nhat_vat", P.x, 0, P.z, 4.5, 0, .7, .08);
+  snd(140, .5, "sawtooth", .06, 500);
+  setTimeout(() => { P.casting = false; if (state === "run") skillRelease(id, col, hex); }, 430);
 }
+function skillRelease(id, col, hex) {
+  const d0 = 34 + 13 * DG.floor, {tg, a} = pxAim(), ca = Math.cos(a), sa = Math.sin(a), tx = tg ? tg.x : P.x + ca * 6, tz = tg ? tg.z : P.z + sa * 6;
+  const area = (x, z, R, d, kb = 2, f) => { let n = 0; for (const e of E) if (!e.dead && Math.hypot(e.x - x, e.z - z) < R + e.r) { const hp0 = e.hp; dmg(e, Math.round(d), kb, x, z); n++; if (f) f(e);
+      const dl = Math.round(hp0 - Math.max(0, e.hp)); if (dl > 0) floatText(e.x + (Math.random() - .5) * 1.2, 3.4, e.z, dl + "!", col); } return n; };
+  const pulses = (x, z, R, d, n = 3, gap = 110, kb = 1.5, f) => { for (let i = 0; i < n; i++) setTimeout(() => { if (state !== "run") return; area(x, z, R, d / n * (i === n - 1 ? 1.6 : 1), i === n - 1 ? kb * 2 : .4, f);
+      if (i === n - 1) { hitStop(.08); shake = Math.max(shake, 10); } else shake = Math.max(shake, 4); }, i * gap); };
+  flashScreen(col, .45, 260); shake = Math.max(shake, 16); punch(.55); snd(60, .5, "sawtooth", .09, -20); snd(880, .25, "square", .04, -600);
+  if (id === "lop") { [-.32, -.11, .11, .32].forEach(o => { const b = a + o, m = fxSprite("px_lop_kn1", 0, 3.6, 0); scene.add(m);
+      PXQ.push({x:P.x, z:P.z, vx:Math.cos(b) * 17, vz:Math.sin(b) * 17, life:1.1, d:d0 * 1.2, hit:new Set(), m, k:"px_lop_kn1", w:3.6, R:1.6, loop:1, mirror:1, y:1.3,
+        boom:(x, z) => { FXG("px_dan_lua", x, 1, z, 3.6, 0, .4); area(x, z, 2.4, d0 * .5); }}); });
+    FXG("px_lop_kn2", P.x, 1.5, P.z, 8, 0, 1, .5); pulses(P.x, P.z, 4.5, d0, 3, 120, 3); P.inv = Math.max(P.inv, 2.2); P.shield = 1; }
+  else if (id === "ban") { FXG("px_ban_kn1", tx, tz, 9, 0, 0, 1.1, .06); pulses(tx, tz, 4.4, d0 * 1.4, 4, 140, 1.2);
+    FXG("px_ban_kn2", P.x, 2.2, P.z, 6, 0, 1.1, .5); P.hp = Math.min(P.max, P.hp + 2); P.arm = P.armMax; P.inv = Math.max(P.inv, 2); }
+  else if (id === "hot") { E.filter(e => !e.dead && Math.hypot(e.x - P.x, e.z - P.z) < 15).sort((p, q) => Math.hypot(p.x - P.x, p.z - P.z) - Math.hypot(q.x - P.x, q.z - P.z)).slice(0, 8)
+      .forEach((e, i) => setTimeout(() => { if (e.dead || state !== "run") return; FXG("px_hot_kn1", e.x, 0, e.z, 4.8, 0, .6, .06); area(e.x, e.z, 2, d0 * 1.3, 1, o => o.slow = 1.2); flashScreen("#d9b3ff", .18, 90); shake = Math.max(shake, 7); hitStop(.035); snd(1200, .08, "square", .04, -900); }, i * 85));
+    FXG("px_hot_kn2", P.x, 1.6, P.z, 7, 0, 1, .5); P.inv = Math.max(P.inv, 2.8); P.buff = 4; }
+  else if (id === "gym") { FXG("px_gym_kn1", P.x, 1, P.z, 13, 0, .8, .5); ring(P.x, P.z, 7, 0xfff0a0, .45); ring(P.x, P.z, 4, 0xffffff, .3); burst(P.x, P.z, 0xb59a78, 30, 12);
+    pulses(P.x, P.z, 7, d0 * 1.6, 3, 100, 5); FXG("px_gym_kn2", P.x, 0, P.z, 5.5, 0, 1.2, .06); P.arm = P.armMax; P.buff = 5; }
+  else if (id === "bo") { FXG("px_bo_kn1", P.x, 2, P.z, 11, 0, .8, .5); ring(P.x, P.z, 8, 0xffd23f, .5); area(P.x, P.z, 8, d0 * .4, 5, e => e.slow = 3);
+    setTimeout(() => { if (state !== "run") return; FXG("px_bo_kn2", tx, tz, 9, 0, 0, 1, .06); pulses(tx, tz, 4.4, d0 * 1.5, 4, 120, 1.5); }, 220); }
+  else if (id === "me") { FXG("px_me_kn1", tx, tz, 8, 1.2, 0, 1, .5); pulses(tx, tz, 4.6, d0 * 1.1, 4, 120, 0, e => { e.x += (tx - e.x) * .35; e.z += (tz - e.z) * .35; });
+    setTimeout(() => { if (state !== "run") return; FXG("px_me_kn2", P.x + ca * 4, P.z + sa * 4, 10, 0, 0, 1, .1); for (const e of E) if (!e.dead && segDist(e.x, e.z, P.x, P.z, P.x + ca * 11, P.z + sa * 11) < 3 + e.r) dmg(e, Math.round(d0 * 1.5), 4, P.x, P.z); hitStop(.08); shake = Math.max(shake, 12); }, 300); P.buff = 6; }
+  else if (id === "anh") { FXG("px_anh_kn1", tx, tz, 9, 0, 0, 1, .15); pulses(tx, tz, 4.8, d0 * 1.5, 5, 90, 1, e => e.slow = 2.5); FXG("px_anh_kn2", P.x, 0, P.z, 4.6, 0, 1, .06); P.en = P.enMax; }
+}
+
 // ---------- Chọn skin trong menu nhân vật ----------
 function skinRow(id) {
   const k = CH[id].anim, cur = (SV.skin || {})[k] || 0;
@@ -1699,7 +1757,7 @@ function syncVisuals(dt) {
     if (ud.spr) { // yêu quái ảnh động: chọn khung đi/trúng đòn, quay mặt về phía người chơi (ảnh gốc nhìn sang trái)
       const F = FOE_TEX[ud.key], fl = P.x > e.x ? 1 : 0; e.atkT = Math.max(0, (e.atkT || 0) - dt);
       ud.spr.material.map = (e.h > 0 ? F.hit : e.atkT > 0 && F.atk ? F.atk[Math.min(5, Math.floor((1 - e.atkT / .55) * 6))] : F.walk[Math.floor(e.w * .9) % F.walk.length])[fl];
-      const col = e.boost > 0 ? 0xffb38a : e.elite ? 0xff9d9d : 0xffffff; if (e.em !== col) { e.em = col; ud.spr.material.color.setHex(col); }
+      const col = e.boost > 0 ? 0xffb38a : e.elite ? 0xff9d9d : 0xffffff, wf = e.h > .03; if (e.em !== col || e.wf !== wf) { e.em = col; e.wf = wf; ud.spr.material.color.setHex(col); if (wf) ud.spr.material.color.multiplyScalar(6); }
       const sqE = e.h > 0 ? Math.min(1, e.h / .08) : 0, bsE = e.bs || (e.bs = e.mesh.scale.x); e.mesh.scale.set(bsE * (1 + .1 * sqE), bsE * (1 - .15 * sqE), bsE);
       e.mesh.position.set(e.x, FLOAT.has(ud.key) ? .25 + Math.sin(e.w * .7) * .2 : 0, e.z); continue; }
     e.mesh.position.set(e.x, Math.abs(Math.sin(e.w)) * .14, e.z); e.mesh.rotation.y = Math.atan2(P.x - e.x, P.z - e.z); e.mesh.userData.legs.forEach((l, i) => l.rotation.x = Math.sin(e.w * 1.2) * (i ? -.6 : .6));
@@ -1716,12 +1774,12 @@ function syncVisuals(dt) {
   $("lvl").textContent = "Lv " + P.lvl; $("tm").textContent = fmt(t); $("kl").textContent = "☠ " + kills; $("cn").textContent = "💰 +" + projCoins(); }
 }
 function frame(tt) {
-  const dt = Math.min(.05, (tt - last) / 1000); last = tt; if (state === "run") update(dt); if (state === "dying" && (P.dieT -= dt) <= 0) endRun(false); if (P) syncVisuals(dt);
+  const dt = juiceDt(Math.min(.05, (tt - last) / 1000)); last = tt; if (state === "run") update(dt); if (state === "dying" && (P.dieT -= dt) <= 0) endRun(false); if (P) syncVisuals(dt);
   shake = Math.max(0, shake - dt * 40); const px = P ? P.x : 0, pz = P ? P.z : 7, k = Math.min(1, dt * 6);
   camT.x += ((DG.on ? px : clamp(px, -MAXX + 11, MAXX - 11)) - camT.x) * k; camT.z += ((DG.on ? pz + 1 : clamp(pz, -MAXZ + 7, MAXZ - 7)) - camT.z) * k;
   if (FLAG) FLAG.rotation.y = Math.sin(tt / 600) * .25; // cờ bay nhẹ
   sun.position.set(px + 8, 18, pz + 8); sun.target.position.set(px, 0, pz); sun.target.updateMatrixWorld();
-  cam.position.set(camT.x + (Math.random() - .5) * shake * .04, 19 + (Math.random() - .5) * shake * .04, camT.z + 14.5); cam.lookAt(camT.x, 0, camT.z - 1);
+  const zk = 1 - ZOOM * .2; cam.position.set(camT.x + (Math.random() - .5) * shake * .04, 19 * zk + (Math.random() - .5) * shake * .04, camT.z + 14.5 * zk); cam.lookAt(camT.x, 0, camT.z - 1);
   composer.render(); drawMini(); requestAnimationFrame(frame);
 }
 function keysClear() { for (const k in keys) keys[k] = false; jo = null; mouseGo = null; mouseFire = false; touchFire = false; joyBase.style.display = "none"; }
@@ -1778,7 +1836,7 @@ $("saveForm").addEventListener("submit", async e => {
   loadBoard();
 });
 
-if (/[?&]debug\b/.test(location.search)) window.__d = {get P() { return P; }, get E() { return E; }, get state() { return state; }, get SV() { return SV; }, spawnE, startRun, lvUp: () => { P.xp = P.need; }, addWeapon, renderSlots, setT: v => { t = v; }, get PJ() { return PJ; }, get EB() { return EB; }, get CANS() { return CANS; }, dropCan, setChar, renderMenu, DG, dgFloor, dgSkill, dgSwap, dgChest, dgCleared, canStand, get C() { return C; }, fire: v => { touchFire = v; }, killAll: () => { DG.pend.forEach(q => q.t = 0); E.forEach(e => { if (!e.dead) die(e); }); }};
+if (/[?&]debug\b/.test(location.search)) window.__d = {get P() { return P; }, get E() { return E; }, get state() { return state; }, get SV() { return SV; }, spawnE, startRun, lvUp: () => { P.xp = P.need; }, addWeapon, renderSlots, setT: v => { t = v; }, get PJ() { return PJ; }, get EB() { return EB; }, get CANS() { return CANS; }, dropCan, setChar, renderMenu, DG, dgFloor, dgSkill, dgSwap, dgChest, dgCleared, canStand, get C() { return C; }, fire: v => { touchFire = v; }, get pxSw() { return pxSw; }, hs: v => { HS = v; }, killAll: () => { DG.pend.forEach(q => q.t = 0); E.forEach(e => { if (!e.dead) die(e); }); }};
 composer = new EffectComposer(renderer); composer.addPass(new RenderPass(scene, cam));
 bloom = new UnrealBloomPass(new THREE.Vector2(box.clientWidth || 2, box.clientHeight || 2), .08, .4, .97); composer.addPass(bloom); composer.addPass(new OutputPass());
 resize();
