@@ -128,3 +128,18 @@ body .pbtn.tbtn.swap{right:max(30px,calc(env(safe-area-inset-right) + 12px));bot
 @keyframes ciPort{to{transform:translateX(0)}}
 @keyframes ciName{to{transform:translateX(0);opacity:1}}
 @keyframes ciFade{0%,72%{opacity:1}100%{opacity:0}}
+/* v20: trang chủ toàn màn hình, cut-in vẽ tay lớn */
+body:not(.appmode){overflow:hidden}
+body:not(.appmode) .board{position:fixed;inset:0;z-index:50;width:100vw;height:100vh;height:100dvh;border:0;border-radius:0;box-shadow:none}
+body:not(.appmode) .cv3d{aspect-ratio:auto;width:100%;height:100%}
+#menu{justify-content:flex-start;padding:max(14px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+#menu>*{width:100%;max-width:820px;flex-shrink:0}
+#menu .top{display:flex;align-items:center;gap:12px}
+#menu .fsb{margin-left:auto;padding:4px 10px;font-size:1.1rem;line-height:1}
+#menu .tabc{max-height:none;flex:1 1 auto;min-height:140px;flex-shrink:1}
+#menu .play{max-width:360px;margin:6px auto 4px}
+.rkl{text-align:left;margin:4px auto;padding-left:26px;max-width:420px;font-weight:800}.rkl li{padding:4px 0;border-bottom:1px dashed rgba(255,255,255,.25)}
+.hint2{font-size:.85rem;opacity:.8;max-width:620px;margin:8px auto 0;line-height:1.45}
+.cutin.big img{left:-2%;top:12%;height:auto;width:min(66%,900px);clip-path:polygon(6% 0,100% 0,94% 100%,0 100%);image-rendering:auto}
+.cutin.big .cn{left:auto;right:5%;top:auto;bottom:16%;align-items:flex-end;text-align:right}
+.cutin.big .cb{top:38%;height:34%}

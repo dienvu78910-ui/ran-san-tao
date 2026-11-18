@@ -571,7 +571,7 @@ function buildAnim(root, key) {
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true, alphaTest:.05, depthWrite:false}));
   const k = (A.px ? 3 : ANIM_H) / A.fh; sp.scale.set(A.cw * k, A.ch * k, 1); sp.center.set(.5, 3 / A.ch); root.add(sp); // chân nằm cách đáy ô 3px
   const bl = new THREE.Mesh(shadowGeo, shadowMat); bl.rotation.x = -Math.PI / 2; bl.position.y = .03; root.add(bl);
-  R.anim = {A, tex, sp, atk:-1, wt:0, it:0, lastAct:null}; setFrame("idle", 0, false);
+  if (A.px) sp.renderOrder = 5.4; R.anim = {A, tex, sp, atk:-1, wt:0, it:0, lastAct:null}; setFrame("idle", 0, false);
   const V = DIR3["p_" + key]; if (V && SV.look !== "2d" && !A.v2) { // kiểu 3D mới: ảnh nhân vật 3 hướng, cử động bằng nhún/nghiêng
     const L = new THREE.TextureLoader(), ld = (u, f) => { const t2 = L.load(u); t2.colorSpace = THREE.SRGBColorSpace; if (f) { t2.wrapS = THREE.RepeatWrapping; t2.repeat.x = -1; t2.offset.x = 1; } return t2; };
     const T = {front:ld(V[0].uri), right:ld(V[1].uri), left:ld(V[1].uri, true), back:ld(V[2].uri)}, H = ANIM_H * .98;
@@ -1536,7 +1536,7 @@ function pxHeldTick(dt) {
   const sp = R.anim && R.anim.sp, show = R.anim && R.anim.A.px;
   const run = state === "run" || state === "lv", id = run ? (DG.on ? P.hand[P.cur] : (Object.keys(P.ws).find(k => MW[k]) || CH[SV.sel].w)) : (PX_START[SV.sel] || CH[SV.sel].w);
   const key = id && (PXHELD[id] || (NW[id] && NW[id].img)), c = MW[id];
-  if (!show || !key || !SPR[key] || P.empty > 0 || R.anim.dieT !== undefined) { PXW.visible = false; if (sp) { sp.position.x = sp.position.z = 0; } return; }
+  if (!show || !key || !SPR[key] || P.empty > 0 || (P.casting && PXG[SV.sel]) || R.anim.dieT !== undefined) { PXW.visible = false; if (sp) { sp.position.x = sp.position.z = 0; } return; }
   const pos = playerMesh.position, a = pxSw ? pxSw.a : run ? pxAim().a : (P.fx < 0 ? Math.PI : 0), ca = Math.cos(a), sa = Math.sin(a);
   const r = scrAng(pos.x, 1.2, pos.z, ca, sa), left = Math.cos(r) < 0, side = left ? -1 : 1;
   if (ofs === null) ofs = c ? (c.thrust ? .12 : .9) + Math.sin(t * 3) * .05 : 0; // tư thế cầm: vũ khí cận chiến dựng chếch lên, thở nhẹ
@@ -1553,20 +1553,56 @@ function pxHeldTick(dt) {
   if (strikeNow && FM.length < 170) { const gh = new THREE.Sprite(PXW.material.clone()); gh.center.copy(PXW.center); gh.scale.copy(PXW.scale); gh.position.copy(PXW.position);
     gh.material.blending = THREE.AdditiveBlending; gh.material.color.setHex(c && c.tint || 0xcfefff); gh.renderOrder = 5; scene.add(gh); FM.push({mesh:gh, t:0, dur:.13, op:.55}); }
 }
+// ===================== v20: động tác vẽ tay toàn thân + gồng chiêu + cut-in =====================
+const PXA = {"gym":{"uri":IP[1395],"cw":52,"ch":52,"fh":44},"ban":{"uri":IP[1396],"cw":52,"ch":52,"fh":43},"lop":{"uri":IP[1397],"cw":52,"ch":52,"fh":42},"hot":{"uri":IP[1398],"cw":52,"ch":52,"fh":44},"bo":{"uri":IP[1399],"cw":52,"ch":52,"fh":42},"me":{"uri":IP[1400],"cw":52,"ch":52,"fh":48},"anh":{"uri":IP[1401],"cw":52,"ch":52,"fh":43}};
+const PXG = {"gym":{"fr":[{"uri":IP[1402],"a":1.7566},{"uri":IP[1403],"a":1.7566},{"uri":IP[1404],"a":1.7566},{"uri":IP[1405],"a":1.7566},{"uri":IP[1406],"a":1.7566},{"uri":IP[1407],"a":1.7566}],"r":0.628,"cy":0.044},"ban":{"fr":[{"uri":IP[1408],"a":1.7611},{"uri":IP[1409],"a":1.7611},{"uri":IP[1410],"a":1.7611},{"uri":IP[1411],"a":1.7611},{"uri":IP[1412],"a":1.7611},{"uri":IP[1413],"a":1.7611}],"r":0.624,"cy":0.053},"lop":{"fr":[{"uri":IP[1414],"a":0.708},{"uri":IP[1415],"a":0.708},{"uri":IP[1416],"a":0.708},{"uri":IP[1417],"a":0.708},{"uri":IP[1418],"a":0.708},{"uri":IP[1419],"a":0.708}],"r":0.611,"cy":0.044},"hot":{"fr":[{"uri":IP[1420],"a":0.7124},{"uri":IP[1421],"a":0.7124},{"uri":IP[1422],"a":0.7124},{"uri":IP[1423],"a":0.7124},{"uri":IP[1424],"a":0.7124},{"uri":IP[1425],"a":0.7124}],"r":0.648,"cy":0.077},"bo":{"fr":[{"uri":IP[1426],"a":0.6953},{"uri":IP[1427],"a":0.6953},{"uri":IP[1428],"a":0.6953},{"uri":IP[1429],"a":0.6953},{"uri":IP[1430],"a":0.6953},{"uri":IP[1431],"a":0.6953}],"r":0.597,"cy":0.06},"me":{"fr":[{"uri":IP[1432],"a":0.5584},{"uri":IP[1433],"a":0.5584},{"uri":IP[1434],"a":0.5584},{"uri":IP[1435],"a":0.5584},{"uri":IP[1436],"a":0.5584},{"uri":IP[1437],"a":0.5584}],"r":0.645,"cy":0.117},"anh":{"fr":[{"uri":IP[1438],"a":0.6494},{"uri":IP[1439],"a":0.6494},{"uri":IP[1440],"a":0.6494},{"uri":IP[1441],"a":0.6494},{"uri":IP[1442],"a":0.6494},{"uri":IP[1443],"a":0.6494}],"r":0.662,"cy":0.074}};
+const PXCI = {"gym":IP[1444],"ban":IP[1445],"lop":IP[1446],"hot":IP[1447],"bo":IP[1448],"me":IP[1449],"anh":IP[1450]};
+const ACT_TX = {}, GONG_TX = {}, SW_ROW = {slash:0, heavy:1, thrust:2, spin:3}; let PXB = null; const _pxws = new THREE.Vector3();
+function pxLd(u) { const t = new THREE.TextureLoader().load(u); t.colorSpace = THREE.SRGBColorSpace; t.generateMipmaps = false; t.magFilter = t.minFilter = THREE.NearestFilter; return t; }
+function pxBodyTick(dt) { // thay thân nhân vật bằng khung vẽ tay khi chém / lăn / bắn / gồng chiêu
+  const a = R.anim; if (!a || !a.A.px || a.d || !P) { if (PXB) PXB.visible = false; return; }
+  const sp = a.sp, id = SV.sel, ck = CH[id] && CH[id].anim, def = !((SV.skin || {})[ck]);
+  if (PXA[id] && !ACT_TX[id]) ACT_TX[id] = pxLd(PXA[id].uri); if (PXG[id] && !GONG_TX[id + 0]) PXG[id].fr.forEach((f, i) => { GONG_TX[id + i] = pxLd(f.uri); }); // nạp sẵn để khung đầu không trống
+  if (!PXB) { PXB = new THREE.Sprite(new THREE.SpriteMaterial({transparent:true, alphaTest:.05, depthWrite:false})); PXB.renderOrder = 5.5; }
+  if (PXB.parent !== scene) scene.add(PXB);
+  let mode = null, row = 0, col = 0, left = false;
+  if (a.dieT === undefined && a.winT === undefined && (state === "run" || state === "lv")) {
+    if (P.casting && PXG[id]) mode = "g";
+    else if (def && PXA[id]) {
+      if (pxSw) { const p = playerMesh.position, r = scrAng(p.x, 1.2, p.z, Math.cos(pxSw.a), Math.sin(pxSw.a)); row = SW_ROW[pxSw.type] || 0; col = swFrame(pxSw.type, Math.min(1, pxSw.t / pxSw.d)); left = Math.cos(r) < 0; mode = "a"; }
+      else if (P.roll > 0) { row = 5; col = Math.min(5, Math.floor((1 - P.roll / .45) * 6)); left = P.rfx < 0; mode = "a"; }
+      else if (a.atk >= 0 && (a.row === "gun" || a.row === "bow" || a.row === "throw2")) { row = 4; col = Math.min(5, Math.floor(a.atk / (ACT_T[a.row] || .4) * 6)); left = a.faceL; mode = "a"; }
+    }
+  }
+  if (mode === "a" && !(ACT_TX[id] && ACT_TX[id].image)) mode = null; if (mode === "g" && !(GONG_TX[id + 0] && GONG_TX[id + 0].image)) mode = null;
+  if (!mode) { PXB.visible = false; sp.visible = true; return; }
+  const m = PXB.material, red = P.inv > 0 && P.hurtFlash ? 0xff9a9a : 0xffffff; m.color.setHex(red); m.rotation = 0;
+  if (mode === "a") {
+    const X = PXA[id], tx = ACT_TX[id] || (ACT_TX[id] = pxLd(X.uri)), u = 1 / 6, k = 3 / X.fh; col = Math.max(0, Math.min(5, col | 0));
+    tx.repeat.set(left ? -u : u, u); tx.offset.set((left ? col + 1 : col) * u, 1 - (row + 1) * u);
+    if (m.map !== tx) { m.map = tx; m.needsUpdate = true; }
+    PXB.center.set(.5, 3 / X.ch); PXB.scale.set(X.cw * k, X.ch * k, 1);
+  } else {
+    const G = PXG[id], ct = (performance.now() - (P.castS || 0)) / 1000, i = Math.min(5, Math.floor(ct / .5 * 6)), kk = id + i, f = G.fr[i], tx = GONG_TX[kk] || (GONG_TX[kk] = pxLd(f.uri));
+    if (m.map !== tx) { m.map = tx; m.needsUpdate = true; }
+    const H = 3 / G.r * (1 + .04 * Math.sin(ct * 40)), gl = P.fx < 0; tx.repeat.set(gl ? -1 : 1, 1); tx.offset.set(gl ? 1 : 0, 0); PXB.center.set(.5, G.cy); PXB.scale.set(H * f.a, H, 1);
+  }
+  sp.getWorldPosition(PXB.position); sp.getWorldScale(_pxws); PXB.scale.multiply(_pxws.divide(sp.scale)); PXB.renderOrder = mode === "g" ? 8 : 5.5; PXB.visible = true; sp.visible = false;
+}
 // ---------- Kỹ năng: gồng chiêu (chậm thời gian + cut-in chân dung) rồi bung chiêu nhiều nhịp ----------
 const SKC = {lop:"#ff8a2a", ban:"#ff5fa8", hot:"#b05cff", gym:"#7dff5a", bo:"#ffd23f", me:"#ff5a3a", anh:"#3fe8ff"};
 function skillCutIn(id) {
   const nm = (DG_SKILL[id] || "Kỹ năng").split(" + ");
-  const el = h("div", {cls:"cutin"}, h("div", {cls:"cb"}), h("img", {src:PXD.face[id] || "", alt:""}), h("div", {cls:"cn"}, h("small", {}, CH[id].n), h("b", {}, nm[0]), nm[1] ? h("i", {}, "+ " + nm[1]) : ""));
-  el.style.setProperty("--sc", SKC[id] || "#ffd25e"); box.parentElement.append(el); setTimeout(() => el.remove(), 1150);
+  const big = PXCI[id], el = h("div", {cls:"cutin" + (big ? " big" : "")}, h("div", {cls:"cb"}), h("img", {src:big || PXD.face[id] || "", alt:""}), h("div", {cls:"cn"}, h("small", {}, CH[id].n), h("b", {}, nm[0]), nm[1] ? h("i", {}, "+ " + nm[1]) : ""));
+  el.style.setProperty("--sc", SKC[id] || "#ffd25e"); box.parentElement.append(el); setTimeout(() => el.remove(), big ? 1300 : 1150);
 }
 function dgSkill() {
   if (state !== "run" || !P || P.sk > 0 || P.casting) return; P.sk = P.skMax; const id = SV.sel, col = SKC[id] || "#ffd25e", hex = parseInt(col.slice(1), 16);
-  P.casting = true; P.inv = Math.max(P.inv, 1.6); skillCutIn(id); SLOW = .55; punch(.35); hitStop(.05);
+  P.casting = true; P.castS = performance.now(); P.inv = Math.max(P.inv, 1.6); skillCutIn(id); SLOW = .55; punch(.35); hitStop(.05);
   P.act = {k:"atk", t:0, d:.7, w:CH[id].w, ax:P.fx}; if (R.anim) { R.anim.row = "atk"; R.anim.atk = 0; }
   ring(P.x, P.z, 4, hex, .5); ring(P.x, P.z, 2.2, 0xffffff, .3); burst(P.x, P.z, hex, 18, 3); FXG("px_nhat_vat", P.x, 0, P.z, 4.5, 0, .7, .08);
   snd(140, .5, "sawtooth", .06, 500);
-  setTimeout(() => { P.casting = false; if (state === "run") skillRelease(id, col, hex); }, 430);
+  setTimeout(() => { P.casting = false; if (state === "run") skillRelease(id, col, hex); }, 520);
 }
 function skillRelease(id, col, hex) {
   const d0 = 34 + 13 * DG.floor, {tg, a} = pxAim(), ca = Math.cos(a), sa = Math.sin(a), tx = tg ? tg.x : P.x + ca * 6, tz = tg ? tg.z : P.z + sa * 6;
@@ -1734,12 +1770,14 @@ function endRun(win) {
 // ---------- Trang chủ ----------
 function renderMenu() {
   menuBg();
-  const m = $("menu"), tabs = [["char", "Nhân vật"], ["shop", "Nâng cấp"], ["rare", "Vũ khí hiếm"], ["mis", "Nhiệm vụ" + (SV.gift !== today() ? " 🎁" : "")]];
-  m.replaceChildren(h("div", {cls:"top"}, h("b", {}, "💰 " + SV.coins), h("span", {}, "Kỷ lục sống sót: " + fmt(SV.best))), h("h2", {}, "Lốp Trưởng Đại Chiến"), h("p", {cls:"sub"}, `Chương ${SV.chap + 1} – ${CHAP[SV.chap].n}: vượt 3 tầng và hạ trùm cuối`),
+  const m = $("menu"), tabs = [["char", "Nhân vật"], ["shop", "Nâng cấp"], ["rare", "Vũ khí hiếm"], ["mis", "Nhiệm vụ" + (SV.gift !== today() ? " 🎁" : "")], ["rank", "🏆 Xếp hạng"]];
+  m.replaceChildren(h("div", {cls:"top"}, h("b", {}, "💰 " + SV.coins), h("span", {}, "Kỷ lục sống sót: " + fmt(SV.best)), APP ? "" : h("button", {cls:"fsb", title:"Toàn màn hình", onclick:() => { const de = document.documentElement; if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); else if (de.requestFullscreen) de.requestFullscreen({navigationUI:"hide"}).catch(() => {}); }}, "⛶")), h("h2", {}, "Lốp Trưởng Đại Chiến"), h("p", {cls:"sub"}, `Chương ${SV.chap + 1} – ${CHAP[SV.chap].n}: vượt 3 tầng và hạ trùm cuối`),
     h("div", {cls:"chaps"}, ...CHAP.map((c, i) => h("button", {cls:(SV.chap === i ? "on" : "") + (i > SV.cl ? " lock" : ""), title:c.n, onclick:() => { if (i > SV.cl) return; SV.chap = i; save(); menuBg(); renderMenu(); }}, (i > SV.cl ? "🔒 " : "") + (i + 1) + ". " + c.n))),
     h("div", {cls:"tabs"}, ...tabs.map(([k, n]) => h("button", {cls:tab === k ? "on" : "", onclick:() => { tab = k; renderMenu(); }}, n))), h("div", {cls:"tabc"}, ...tabBody()), h("button", {cls:"play", onclick:startRun}, "▶ CHƠI"));
 }
 function tabBody() {
+  if (tab === "rank") { const L = document.getElementById("list"), st = document.getElementById("status"), hn = document.querySelector(".hint"); setTimeout(() => { Promise.resolve(loadBoard()).then(() => { const o = document.querySelector("#menu .rkl"), L2 = document.getElementById("list"); if (o && L2) o.replaceChildren(...[...L2.children].map(li => li.cloneNode(true))); }).catch(() => {}); }, 0);
+    return [h("ol", {cls:"rkl"}, ...(L ? [...L.children].map(li => li.cloneNode(true)) : [])), st && st.textContent ? h("p", {cls:"sub"}, st.textContent) : "", hn ? h("p", {cls:"hint2"}, hn.textContent) : ""]; }
   if (tab === "char") return [].concat(...Object.entries(CH).map(([id, c]) => { const own = SV.chars.includes(id), sel = SV.sel === id;
     const row = h("div", {cls:"row" + (sel ? " sel" : "")}, (c.anim ? h("span", {cls:"sw", style:`background:#fff url(${ANIM[c.anim].face}) center/cover`}) : h("span", {cls:"sw", style:`background:#${c.shirt.toString(16).padStart(6, "0")}`}, c.letter)), h("div", {cls:"tx"}, h("b", {}, c.n), h("small", {}, c.d)),
       h("button", {onclick:() => { if (own) SV.sel = id; else if (SV.coins >= c.cost) { SV.coins -= c.cost; SV.chars.push(id); SV.sel = id; } else return; save(); setChar(SV.sel); renderMenu(); }}, sel ? "Đang chọn" : own ? "Chọn" : "💰 " + c.cost)); return sel && c.anim && PXC[c.anim] ? [row, skinRow(id)] : [row]; }));
@@ -1765,7 +1803,7 @@ function syncVisuals(dt) {
   R.turnRate = dA * Math.min(1, dt * 12) / Math.max(dt, 1e-4); R.lean = (R.lean || 0) + (clamp(-R.turnRate * .02, -.12, .12) - (R.lean || 0)) * Math.min(1, dt * 8);
   R.body.rotation.y = Math.PI / 2 - faceA; R.body.position.y = bob;
   if (R.spr) { R.spr.position.y = bob; R.spr.userData.face(P.fx < 0); R.spr.children.forEach(c => c.material.rotation = P.mv ? .05 * Math.sin(P.t * 9) : 0); const ak = P.act ? Math.sin(Math.min(1, P.act.t / P.act.d) * Math.PI) : 0; R.spr.scale.set(1 + .03 * ak, 1 + .07 * ak, 1); }
-  if (R.anim) animateAnim(dt); pxHeldTick(dt);
+  if (R.anim) animateAnim(dt); pxHeldTick(dt); pxBodyTick(dt);
   if (R.rig) animateRig(dt);
   if (R.model) animateModel(dt);
   if (R.held && R.held.userData.face) R.held.userData.face(P.fx < 0);
@@ -1862,7 +1900,7 @@ $("saveForm").addEventListener("submit", async e => {
   loadBoard();
 });
 
-if (/[?&]debug\b/.test(location.search)) window.__d = {get P() { return P; }, get E() { return E; }, get state() { return state; }, get SV() { return SV; }, spawnE, startRun, lvUp: () => { P.xp = P.need; }, addWeapon, renderSlots, setT: v => { t = v; }, get PJ() { return PJ; }, get EB() { return EB; }, get CANS() { return CANS; }, dropCan, setChar, renderMenu, DG, dgFloor, dgSkill, dgSwap, dgChest, dgCleared, canStand, get C() { return C; }, fire: v => { touchFire = v; }, get pxSw() { return pxSw; }, hs: v => { HS = v; }, killAll: () => { DG.pend.forEach(q => q.t = 0); E.forEach(e => { if (!e.dead) die(e); }); }};
+if (/[?&]debug\b/.test(location.search)) window.__d = {get P() { return P; }, get E() { return E; }, get state() { return state; }, get SV() { return SV; }, spawnE, startRun, lvUp: () => { P.xp = P.need; }, addWeapon, renderSlots, setT: v => { t = v; }, get PJ() { return PJ; }, get EB() { return EB; }, get CANS() { return CANS; }, dropCan, setChar, renderMenu, DG, dgFloor, dgSkill, dgSwap, dgChest, dgCleared, canStand, get C() { return C; }, fire: v => { touchFire = v; }, get pxSw() { return pxSw; }, hs: v => { HS = v; }, get pxb() { return PXB; }, get anim() { return R.anim; }, killAll: () => { DG.pend.forEach(q => q.t = 0); E.forEach(e => { if (!e.dead) die(e); }); }};
 composer = new EffectComposer(renderer); composer.addPass(new RenderPass(scene, cam));
 bloom = new UnrealBloomPass(new THREE.Vector2(box.clientWidth || 2, box.clientHeight || 2), .08, .4, .97); composer.addPass(bloom); composer.addPass(new OutputPass());
 resize();
