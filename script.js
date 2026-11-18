@@ -1447,6 +1447,18 @@ Object.assign(DG_SKILL, {lop:"Lốp Lăn Thần Tốc + Vòng Lốp Hộ Thể",
 function pxStart() { const m = PX_START[SV.sel]; if (m && WP[m] && !P.ws[m]) addWeapon(m); return m || null; }
 const wrapA = a => Math.atan2(Math.sin(a), Math.cos(a));
 const pxAim = () => { const tg = nearest(), dd = tg ? Math.hypot(tg.x - P.x, tg.z - P.z) : 1e9; return {tg, dd, a:tg && dd < 14 ? Math.atan2(tg.z - P.z, tg.x - P.x) : Math.atan2(P.fz || 0, P.fx || 1)}; };
+
+// ===================== v18: VŨ KHÍ VUNG VẼ TAY TỪNG KHUNG + VA CHẠM + KỸ NĂNG VẼ TAY =====================
+const PXSW = {"m_kiem_thuoc":{"fr":[IP[1095],IP[1096],IP[1097],IP[1098],IP[1099],IP[1100]],"r":1.246},"m_kiem_tre":{"fr":[IP[1101],IP[1102],IP[1103],IP[1104],IP[1105],IP[1106]],"r":1.293},"m_ma_tau":{"fr":[IP[1107],IP[1108],IP[1109],IP[1110],IP[1111],IP[1112]],"r":1.331},"m_song_dao":{"fr":[IP[1113],IP[1114],IP[1115],IP[1116],IP[1117],IP[1118]],"r":1.095},"m_yen_nguyet":{"fr":[IP[1119],IP[1120],IP[1121],IP[1122],IP[1123],IP[1124]],"r":1.138},"m_thuong_tre":{"fr":[IP[1125],IP[1126],IP[1127],IP[1128],IP[1129],IP[1130]],"r":1.16},"m_bua_dinh":{"fr":[IP[1131],IP[1132],IP[1133],IP[1134],IP[1135],IP[1136]],"r":1.204},"m_bua_ta":{"fr":[IP[1137],IP[1138],IP[1139],IP[1140],IP[1141],IP[1142]],"r":1.022},"m_bua_sam":{"fr":[IP[1143],IP[1144],IP[1145],IP[1146],IP[1147],IP[1148]],"r":1.294},"m_gay":{"fr":[IP[1149],IP[1150],IP[1151],IP[1152],IP[1153],IP[1154]],"r":1.48},"m_con":{"fr":[IP[1155],IP[1156],IP[1157],IP[1158],IP[1159],IP[1160]],"r":1.197},"m_quat":{"fr":[IP[1161],IP[1162],IP[1163],IP[1164],IP[1165],IP[1166]],"r":1.076},"m_choi":{"fr":[IP[1167],IP[1168],IP[1169],IP[1170],IP[1171],IP[1172]],"r":1.252},"m_thuan_thien":{"fr":[IP[1173],IP[1174],IP[1175],IP[1176],IP[1177],IP[1178]],"r":0.968}};
+Object.assign(FXI, {"px_hit_chem":[{"uri":IP[1179],"a":1.1712},{"uri":IP[1180],"a":1.1712},{"uri":IP[1181],"a":1.1712},{"uri":IP[1182],"a":1.1712},{"uri":IP[1183],"a":1.1712},{"uri":IP[1184],"a":1.1712}],"px_hit_nen":[{"uri":IP[1185],"a":1.4846},{"uri":IP[1186],"a":1.4846},{"uri":IP[1187],"a":1.4846},{"uri":IP[1188],"a":1.4846},{"uri":IP[1189],"a":1.4846},{"uri":IP[1190],"a":1.4846}],"px_hit_dam":[{"uri":IP[1191],"a":1.5739},{"uri":IP[1192],"a":1.5739},{"uri":IP[1193],"a":1.5739},{"uri":IP[1194],"a":1.5739},{"uri":IP[1195],"a":1.5739},{"uri":IP[1196],"a":1.5739}],"px_hit_xoay":[{"uri":IP[1197],"a":1.2868},{"uri":IP[1198],"a":1.2868},{"uri":IP[1199],"a":1.2868},{"uri":IP[1200],"a":1.2868},{"uri":IP[1201],"a":1.2868},{"uri":IP[1202],"a":1.2868}],"px_hit_manh":[{"uri":IP[1203],"a":1.3852},{"uri":IP[1204],"a":1.3852},{"uri":IP[1205],"a":1.3852},{"uri":IP[1206],"a":1.3852},{"uri":IP[1207],"a":1.3852},{"uri":IP[1208],"a":1.3852}],"px_hit_chimang":[{"uri":IP[1209],"a":1.2057},{"uri":IP[1210],"a":1.2057},{"uri":IP[1211],"a":1.2057},{"uri":IP[1212],"a":1.2057},{"uri":IP[1213],"a":1.2057},{"uri":IP[1214],"a":1.2057}],"px_kn1_lop_chinh":[{"uri":IP[1215],"a":0.9257},{"uri":IP[1216],"a":0.9257},{"uri":IP[1217],"a":0.9257},{"uri":IP[1218],"a":0.9257},{"uri":IP[1219],"a":0.9257},{"uri":IP[1220],"a":0.9257}],"px_kn1_lop_du":[{"uri":IP[1221],"a":1.8},{"uri":IP[1222],"a":1.8},{"uri":IP[1223],"a":1.8},{"uri":IP[1224],"a":1.8},{"uri":IP[1225],"a":1.8},{"uri":IP[1226],"a":1.8}],"px_kn2_lop_chinh":[{"uri":IP[1227],"a":2.8889},{"uri":IP[1228],"a":2.8889},{"uri":IP[1229],"a":2.8889},{"uri":IP[1230],"a":2.8889},{"uri":IP[1231],"a":2.8889},{"uri":IP[1232],"a":2.8889}],"px_kn2_lop_du":[{"uri":IP[1233],"a":1.6735},{"uri":IP[1234],"a":1.6735},{"uri":IP[1235],"a":1.6735},{"uri":IP[1236],"a":1.6735},{"uri":IP[1237],"a":1.6735},{"uri":IP[1238],"a":1.6735}],"px_kn1_ban_chinh":[{"uri":IP[1239],"a":0.9916},{"uri":IP[1240],"a":0.9916},{"uri":IP[1241],"a":0.9916},{"uri":IP[1242],"a":0.9916},{"uri":IP[1243],"a":0.9916},{"uri":IP[1244],"a":0.9916}],"px_kn1_ban_du":[{"uri":IP[1245],"a":1.487},{"uri":IP[1246],"a":1.487},{"uri":IP[1247],"a":1.487},{"uri":IP[1248],"a":1.487},{"uri":IP[1249],"a":1.487},{"uri":IP[1250],"a":1.487}],"px_kn2_ban_chinh":[{"uri":IP[1251],"a":1.0106},{"uri":IP[1252],"a":1.0106},{"uri":IP[1253],"a":1.0106},{"uri":IP[1254],"a":1.0106},{"uri":IP[1255],"a":1.0106},{"uri":IP[1256],"a":1.0106}],"px_kn2_ban_du":[{"uri":IP[1257],"a":1.3026},{"uri":IP[1258],"a":1.3026},{"uri":IP[1259],"a":1.3026},{"uri":IP[1260],"a":1.3026},{"uri":IP[1261],"a":1.3026},{"uri":IP[1262],"a":1.3026}],"px_kn1_hot_chinh":[{"uri":IP[1263],"a":0.9685},{"uri":IP[1264],"a":0.9685},{"uri":IP[1265],"a":0.9685},{"uri":IP[1266],"a":0.9685},{"uri":IP[1267],"a":0.9685},{"uri":IP[1268],"a":0.9685}],"px_kn1_hot_du":[{"uri":IP[1269],"a":1.1988},{"uri":IP[1270],"a":1.1988},{"uri":IP[1271],"a":1.1988},{"uri":IP[1272],"a":1.1988},{"uri":IP[1273],"a":1.1988},{"uri":IP[1274],"a":1.1988}],"px_kn_ban_canh":[{"uri":IP[1275],"a":1.3472},{"uri":IP[1276],"a":1.3472},{"uri":IP[1277],"a":1.3472},{"uri":IP[1278],"a":1.3472},{"uri":IP[1279],"a":1.3472},{"uri":IP[1280],"a":1.3472}]});
+for (const k in FXI) if (k.startsWith("px_hit_") || k.startsWith("px_kn")) FXI[k].px = 1;
+FXI.px_lop_kn1 = FXI.px_kn1_lop_chinh; FXI.px_lop_kn2 = FXI.px_kn2_lop_chinh; FXI.px_ban_kn1 = FXI.px_kn1_ban_chinh; FXI.px_ban_kn2 = FXI.px_kn2_ban_chinh; FXI.px_hot_kn1 = FXI.px_kn1_hot_chinh;
+const SWT = {}; function swTex(id, i, fl) { const k = id + i + (fl ? "f" : ""); if (!SWT[k]) { const t = SWT[k] = new THREE.TextureLoader().load(PXSW[id].fr[i]); t.colorSpace = THREE.SRGBColorSpace;
+  t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; if (fl) { t.wrapS = THREE.RepeatWrapping; t.repeat.x = -1; t.offset.x = 1; } } return SWT[k]; }
+// mốc khung theo kiểu đòn: [ranh giới 6 khung], khoảnh khắc trúng = đầu khung ra đòn
+const SWB = {slash:[0, .07, .3, .46, .64, .84, 1], heavy:[0, .06, .24, .46, .6, .82, 1], thrust:[0, .08, .28, .44, .62, .82, 1], spin:[0, .1, .28, .46, .64, .82, 1]};
+const swFrame = (type, k) => { const b = SWB[type]; for (let i = 0; i < 6; i++) if (k < b[i + 1]) return i; return 5; };
+const DU = (k, x, z, w, dur = 2.6) => fxAnim("px_" + k, x, .02, z, w, 0, dur, .5, 0xffffff, .35);
 // ===================== v17: CẢM GIÁC ĐÁNH (hit-stop, giật camera, vung vũ khí thật, kỹ năng có cut-in) =====================
 let PXW = null, pxSw = null, HS = 0, SLOW = 0, ZOOM = 0; const PXQ = [];
 function juiceDt(d) { ZOOM = Math.max(0, ZOOM - d * 2.4); if (HS > 0) { HS -= d; return d * .03; } if (SLOW > 0) { SLOW -= d; return d * .3; } return d; }
@@ -1463,10 +1475,10 @@ function FXG(k, x, y, z, w, rot = 0, dur = .7, cy = .5, tint = 0xffffff) {
 const ez = k => k * k * (3 - 2 * k), eOut = k => 1 - Math.pow(1 - k, 3), eIn = k => k * k * k;
 // quỹ đạo vung: góc lệch so với hướng ngắm (dương = giơ lên/ra sau), đẩy tới (đâm), khoảnh khắc trúng
 const SW = {
-  slash:{d:.3, imp:.42, f:k => k < .3 ? .9 + 1.4 * ez(k / .3) : k < .48 ? 2.3 - 3.9 * eOut((k - .3) / .18) : -1.6 + 2.5 * ez((k - .48) / .52), lg:k => k > .3 && k < .6 ? Math.sin((k - .3) / .3 * Math.PI) * .45 : 0},
-  heavy:{d:.56, imp:.62, f:k => k < .46 ? .9 + 2 * ez(k / .46) : k < .62 ? 2.9 - 3.9 * eIn((k - .46) / .16) : -1 + 1.9 * ez((k - .62) / .38), lg:k => k > .46 && k < .8 ? Math.sin((k - .46) / .34 * Math.PI) * .55 : k < .46 ? -.2 * ez(k / .46) : 0},
-  thrust:{d:.26, imp:.5, f:() => .12, p:k => k < .35 ? -.7 * ez(k / .35) : k < .55 ? -.7 + 2.5 * eOut((k - .35) / .2) : 1.8 * (1 - ez((k - .55) / .45)), lg:k => k > .35 && k < .7 ? .5 * Math.sin((k - .35) / .35 * Math.PI) : 0},
-  spin:{d:.34, imp:.3, f:k => .9 - 6.283 * eOut(k), lg:() => 0}
+  slash:{d:.3, imp:.3, f:k => k < .3 ? .9 + 1.4 * ez(k / .3) : k < .48 ? 2.3 - 3.9 * eOut((k - .3) / .18) : -1.6 + 2.5 * ez((k - .48) / .52), lg:k => k > .3 && k < .6 ? Math.sin((k - .3) / .3 * Math.PI) * .45 : 0},
+  heavy:{d:.56, imp:.46, f:k => k < .46 ? .9 + 2 * ez(k / .46) : k < .62 ? 2.9 - 3.9 * eIn((k - .46) / .16) : -1 + 1.9 * ez((k - .62) / .38), lg:k => k > .46 && k < .8 ? Math.sin((k - .46) / .34 * Math.PI) * .55 : k < .46 ? -.2 * ez(k / .46) : 0},
+  thrust:{d:.26, imp:.28, f:() => .12, p:k => k < .35 ? -.7 * ez(k / .35) : k < .55 ? -.7 + 2.5 * eOut((k - .35) / .2) : 1.8 * (1 - ez((k - .55) / .45)), lg:k => k > .35 && k < .7 ? .5 * Math.sin((k - .35) / .35 * Math.PI) : 0},
+  spin:{d:.34, imp:.28, f:k => .9 - 6.283 * eOut(k), lg:() => 0}
 };
 function pxMelee(id, c, w, dt) {
   w.cd -= dt; if (w.cd > 0 || pxSw) return; const {tg, dd} = pxAim(), Rr = c.R * (1 + .04 * (w.lv - 1)) * (w.evo ? 1.25 : 1);
@@ -1478,17 +1490,22 @@ function pxMelee(id, c, w, dt) {
   snd(type === "heavy" ? 120 : 300, .07, "triangle", .025, type === "heavy" ? 80 : 200); // tiếng lấy đà
 }
 function pxMeleeHit(c, a, Rr, d0, type) {
-  const ca = Math.cos(a), sa = Math.sin(a), tint = c.tint || 0xffffff, k = "px_" + c.fx; let n = 0;
+  const ca = Math.cos(a), sa = Math.sin(a); let n = 0, crit = false;
+  const HX = {slash:"px_hit_chem", heavy:"px_hit_manh", thrust:"px_hit_dam", spin:"px_hit_manh"}[type];
   for (const e of E) { if (e.dead) continue; const dx = e.x - P.x, dz = e.z - P.z, L = Math.hypot(dx, dz); if (L > Rr + e.r) continue;
     if (c.arc < 6 && Math.abs(wrapA(Math.atan2(dz, dx) - a)) > c.arc / 2 + e.r / Math.max(L, .5)) continue;
-    const hp0 = e.hp; for (let i = 0; i < (c.hits || 1); i++) dmg(e, d0, c.kb * (type === "heavy" ? 1.4 : 1), P.x, P.z); if (c.slow) e.slow = 1.2; n++;
-    const dealt = Math.round(hp0 - Math.max(0, e.hp)); if (dealt > 0) floatText(e.x + (Math.random() - .5), 3.2, e.z, String(dealt), type === "heavy" ? "#ffb347" : "#fff");
-    if (FM.length < 170) { FXG("px_trung_don", e.x, 1.4, e.z, type === "heavy" ? 3.2 : 2.5, Math.random() * 6, .28); burst(e.x, e.z, 0xffffff, 4, 6); } }
-  if (type === "spin") FXG(k, P.x, 1.3, P.z, Rr * 2.4, 0, .32, .5, tint);
-  else if (type === "heavy") { const x = P.x + ca * Rr * .55, z = P.z + sa * Rr * .55; FXG(k, x, 0, z, Rr * 2.3, 0, .55, .3, tint); ring(x, z, Rr * 1.1, 0xffe0a0, .35); burst(x, z, 0xb59a78, 12, 8);
+    const cr = Math.random() < .15; crit = crit || cr; const hp0 = e.hp;
+    for (let i = 0; i < (c.hits || 1); i++) dmg(e, d0 * (cr ? 2 : 1), c.kb * (type === "heavy" ? 1.4 : 1) * (cr ? 1.5 : 1), P.x, P.z); if (c.slow) e.slow = 1.2; n++;
+    const dealt = Math.round(hp0 - Math.max(0, e.hp)); if (dealt > 0) floatText(e.x + (Math.random() - .5), 3.3, e.z, cr ? dealt + "!!" : String(dealt), cr ? "#ff4040" : type === "heavy" ? "#ffb347" : "#fff");
+    if (FM.length < 170) { const ex = e.x - ca * .4, ez = e.z - sa * .4;
+      if (cr) FXG("px_hit_chimang", ex, 1.4, ez, 4.2, Math.random() * .6, .36);
+      else FXG(HX, ex, 1.4, ez, type === "slash" ? 3.6 : 3, type === "slash" || type === "thrust" ? scrAng(e.x, 1.4, e.z, ca, sa) : 0, .3);
+      burst(e.x, e.z, 0xffffff, 4, 6); } }
+  if (type === "spin") FXG("px_hit_xoay", P.x, 1.3, P.z, Rr * 2.3, 0, .34);
+  else if (type === "heavy") { const x = P.x + ca * Rr * .55, z = P.z + sa * Rr * .55; FXG("px_hit_nen", x, 0, z, Rr * 2.2, 0, .55, .3); ring(x, z, Rr * 1.1, 0xffe0a0, .35); burst(x, z, 0xb59a78, 12, 8);
     shake = Math.max(shake, 12); punch(.32); hitStop(.09); snd(70, .3, "sawtooth", .08, -30); }
-  else { const x = P.x + ca * Rr * .5, z = P.z + sa * Rr * .5; FXG(k, x, 1.5, z, Rr * (type === "thrust" ? 1.3 : 1.45), scrAng(x, 1.5, z, ca, sa) + (c.rot || 0), .28, .5, tint); }
-  if (n && type !== "heavy") { hitStop(type === "spin" ? .025 : .05); shake = Math.max(shake, 5); punch(.08); }
+  if (n && type !== "heavy") { hitStop(crit ? .09 : type === "spin" ? .025 : .055); shake = Math.max(shake, crit ? 9 : 5); punch(crit ? .2 : .08); }
+  if (crit) { flashScreen("#ff5030", .22, 120); snd(1500, .12, "square", .05, -1200); }
   snd(type === "heavy" ? 90 : 700 + Math.random() * 200, .09, n ? "square" : "triangle", n ? .05 : .03, -400);
   if (c.bolt) E.filter(e => !e.dead && Math.hypot(e.x - P.x, e.z - P.z) < 8).sort(() => Math.random() - .5).slice(0, c.bolt).forEach(e => strike(e.x, e.z, 1.6, Math.round(d0 * .6), false));
   if (c.qi) { const m = fxSprite("px_thuan_thien", 3, 3.4, 0); m.material.blending = THREE.AdditiveBlending; m.position.set(P.x, 1.5, P.z); scene.add(m); PXQ.push({x:P.x, z:P.z, vx:ca * 20, vz:sa * 20, life:.6, d:Math.round(d0 * .8), hit:new Set(), m, k:"px_thuan_thien", w:3.4, R:1.5}); }
@@ -1520,9 +1537,12 @@ function pxHeldTick(dt) {
   // thân người nhào theo nhát chém
   if (sp) { sp.position.x = ca * lunge; sp.position.z = sa * lunge; sp.material.rotation = pxSw ? -side * (pxSw.type === "heavy" ? .18 : .1) * Math.sin(Math.min(1, pxSw.t / pxSw.d) * Math.PI) : sp.material.rotation; }
   _hu.set(0, 1, 0).applyQuaternion(cam.quaternion); _hr.set(1, 0, 0).applyQuaternion(cam.quaternion);
-  const L = (c && c.len ? c.len * .78 : (id === "gun" ? 1.9 : 1.5)), S = SPR[key], g = .16, tip = left ? r - ofs : r + ofs, hy = 1.05 + (sp ? sp.position.y : 0);
+  const L = (c && c.len ? c.len * .78 : (id === "gun" ? 1.9 : 1.5)), S = SPR[key], g = .16, tip = left ? r - ofs : r + ofs, hy = 1.05 + (sp ? sp.position.y : 0), FR = PXSW[id];
   const hx = pos.x + _hr.x * .42 * side + _hu.x * hy + ca * (lunge + push * .6), hz = pos.z + _hr.z * .42 * side + _hu.z * hy + sa * (lunge + push * .6);
-  PXW.visible = true; PXW.material.map = sprMap(key, left); PXW.material.rotation = left ? tip - Math.PI : tip; PXW.center.set(left ? 1 - g : g, .5);
+  PXW.visible = true;
+  if (FR) { const fi = pxSw ? swFrame(pxSw.type, Math.min(1, pxSw.t / pxSw.d)) : 0, Z = L * FR.r * 1.1; // khung vẽ tay: tâm ô = bàn tay, xoay cả khung theo hướng ngắm
+    PXW.material.map = swTex(id, fi, left); PXW.material.rotation = left ? r - Math.PI : r; PXW.center.set(.5, .5); PXW.scale.set(Z, Z, 1); PXW.position.set(hx, _hu.y * hy, hz + .05); return; }
+  PXW.material.map = sprMap(key, left); PXW.material.rotation = left ? tip - Math.PI : tip; PXW.center.set(left ? 1 - g : g, .5);
   PXW.scale.set(L, L / S.a, 1); PXW.position.set(hx, _hu.y * hy, hz + .05);
   if (strikeNow && FM.length < 170) { const gh = new THREE.Sprite(PXW.material.clone()); gh.center.copy(PXW.center); gh.scale.copy(PXW.scale); gh.position.copy(PXW.position);
     gh.material.blending = THREE.AdditiveBlending; gh.material.color.setHex(c && c.tint || 0xcfefff); gh.renderOrder = 5; scene.add(gh); FM.push({mesh:gh, t:0, dur:.13, op:.55}); }
@@ -1549,22 +1569,22 @@ function skillRelease(id, col, hex) {
   const pulses = (x, z, R, d, n = 3, gap = 110, kb = 1.5, f) => { for (let i = 0; i < n; i++) setTimeout(() => { if (state !== "run") return; area(x, z, R, d / n * (i === n - 1 ? 1.6 : 1), i === n - 1 ? kb * 2 : .4, f);
       if (i === n - 1) { hitStop(.08); shake = Math.max(shake, 10); } else shake = Math.max(shake, 4); }, i * gap); };
   flashScreen(col, .45, 260); shake = Math.max(shake, 16); punch(.55); snd(60, .5, "sawtooth", .09, -20); snd(880, .25, "square", .04, -600);
-  if (id === "lop") { [-.32, -.11, .11, .32].forEach(o => { const b = a + o, m = fxSprite("px_lop_kn1", 0, 3.6, 0); scene.add(m);
-      PXQ.push({x:P.x, z:P.z, vx:Math.cos(b) * 17, vz:Math.sin(b) * 17, life:1.1, d:d0 * 1.2, hit:new Set(), m, k:"px_lop_kn1", w:3.6, R:1.6, loop:1, mirror:1, y:1.3,
-        boom:(x, z) => { FXG("px_dan_lua", x, 1, z, 3.6, 0, .4); area(x, z, 2.4, d0 * .5); }}); });
-    FXG("px_lop_kn2", P.x, 1.5, P.z, 8, 0, 1, .5); pulses(P.x, P.z, 4.5, d0, 3, 120, 3); P.inv = Math.max(P.inv, 2.2); P.shield = 1; }
-  else if (id === "ban") { FXG("px_ban_kn1", tx, tz, 9, 0, 0, 1.1, .06); pulses(tx, tz, 4.4, d0 * 1.4, 4, 140, 1.2);
-    FXG("px_ban_kn2", P.x, 2.2, P.z, 6, 0, 1.1, .5); P.hp = Math.min(P.max, P.hp + 2); P.arm = P.armMax; P.inv = Math.max(P.inv, 2); }
+  if (id === "lop") { [-.32, -.11, .11, .32].forEach(o => { const b = a + o, m = fxSprite("px_lop_kn1", 0, 4.2, 0); scene.add(m);
+      PXQ.push({x:P.x, z:P.z, vx:Math.cos(b) * 17, vz:Math.sin(b) * 17, life:1.1, d:d0 * 1.2, hit:new Set(), m, k:"px_lop_kn1", w:4.2, R:1.6, loop:1, mirror:1, y:1.3,
+        boom:(x, z) => { FXG("px_dan_lua", x, 1, z, 3.6, 0, .4); DU("kn1_lop_du", x, z, 4.5); area(x, z, 2.4, d0 * .5); }}); });
+    FXG("px_lop_kn2", P.x, 0, P.z, 9, 0, 1.2, .12); DU("kn2_lop_du", P.x, P.z, 8); pulses(P.x, P.z, 4.5, d0, 3, 120, 3); P.inv = Math.max(P.inv, 2.2); P.shield = 1; }
+  else if (id === "ban") { FXG("px_ban_kn1", tx, 0, tz, 10, 0, 1.2, .08); setTimeout(() => { DU("kn1_ban_du", tx, tz, 8); DU("kn_ban_canh", tx, tz, 6, 2); }, 500); pulses(tx, tz, 4.4, d0 * 1.4, 4, 140, 1.2);
+    FXG("px_ban_kn2", P.x, 0, P.z, 7, 0, 1.2, .1); DU("kn2_ban_du", P.x, P.z, 6); P.hp = Math.min(P.max, P.hp + 2); P.arm = P.armMax; P.inv = Math.max(P.inv, 2); }
   else if (id === "hot") { E.filter(e => !e.dead && Math.hypot(e.x - P.x, e.z - P.z) < 15).sort((p, q) => Math.hypot(p.x - P.x, p.z - P.z) - Math.hypot(q.x - P.x, q.z - P.z)).slice(0, 8)
-      .forEach((e, i) => setTimeout(() => { if (e.dead || state !== "run") return; FXG("px_hot_kn1", e.x, 0, e.z, 4.8, 0, .6, .06); area(e.x, e.z, 2, d0 * 1.3, 1, o => o.slow = 1.2); flashScreen("#d9b3ff", .18, 90); shake = Math.max(shake, 7); hitStop(.035); snd(1200, .08, "square", .04, -900); }, i * 85));
+      .forEach((e, i) => setTimeout(() => { if (e.dead || state !== "run") return; FXG("px_hot_kn1", e.x, 0, e.z, 6, 0, .7, .06); DU("kn1_hot_du", e.x, e.z, 4.2, 2); area(e.x, e.z, 2, d0 * 1.3, 1, o => o.slow = 1.2); flashScreen("#d9b3ff", .18, 90); shake = Math.max(shake, 7); hitStop(.035); snd(1200, .08, "square", .04, -900); }, i * 85));
     FXG("px_hot_kn2", P.x, 1.6, P.z, 7, 0, 1, .5); P.inv = Math.max(P.inv, 2.8); P.buff = 4; }
   else if (id === "gym") { FXG("px_gym_kn1", P.x, 1, P.z, 13, 0, .8, .5); ring(P.x, P.z, 7, 0xfff0a0, .45); ring(P.x, P.z, 4, 0xffffff, .3); burst(P.x, P.z, 0xb59a78, 30, 12);
     pulses(P.x, P.z, 7, d0 * 1.6, 3, 100, 5); FXG("px_gym_kn2", P.x, 0, P.z, 5.5, 0, 1.2, .06); P.arm = P.armMax; P.buff = 5; }
   else if (id === "bo") { FXG("px_bo_kn1", P.x, 2, P.z, 11, 0, .8, .5); ring(P.x, P.z, 8, 0xffd23f, .5); area(P.x, P.z, 8, d0 * .4, 5, e => e.slow = 3);
-    setTimeout(() => { if (state !== "run") return; FXG("px_bo_kn2", tx, tz, 9, 0, 0, 1, .06); pulses(tx, tz, 4.4, d0 * 1.5, 4, 120, 1.5); }, 220); }
-  else if (id === "me") { FXG("px_me_kn1", tx, tz, 8, 1.2, 0, 1, .5); pulses(tx, tz, 4.6, d0 * 1.1, 4, 120, 0, e => { e.x += (tx - e.x) * .35; e.z += (tz - e.z) * .35; });
-    setTimeout(() => { if (state !== "run") return; FXG("px_me_kn2", P.x + ca * 4, P.z + sa * 4, 10, 0, 0, 1, .1); for (const e of E) if (!e.dead && segDist(e.x, e.z, P.x, P.z, P.x + ca * 11, P.z + sa * 11) < 3 + e.r) dmg(e, Math.round(d0 * 1.5), 4, P.x, P.z); hitStop(.08); shake = Math.max(shake, 12); }, 300); P.buff = 6; }
-  else if (id === "anh") { FXG("px_anh_kn1", tx, tz, 9, 0, 0, 1, .15); pulses(tx, tz, 4.8, d0 * 1.5, 5, 90, 1, e => e.slow = 2.5); FXG("px_anh_kn2", P.x, 0, P.z, 4.6, 0, 1, .06); P.en = P.enMax; }
+    setTimeout(() => { if (state !== "run") return; FXG("px_bo_kn2", tx, 0, tz, 9, 0, 1, .06); pulses(tx, tz, 4.4, d0 * 1.5, 4, 120, 1.5); }, 220); }
+  else if (id === "me") { FXG("px_me_kn1", tx, 1.2, tz, 8, 0, 1, .5); pulses(tx, tz, 4.6, d0 * 1.1, 4, 120, 0, e => { e.x += (tx - e.x) * .35; e.z += (tz - e.z) * .35; });
+    setTimeout(() => { if (state !== "run") return; FXG("px_me_kn2", P.x + ca * 4, 0, P.z + sa * 4, 10, 0, 1, .1); for (const e of E) if (!e.dead && segDist(e.x, e.z, P.x, P.z, P.x + ca * 11, P.z + sa * 11) < 3 + e.r) dmg(e, Math.round(d0 * 1.5), 4, P.x, P.z); hitStop(.08); shake = Math.max(shake, 12); }, 300); P.buff = 6; }
+  else if (id === "anh") { FXG("px_anh_kn1", tx, 0, tz, 9, 0, 1, .15); pulses(tx, tz, 4.8, d0 * 1.5, 5, 90, 1, e => e.slow = 2.5); FXG("px_anh_kn2", P.x, 0, P.z, 4.6, 0, 1, .06); P.en = P.enMax; }
 }
 
 // ---------- Chọn skin trong menu nhân vật ----------
