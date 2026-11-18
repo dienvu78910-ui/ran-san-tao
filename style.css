@@ -83,3 +83,34 @@ body.inbattle .pbtn{top:max(10px,env(safe-area-inset-top));right:max(12px,env(sa
 .card i .wic{width:56px;height:56px;margin:0}
 .rbtn{top:auto;bottom:max(150px,env(safe-area-inset-bottom));right:max(16px,env(safe-area-inset-right));width:64px;height:64px;font-size:1.7rem}
 body.inbattle .rbtn{top:auto;bottom:max(150px,calc(env(safe-area-inset-bottom) + 140px))}
+/* v13: chế độ vượt ải */
+.dgbars{display:none;flex-direction:column;gap:3px;width:min(46%,260px)}
+body.dgmode .dgbars{display:flex}
+body.dgmode .hpbar,body.dgmode .xpbar{display:none}
+.dgb{position:relative;height:16px;background:var(--ink);border:2px solid var(--ink);border-radius:8px;overflow:hidden}
+.dgb i{display:block;height:100%;width:100%;transition:width .15s}
+.dgb.hp i{background:#e8453c}.dgb.arm i{background:#9aa3b5}.dgb.en i{background:#3fa9f5}
+.dgb span{position:absolute;inset:0;font-size:.7rem;text-align:center;line-height:13px}
+body.dgmode .mini{top:52px;bottom:auto;width:22%}
+.slots span.on{border-color:var(--sun,#ffd25e);background:rgba(255,210,94,.25)}
+.slots span.off{opacity:.6}
+.tbtn{top:auto;font-weight:800}
+.tbtn.fire{right:max(18px,env(safe-area-inset-right));bottom:max(26px,env(safe-area-inset-bottom));width:88px;height:88px;font-size:2.1rem;background:rgba(232,69,60,.85)}
+.tbtn.skill{right:max(120px,calc(env(safe-area-inset-right) + 102px));bottom:max(96px,calc(env(safe-area-inset-bottom) + 70px));width:58px;height:58px;font-size:1.3rem;background:rgba(255,190,40,.9);color:#2b1b3d}
+.tbtn.swap{right:max(34px,calc(env(safe-area-inset-right) + 16px));bottom:max(128px,calc(env(safe-area-inset-bottom) + 102px));width:50px;height:50px;font-size:1.3rem}
+body.dgmode .rbtn,body.dgmode.inbattle .rbtn{right:max(124px,calc(env(safe-area-inset-right) + 106px));bottom:max(22px,env(safe-area-inset-bottom));width:60px;height:60px}
+.pbtn.tbtn{top:auto!important;display:none}
+body.dgmode .mini{width:min(22%,150px)}
+@media (max-height:500px){.dgbars{width:min(34%,220px)}.dgb{height:14px}.dgb span{line-height:11px;font-size:.62rem}}
+body .pbtn.tbtn.fire{right:max(18px,env(safe-area-inset-right));bottom:max(22px,env(safe-area-inset-bottom))}
+body .pbtn.tbtn.skill{right:max(116px,calc(env(safe-area-inset-right) + 98px));bottom:max(94px,calc(env(safe-area-inset-bottom) + 72px))}
+body .pbtn.tbtn.swap{right:max(30px,calc(env(safe-area-inset-right) + 12px));bottom:max(122px,calc(env(safe-area-inset-bottom) + 100px))}
+/* v14: chọn skin nhân vật */
+.skins{display:flex;gap:6px;margin:-2px 0 10px;flex-wrap:wrap}
+.skin{flex:1 1 22%;min-width:64px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:3px 2px;border-radius:12px;border:2px solid #4a3a66;background:#241a36;color:#fff;cursor:pointer;font:inherit}
+.skin .skp{display:block;width:46px;height:46px;background-size:600% 400%;background-position:0 0;background-repeat:no-repeat;image-rendering:pixelated}
+.skin small{font-size:11px;line-height:1.2;text-align:center}
+.skin i{display:none}
+.skin.t1{border-color:#5fa8ff}.skin.t2{border-color:#c77dff}.skin.t3{border-color:#ffd25e;box-shadow:0 0 10px rgba(255,210,94,.45)}
+.skin.on{background:#4a3570;outline:3px solid #fff}
+.wic{image-rendering:pixelated}
