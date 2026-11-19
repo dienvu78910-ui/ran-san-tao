@@ -581,7 +581,7 @@ function buildAnim(root, key) {
 }
 function setFrame(row, col, left) {
   const {A, tex} = R.anim, u = 1 / A.cols, v = 1 / A.rows;
-  if (A.fm) { const [rr, cc] = A.fm[row][col] || A.fm[row][0]; tex.repeat.set(left ? -u : u, v); tex.offset.set((left ? cc + 1 : cc) * u, 1 - (rr + 1) * v); return; } // sheet pixel
+  if (A.fm) { const [rr, cc] = A.fm[row][col] || A.fm[row][0]; R.anim.cell = [rr, cc]; R.anim.cl = left; tex.repeat.set(left ? -u : u, v); tex.offset.set((left ? cc + 1 : cc) * u, 1 - (rr + 1) * v); return; } // sheet pixel
   tex.repeat.set(left ? -u : u, v); tex.offset.set((left ? col + 1 : col) * u, 1 - (ROW[row] + 1) * v); // lật ngang khi nhìn sang trái
 }
 function animDir(a, dt) { // nhân vật 3D mới: chọn hướng nhìn, nhún khi đi, bật người khi ra đòn
@@ -610,7 +610,7 @@ function animateAnimCore(dt, a, A, own) {
     a.atk += dt; const T = ACT_T[a.row], n = A.n[a.row]; setFrame(a.row, Math.min(n - 1, Math.floor(a.atk / T * n)), a.faceL);
     R.anim.sp.position.y = P.mv ? Math.abs(Math.sin(P.t * 9)) * .12 : 0; if (a.atk >= T) a.atk = -1;
   }
-  else { R.anim.sp.position.y = 0; if (P.mv) { a.wt += dt; const f = Math.floor(a.wt * 12) % A.n.walk; if (A.n.front && Math.abs(P.fz) > Math.abs(P.fx) * 1.3) setFrame(P.fz > 0 ? "front" : "back", f, false); else setFrame("walk", f, P.fx < 0); } else { a.it += dt; setFrame("idle", Math.floor(a.it * 5) % A.n.idle, P.fx < 0); } }
+  else { R.anim.sp.position.y = 0; if (P.mv) { a.wt += dt; const f = Math.floor(a.wt * 12) % A.n.walk; if (A.n.front && Math.abs(P.fz) > Math.abs(P.fx) * 1.3) setFrame(P.fz > 0 ? "front" : "back", f, false); else setFrame("walk", f, faceL()); } else { a.it += dt; setFrame("idle", Math.floor(a.it * 5) % A.n.idle, faceL()); } }
 }
 // Điểm trên hình nhân vật (cao h, lệch ngang d theo hướng nhìn) quy ra toạ độ 3D: dùng để đạn, mũi tên, vật ném xuất phát đúng tay/nòng súng
 const _cu = new THREE.Vector3(), _cr = new THREE.Vector3(), _p1 = new THREE.Vector3(), _p2 = new THREE.Vector3();
@@ -1537,20 +1537,21 @@ function pxHeldTick(dt) {
   const sp = R.anim && R.anim.sp, show = R.anim && R.anim.A.px;
   const run = state === "run" || state === "lv", id = run ? (DG.on ? P.hand[P.cur] : (Object.keys(P.ws).find(k => MW[k]) || CH[SV.sel].w)) : (PX_START[SV.sel] || CH[SV.sel].w);
   const key = id && (PXHELD[id] || (NW[id] && NW[id].img)), c = MW[id]; pxCurId = run ? id : null;
-  if (!show || !key || pxHoldOn || (P.wcast) || !SPR[key] || P.empty > 0 || (P.casting && PXG[SV.sel]) || R.anim.dieT !== undefined) { PXW.visible = false; if (sp) { sp.position.x = sp.position.z = 0; } return; }
+  if (!show || !key || pxHoldOn || pxHideW || !SPR[key] || P.empty > 0 || (P.casting && PXG[SV.sel]) || R.anim.dieT !== undefined) { PXW.visible = false; if (sp) { sp.position.x = sp.position.z = 0; } return; }
   const pos = playerMesh.position, a = pxSw ? pxSw.a : run ? pxAim().a : (P.fx < 0 ? Math.PI : 0), ca = Math.cos(a), sa = Math.sin(a);
   const r = scrAng(pos.x, 1.2, pos.z, ca, sa), left = Math.cos(r) < 0, side = left ? -1 : 1;
   if (ofs === null) ofs = c ? (c.thrust ? .12 : .9) + Math.sin(t * 3) * .05 : 0; // tư thế cầm: vũ khí cận chiến dựng chếch lên, thở nhẹ
   // thân người nhào theo nhát chém
-  if (sp) { sp.position.x = ca * lunge; sp.position.z = sa * lunge; sp.material.rotation = pxSw ? -side * (pxSw.type === "heavy" ? .18 : .1) * Math.sin(Math.min(1, pxSw.t / pxSw.d) * Math.PI) : sp.material.rotation; }
+  if (sp && !(PXB && PXB.visible)) { sp.position.x = ca * lunge; sp.position.z = sa * lunge; sp.material.rotation = pxSw ? -side * (pxSw.type === "heavy" ? .18 : .1) * Math.sin(Math.min(1, pxSw.t / pxSw.d) * Math.PI) : sp.material.rotation; }
   _hu.set(0, 1, 0).applyQuaternion(cam.quaternion); _hr.set(1, 0, 0).applyQuaternion(cam.quaternion);
   const L = (c && c.len ? c.len * .78 : (id === "gun" ? 1.9 : 1.5)), S = SPR[key], g = .16, tip = left ? r - ofs : r + ofs, hy = 1.05 + (sp ? sp.position.y : 0), FR = PXSW[id];
   const hx = pos.x + _hr.x * .42 * side + _hu.x * hy + ca * (lunge + push * .6), hz = pos.z + _hr.z * .42 * side + _hu.z * hy + sa * (lunge + push * .6);
+  const HX = PXHANDW ? PXHANDW.x + ca * push * .3 : hx, HZ = PXHANDW ? PXHANDW.z + sa * push * .3 : hz + .05, HY = PXHANDW ? PXHANDW.y : _hu.y * hy;
   PXW.visible = true;
   if (FR) { const fi = pxSw ? swFrame(pxSw.type, Math.min(1, pxSw.t / pxSw.d)) : 0, Z = L * FR.r * 1.1; // khung vẽ tay: tâm ô = bàn tay, xoay cả khung theo hướng ngắm
-    PXW.material.map = swTex(id, fi, left); PXW.material.rotation = left ? r - Math.PI : r; PXW.center.set(.5, .5); PXW.scale.set(Z, Z, 1); PXW.position.set(hx, _hu.y * hy, hz + .05); return; }
+    PXW.material.map = swTex(id, fi, left); PXW.material.rotation = left ? r - Math.PI : r; PXW.center.set(.5, .5); PXW.scale.set(Z, Z, 1); PXW.position.set(HX, HY, HZ); return; }
   PXW.material.map = sprMap(key, left); PXW.material.rotation = left ? tip - Math.PI : tip; PXW.center.set(left ? 1 - g : g, .5);
-  PXW.scale.set(L, L / S.a, 1); PXW.position.set(hx, _hu.y * hy, hz + .05);
+  PXW.scale.set(L, L / S.a, 1); PXW.position.set(HX, HY, HZ);
   if (strikeNow && FM.length < 170) { const gh = new THREE.Sprite(PXW.material.clone()); gh.center.copy(PXW.center); gh.scale.copy(PXW.scale); gh.position.copy(PXW.position);
     gh.material.blending = THREE.AdditiveBlending; gh.material.color.setHex(c && c.tint || 0xcfefff); gh.renderOrder = 5; scene.add(gh); FM.push({mesh:gh, t:0, dur:.13, op:.55}); }
 }
@@ -1563,64 +1564,53 @@ const PXG = {"gym":{"fr":[{"uri":IP[1409],"a":1.7566},{"uri":IP[1410],"a":1.7566
 const PXCI = {"gym":IP[1451],"ban":IP[1452],"lop":IP[1453],"hot":IP[1454],"bo":IP[1455],"me":IP[1456],"anh":IP[1457]};
 const ACT_TX = {}, GONG_TX = {}, SW_ROW = {slash:0, heavy:1, thrust:2, spin:3}; let PXB = null; const _pxws = new THREE.Vector3();
 function pxLd(u) { const t = new THREE.TextureLoader().load(u); t.colorSpace = THREE.SRGBColorSpace; t.generateMipmaps = false; t.magFilter = t.minFilter = THREE.NearestFilter; return t; }
-function pxBodyTick(dt) { // thay thân nhân vật bằng khung vẽ tay khi chém / lăn / bắn / gồng chiêu
+const PXHAND = {"act":{"lop":[[[36.3,22.5],[14.8,13.1],[36.2,38.8],[33.3,37.6],[24.7,32.1],[36.6,22.6]],[[36.7,23.1],[10.2,6.8],[2.5,7.6],[34.2,43.4],[34.0,43.6],[36.7,22.8]],[[36.8,23.0],[29.7,26.7],[40.7,30.1],[49.4,27.4],[36.8,29.3],[36.6,22.9]],[[18.5,41.9],[41.1,23.9],[37.9,23.6],[8.6,22.8],[15.7,22.5],[37.0,19.4]],[[43.5,19.9],[7.0,10.8],[35.7,26.5],[6.7,17.7],[46.6,21.1],[40.2,29.2]],[null,null,null,null,null,null]],"ban":[[[31.5,19.7],[13.7,17.9],[36.5,36.7],[30.5,38.8],[29.2,26.8],[31.5,19.5]],[[31.5,18.5],[14.8,5.3],[6.2,7.5],[31.4,41.6],[32.8,41.0],[31.5,18.5]],[[31.5,19.7],[28.7,27.2],[41.8,27.2],[45.6,28.9],[35.8,29.4],[31.5,19.7]],[[16.5,43.8],[39.7,22.2],[37.9,20.2],[6.3,23.8],[13,23],[37.7,25.6]],[[39.5,24.5],[7,10],[31.8,27.5],[6.1,24.6],[47,20],[46,28]],[null,null,null,null,null,null]],"hot":[[[36,22],[16,13],[36.0,44.0],[33,38],[28.0,27.0],[35.0,21.0]],[[34.0,22.0],[9.2,9.0],[3.0,11.0],[35.0,43.0],[34.3,47.0],[34.0,21.0]],[[32.5,22.5],[26.0,23.5],[41.5,31.5],[44.0,21.2],[32.8,28.5],[33.0,23.0]],[[18,42],[38.0,29.0],[40.0,27.0],[7,24],[13,23],[33.3,18.0]],[[41.0,25.7],[11.8,14.2],[31.0,35.0],[6,17],[47,20],[46,28]],[null,null,null,null,null,null]],"gym":[[[36.0,23.0],[14.1,14.0],[35.6,38.9],[33.4,37.5],[25.2,31.2],[36.4,23.0]],[[36.5,23.0],[10.9,7.4],[2.4,7.7],[34.0,43.4],[33.8,43.6],[36.5,23.0]],[[36.4,23.0],[29.0,26.9],[40.3,29.8],[49.2,27.2],[36.3,30.2],[36.4,23.0]],[[18.7,41.5],[40.2,23.7],[37.8,23.3],[8.9,22.9],[15.0,21.0],[37.0,18.3]],[[43.0,19.0],[8.0,10.8],[34.8,25.5],[6.7,17.8],[45.7,21.5],[39.3,28.5]],[null,null,null,null,null,null]],"bo":[[[36,22],[14.8,15.6],[35.8,39.4],[34.7,35.9],[31.0,32.1],[37,22]],[[37,22],[14.0,8.0],[4.0,11.7],[33.0,43.2],[33.7,43.9],[37,22]],[[37,22],[27.3,29.8],[41.1,29.6],[46.2,29.4],[32.0,27.0],[37,22]],[[14.8,45.4],[40.2,23.6],[37.8,24.7],[10.3,24.3],[15.2,26.7],[37.2,22.0]],[[42.9,23.2],[7,10],[34.4,28.0],[5.7,19.4],[42.8,24.2],[40.5,30.7]],[null,null,null,null,null,null]],"me":[[[38.5,20.8],[14.2,12.5],[35.0,41.6],[31.5,38.5],[34.2,31.2],[38.4,21.0]],[[38.8,23.2],[8.5,5.2],[1.5,11.5],[36.0,42.3],[34.0,43.0],[34.5,24.0]],[[38.8,23.0],[29.8,29.0],[41.6,30.4],[49.0,23.5],[33.0,26.5],[39.0,21.8]],[[16.0,44.5],[42.0,24.8],[40.0,26.5],[4.0,22.0],[9.4,24.0],[38.3,17.0]],[[40.5,17.8],[4.6,9.0],[36.5,28.2],[8.0,19.0],[47.0,23.0],[42.0,30.0]],[null,null,null,null,null,null]],"anh":[[[31.7,22.1],[15.3,15.1],[35.4,40.1],[37.7,37.6],[33.0,32.7],[31.8,22.3]],[[31.8,22.1],[11.9,9.6],[3,7],[29.4,42.6],[32.4,44.2],[32.9,23.0]],[[31.7,22.1],[24.2,24.8],[41.8,31.2],[50,26],[30.7,24.7],[31.7,22.5]],[[13.1,36.9],[41.6,25.7],[39.2,24.9],[7.0,26.4],[17.7,22.5],[32.1,25.3]],[[42.8,25.6],[7,10],[30.1,30.4],[7.8,20.6],[47,20],[39.9,31.3]],[null,null,null,null,null,null]]},"ch":{"lop":[[[40,40],[44.0,44.5],[44.0,44.5],[44.0,44.5],[44.0,45.5],[44.0,45.5]],[[47.8,38.8],[44.5,40.3],[46.5,43.0],[45.2,43.0],[46.4,39.4],[35.0,45.0]],[[39.0,39.1],[44.4,46.4],[44.4,46.4],[54.5,41.0],[47.2,42.8],[45.0,45.3]],[[40,40],[40.1,44.25],[34.4,38.8],[35.6,48.5],[40.2,49.4],[40.2,49.0]]],"ban":[[[45.0,42.0],[42.5,43.0],[45.0,42.0],[45.0,42.0],[45.0,42.0],[41.0,41.0]],[[43.5,45.0],[41.5,43.0],[41.5,43.0],[44.5,45.0],[38.0,40.5],[37.5,49.0]],[[39.0,46.0],[39.0,46.0],[41.0,48.5],[41.0,48.5],[34.0,38.5],[45.0,43.0]],[[40,40],[40,40],[38.0,46.5],[47.2,45.7],[50.0,52.5],[48.1,40.5]]],"hot":[[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40,40],[40,40],[40,40],[40,40],[40.0,40.0]]],"gym":[[[47.0,45.1],[46.7,42.4],[47.0,45.3],[46.9,45.1],[47.1,45.1],[46.6,43.8]],[[50.2,40.2],[50.5,38.5],[50.8,42.0],[48.6,41.9],[47.4,39.8],[44.4,43.9]],[[46.2,46.8],[50.5,38.0],[50.5,38.0],[48.6,37.9],[47.3,40.5],[46.0,42.9]],[[44.4,38.4],[47.3,37.1],[42.5,45.8],[39.4,45.2],[43.45,45.5],[42.5,51.2]]],"bo":[[[50.0,44.5],[50.0,41.0],[50.0,44.0],[50.0,45.0],[50.0,44.0],[50.0,44.0]],[[50.8,37.9],[48.0,39.0],[49.2,37.6],[50.9,37.8],[47.6,38.8],[49.5,37.6]],[[45.2,45.4],[46.3,42.1],[46.3,42.1],[48.0,35.5],[50.2,41.2],[49.6,43.6]],[[49.7,38.1],[53.0,51.0],[36.2,48.9],[35.9,42.2],[43.3,49.1],[43.4,47.3]]],"me":[[[46.4,44.1],[46.2,42.1],[46.2,44.9],[46.0,45.0],[46.1,45.1],[46.2,44.9]],[[47.2,40.1],[36.9,41.0],[39.8,41.1],[46.9,40.0],[37.0,40.9],[39.5,41.1]],[[38.5,39.5],[46.5,43.0],[46.5,43.0],[47.0,34.0],[46.1,43.7],[46.0,44.2]],[[48.0,36.5],[46.2,36.5],[36.0,37.5],[36.0,44.0],[37.8,48.4],[43.4,47.1]]],"anh":[[[42.0,47.0],[42.4,44.3],[41.6,47.2],[42.4,46.8],[41.8,47.0],[42.0,47.0]],[[44.6,40.2],[41.8,44.0],[38.8,43.3],[44.6,41.4],[42.6,42.9],[38.0,44.5]],[[37.9,39.8],[46.0,44.0],[46.0,44.0],[46.0,44.0],[43.5,45.2],[42.0,47.0]],[[40,40],[45.0,36.8],[32.6,38.8],[33.4,46.7],[42.8,50.7],[40.7,48.4]]],"lop_s1":[[[41.7,45.7],[41.4,45.8],[41.7,45.3],[41.6,46.2],[41.5,46.5],[41.5,46.5]],[[46.1,40.9],[40.3,41.2],[44.7,41.3],[46.2,40.9],[38.4,42.1],[42.9,42.0]],[[39.2,38.9],[47.0,44.0],[47.0,44.0],[51.0,36.0],[46.4,44.0],[43.0,46.3]],[[40,40],[40.6,37.3],[36.6,40.6],[35.0,48.5],[42.2,52.1],[42.0,52.5]]],"lop_s2":[[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40,40],[40,40],[40,40],[40,40],[33.0,44.0]],[[40.7,39.7],[42.2,46.4],[42.2,46.4],[52.2,41.8],[52.2,41.8],[52.2,41.8]],[[40,40],[40,40],[35.5,38.0],[37.0,49.0],[37.0,49.0],[37.0,49.0]]],"lop_s3":[[[37.8,44.9],[37.7,43.6],[49.0,42.5],[37.8,44.9],[41.0,36.5],[41.0,36.5]],[[34.5,46.0],[34.0,40.5],[36.5,43.0],[36.5,43.0],[37.0,41.5],[34.0,37.5]],[[37.0,41.5],[46.0,45.0],[40.4,35.8],[40.5,48.0],[42.7,37.7],[40.0,37.5]],[[41.0,38.1],[36.5,42.2],[36.5,42.2],[36.5,42.2],[36.5,42.2],[36.5,42.2]]],"ban_s1":[[[35.9,35.3],[28.3,36.3],[35.3,40.7],[28.2,37.2],[36.5,34.0],[35.9,35.3]],[[29.0,38.0],[32.3,41.3],[32.3,41.3],[31.5,41.0],[30.0,39.5],[30.0,40.5]],[[33.4,36.150000000000006],[36.0,38.0],[32.3,37.3],[33.4,36.1],[33.4,36.1],[33.4,36.1]],[[40,40],[40,40],[46.2,40.0],[52.3,41.4],[52.4,47.1],[43.5,42.7]]],"ban_s2":[[[48.3,34.3],[48.3,34.3],[48.3,34.3],[48.3,34.3],[48.3,34.3],[48.3,34.3]],[[42.5,44.0],[49.5,35.5],[43.5,39.25],[44.5,43.0],[49.7,34.7],[36.5,34.0]],[[48.0,39.0],[44.0,40.0],[44.5,36.0],[44.5,36.0],[43.0,44.5],[48.3,34.3]],[[36.2,44.8],[33.0,41.5],[45.0,38.5],[44.0,44.5],[50.7,46.5],[45.8,41.9]]],"ban_s3":[[[46.5,34.0],[45.5,34.0],[42.0,41.5],[45.0,44.5],[45.2,34.8],[45.1,38.15]],[[48.0,45.5],[37.7,35.3],[42.0,38.0],[42.5,45.0],[45.0,43.5],[44.5,35.0]],[[45.0,40.5],[46.3,36.3],[41.5,50.0],[47.5,49.0],[35.5,41.0],[39.3,50.3]],[[38.8,46.6],[40.9,43.4],[44.4,39.2],[46.0,47.0],[43.2,45.0],[41.9,45.5]]],"hot_s1":[[[44.3,45.3],[44.7,44.7],[45.0,43.5],[44.3,45.3],[44.5,45.5],[44.3,45.3]],[[46.3,38.3],[41.5,42.0],[45.3,39.9],[46.2,38.1],[41.5,42.0],[45.3,39.9]],[[40.0,38.0],[38.0,36.0],[38.0,36.0],[38.0,36.0],[47.9,44.4],[45.2,44.2]],[[47.5,39.5],[46.2,36.5],[35.4,38.0],[33.4,43.8],[41.6,50.2],[39.7,49.9]]],"hot_s2":[[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40,40],[40,40],[40,40],[40,40],[40.0,40.0]]],"hot_s3":[[[40,40],[32.2,36.4],[31.8,35.8],[31.8,35.8],[30.5,45.0],[30.5,45.0]],[[30.5,45.0],[32.0,35.0],[32.0,35.0],[44.0,41.5],[44.0,41.5],[44.0,41.5]],[[36.5,36.5],[30.5,38.0],[31.0,34.5],[30.6,35.1],[33.75,37.25],[33.75,37.25]],[[39.9,39.6],[39.5,41.0],[39.5,41.0],[39.5,41.0],[39.5,41.0],[39.5,41.0]]],"gym_s1":[[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40,40],[40,40],[40,40],[40.1,46.3],[39.9,46.2]]],"gym_s2":[[[46.9,43.0],[46.6,39.8],[37.2,37.0],[38.1,38.1],[47.0,41.9],[46.9,42.0]],[[50.1,38.1],[43.7,42.5],[49.1,40.3],[50.1,38.1],[43.7,42.6],[49.0,38.3]],[[44.3,43.3],[46.7,42.2],[46.85,42.0],[49.0,35.5],[49.0,41.8],[47.0,42.2]],[[38.650000000000006,47.85],[48.2,49.5],[39.8,47.5],[34.1,42.3],[38.7,50.5],[38.6,48.2]]],"gym_s3":[[[45.7,44.8],[45.4,43.9],[45.3,43.1],[45.8,44.4],[45.8,44.4],[45.7,46.2]],[[49.9,40.2],[43.0,41.8],[42.9,42.1],[49.9,39.2],[43.3,41.7],[45.4,40.2]],[[47.0,47.4],[47.0,47.4],[47.0,47.4],[51.5,40.0],[49.7,42.9],[46.2,45.8]],[[48.8,39.0],[47.5,38.0],[41.8,50.6],[36.0,43.7],[40.2,51.5],[41.3,49.3]]],"bo_s1":[[[50.0,44.5],[50.0,43.0],[50.0,42.0],[50.0,45.0],[50.0,45.0],[50.0,45.5]],[[49.8,38.3],[47.0,43.5],[48.0,39.0],[50.0,38.5],[46.2,40.9],[49.0,39.5]],[[46.7,46.6],[47.6,42.2],[44.3,44.7],[50.2,40.6],[50.4,40.5],[47.3,46.1]],[[40.1,45.2],[33.0,36.5],[37.9,49.3],[45.2,41.5],[39.2,49.4],[41.0,48.9]]],"bo_s2":[[[51.5,46.0],[52.6,44.6],[52.6,44.1],[51.6,45.6],[51.6,46.6],[52.0,46.5]],[[51.8,39.6],[49.9,39.9],[49.8,40.599999999999994],[51.7,39.4],[49.7,41.3],[49.0,43.5]],[[44.9,47.9],[44.9,47.9],[44.9,47.9],[44.9,47.9],[49.1,43.3],[51.7,46.2]],[[40,40],[39.75,47.3],[39.5,49.8],[36.9,42.6],[36.4,50.4],[43.6,48.8]]],"bo_s3":[[[50.0,45.5],[50.0,45.5],[50.0,45.5],[50.0,45.5],[50.0,45.5],[50.0,45.5]],[[51.6,39.9],[52.5,39.0],[50.5,40.4],[51.0,38.8],[52.4,39.5],[50.0,43.5]],[[48.8,43.8],[48.8,43.8],[48.8,43.8],[53.9,36.4],[52.8,38.2],[52.8,38.2]],[[40,40],[50.0,47.5],[47.2,43.4],[37.8,42.2],[40.2,46.3],[40.4,46.5]]],"me_s1":[[[46.0,45.0],[46.2,44.0],[46.0,43.5],[46.0,45.0],[45.5,45.5],[46.0,45.5]],[[46.3,40.6],[43.0,43.5],[42.8,40.8],[46.6,40.4],[43.0,43.5],[42.9,41.1]],[[39.2,36.4],[42.9,43.0],[42.9,43.0],[43.95,41.75],[48.2,40.5],[45.0,44.7]],[[42.1,46.349999999999994],[46.5,51.0],[37.7,49.4],[37.4,43.3],[36.6,50.3],[50.4,40.9]]],"me_s2":[[[47.5,47.0],[46.0,46.5],[47.5,47.0],[47.5,47.0],[47.5,47.0],[47.5,47.0]],[[44.0,45.5],[40.3,36.8],[49.0,44.5],[42.2,41.0],[40.4,35.7],[48.0,46.0]],[[46.0,37.0],[46.0,37.0],[36.5,33.0],[53.0,34.0],[46.0,44.0],[44.5,37.0]],[[50.8,38.8],[50.8,38.8],[42.5,37.0],[47.0,46.5],[43.5,53.5],[45.0,51.5]]],"me_s3":[[[50.7,40.5],[50.7,35.3],[51.0,40.5],[50.7,39.3],[51.0,40.5],[49.0,43.0]],[[45.0,44.5],[33.2,50.8],[31.0,47.5],[44.0,41.5],[39.5,49.0],[28.0,43.5]],[[52.6,41.8],[52.0,40.8],[53.5,43.0],[53.2,40.8],[54.3,43.3],[50.0,42.8]],[[40.0,45.5],[43.0,37.5],[33.5,47.0],[26.0,51.5],[26.0,51.5],[36.75,46.25]]],"anh_s1":[[[42.6,47.4],[42.6,45.1],[43.4,43.1],[43.7,44.1],[42.7,47.2],[42.9,48.4]],[[46.8,41.5],[40.0,38.4],[38.8,46.0],[46.8,40.7],[48.2,40.5],[36.2,46.0]],[[38.2,39.7],[44.7,42.4],[42.45,42.55],[41.3,42.7],[44.6,42.7],[43.6,45.9]],[[46.6,37.5],[45.8,36.4],[40.1,38.6],[33.0,48.5],[41.9,51.3],[42.4,51.0]]],"anh_s2":[[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[38.8,42.0],[39.2,43.5],[34.5,43.3],[38.8,40.8],[39.5,44.0],[34.5,43.3]],[[33.8,40.8],[36.7,46.0],[36.7,46.0],[36.7,46.0],[39.7,41.4],[39.7,41.4]],[[40,40],[42.5,39.0],[33.3,40.5],[33.2,48.1],[32.3,54.3],[32.3,54.3]]],"anh_s3":[[[40,40],[40,40],[40,40],[40,40],[40,40],[40,40]],[[40,40],[40.5,45.5],[40.5,45.5],[46.5,45.0],[40.0,44.5],[40.0,44.5]],[[32.5,39.0],[32.5,39.0],[32.5,39.0],[32.5,39.0],[32.5,39.0],[32.5,39.0]],[[40,40],[40,40],[27.7,40.3],[36.5,46.9],[35.3,49.7],[35.3,49.7]]]}};
+let PXHANDW = null, pxHideW = false; const _hw = new THREE.Vector3(), _hw2 = new THREE.Vector3();
+function faceL() { if (!P || !playerMesh) return false; const q = pxAim(); if (q.tg && q.dd < 14 && (state === "run" || state === "lv")) { const p = playerMesh.position; return Math.cos(scrAng(p.x, 1.2, p.z, Math.cos(q.a), Math.sin(q.a))) < 0; } return P.fx < 0; }
+const pxSheetKey = () => { const A = R.anim.A, k = CH[SV.sel].anim; return A.sk ? k + "_s" + A.sk : k; };
+function handWorld(spr, cw, ch, hp, left, isChild) { // điểm ảnh bàn tay trong ô -> toạ độ thế giới (sprite luôn quay mặt về camera)
+  const u0 = (hp[0] + .5) / cw, u = left ? 1 - u0 : u0, v = 1 - (hp[1] + .5) / ch;
+  spr.getWorldPosition(_hw); if (isChild) spr.getWorldScale(_hw2); else _hw2.copy(spr.scale);
+  _hu.set(0, 1, 0).applyQuaternion(cam.quaternion); _hr.set(1, 0, 0).applyQuaternion(cam.quaternion);
+  return _hw.addScaledVector(_hr, (u - spr.center.x) * Math.abs(_hw2.x)).addScaledVector(_hu, (v - spr.center.y) * _hw2.y);
+}
+function pxBodyTick(dt) { // thân người = khung vẽ tay (đứng, chạy, chém, nện, đâm, xoay, lăn, gồng); vũ khí ghim vào bàn tay của khung đang hiện
+  PXHANDW = null; pxHideW = false;
   const a = R.anim; if (!a || !a.A.px || a.d || !P) { if (PXB) PXB.visible = false; pxHoldOn = false; return; }
   const sp = a.sp, id = SV.sel, ck = CH[id] && CH[id].anim, def = !((SV.skin || {})[ck]);
-  if (PXA[id] && !ACT_TX[id]) ACT_TX[id] = pxLd(PXA[id].uri); if (PXG[id] && !GONG_TX[id + 0]) PXG[id].fr.forEach((f, i) => { GONG_TX[id + i] = pxLd(f.uri); }); // nạp sẵn để khung đầu không trống
+  if (PXA[id] && !ACT_TX[id]) ACT_TX[id] = pxLd(PXA[id].uri); if (PXG[id] && !GONG_TX[id + 0]) PXG[id].fr.forEach((f, i) => { GONG_TX[id + i] = pxLd(f.uri); });
+  if (!HOLD_TX[id] && PXH[id]) HOLD_TX[id] = pxLd(PXH[id].uri);
   if (!PXB) { PXB = new THREE.Sprite(new THREE.SpriteMaterial({transparent:true, alphaTest:.05, depthWrite:false})); PXB.renderOrder = 5.5; }
   if (PXB.parent !== scene) scene.add(PXB);
   let mode = null, row = 0, col = 0, left = false, hc = -1;
-  const alive = a.dieT === undefined && a.winT === undefined && (state === "run" || state === "lv");
+  const alive = a.dieT === undefined && a.winT === undefined && (state === "run" || state === "lv"), M = PXH[id] && PXH[id].m;
   if (alive) {
-    if (P.casting && PXG[id]) mode = "g";
-    else if (P.roll > 0 && def && PXA[id]) { row = 5; col = Math.min(5, Math.floor((1 - P.roll / .45) * 6)); left = P.rfx < 0; mode = "a"; }
-    else if (def && PXH[id] && pxCurId && !(P.empty > 0)) { const M = PXH[id].m; hc = P.wcast && M.win !== undefined ? M.win : M[pxCurId] !== undefined ? M[pxCurId] : -1; if (hc >= 0) mode = "h"; }
-    if (!mode && def && PXA[id]) {
-      if (pxSw) { const p = playerMesh.position, r = scrAng(p.x, 1.2, p.z, Math.cos(pxSw.a), Math.sin(pxSw.a)); row = SW_ROW[pxSw.type] || 0; col = swFrame(pxSw.type, Math.min(1, pxSw.t / pxSw.d)); left = Math.cos(r) < 0; mode = "a"; }
-      else if (a.atk >= 0 && (a.row === "gun" || a.row === "bow" || a.row === "throw2")) { row = 4; col = Math.min(5, Math.floor(a.atk / (ACT_T[a.row] || .4) * 6)); left = a.faceL; mode = "a"; }
-    }
+    if (P.casting && PXG[id]) { mode = "g"; pxHideW = true; }
+    else if (P.roll > 0) { pxHideW = true; if (def && PXA[id]) { row = 5; col = Math.min(5, Math.floor((1 - P.roll / .45) * 6)); left = P.rfx < 0; mode = "a"; } }
+    else if (pxSw && def && PXA[id]) { const p = playerMesh.position, rr = scrAng(p.x, 1.2, p.z, Math.cos(pxSw.a), Math.sin(pxSw.a)); row = SW_ROW[pxSw.type] || 0; col = swFrame(pxSw.type, Math.min(1, pxSw.t / pxSw.d)); left = Math.cos(rr) < 0; mode = "a"; }
+    else if (def && M && pxCurId && !(P.empty > 0) && (P.wcast || (!P.mv && !(a.atk >= 0)))) { hc = P.wcast && M.win !== undefined ? M.win : M[pxCurId] !== undefined ? M[pxCurId] : -1; if (hc >= 0) { left = faceL(); mode = "h"; } }
   }
-  if (!HOLD_TX[id] && PXH[id]) HOLD_TX[id] = pxLd(PXH[id].uri);
   if (mode === "h" && !(HOLD_TX[id] && HOLD_TX[id].image)) mode = null;
-  pxHoldOn = mode === "h";
   if (mode === "a" && !(ACT_TX[id] && ACT_TX[id].image)) mode = null; if (mode === "g" && !(GONG_TX[id + 0] && GONG_TX[id + 0].image)) mode = null;
-  if (!mode) { PXB.visible = false; sp.visible = true; pxHoldOn = false; return; }
-  const m = PXB.material, red = P.inv > 0 && P.hurtFlash ? 0xff9a9a : 0xffffff; m.color.setHex(red); m.rotation = 0;
-  if (mode === "h") {
-    const X = PXH[id], tx = HOLD_TX[id], cu = 1 / X.cols, rv = 1 / X.rows, col2 = hc % X.cols, row2 = (hc / X.cols) | 0, k = 3 / X.fh;
-    tx.repeat.set(left ? -cu : cu, rv); tx.offset.set((left ? col2 + 1 : col2) * cu, 1 - (row2 + 1) * rv);
-    if (m.map !== tx) { m.map = tx; m.needsUpdate = true; }
-    const ag = pxSw ? pxSw.a : pxAim().a, ca = Math.cos(ag), sa = Math.sin(ag), side = left ? -1 : 1;
-    // ra đòn bằng chính dáng cầm: lấy đà ngả ra sau -> quật tới trước, nhào người, nén - giãn; xoay = lật nhanh; bắn = giật lùi
-    let rot = 0, lg = 0, ly = 0, sx = 1, sy = 1, flip = false;
-    if (pxSw) { const S = SW[pxSw.type], kk = Math.min(1, pxSw.t / pxSw.d), imp = S.imp, ty = pxSw.type, wind = kk < imp ? ez(kk / imp) : 0, hit = kk >= imp ? Math.max(0, 1 - (kk - imp) / (1 - imp)) : 0, st = hit * hit;
-      if (ty === "spin") { flip = Math.floor(kk * 8) % 2 === 1; sx = 1 + .1 * Math.sin(kk * Math.PI); ly = .25 * Math.sin(kk * Math.PI); }
-      else { const back = ty === "heavy" ? .42 : ty === "thrust" ? .06 : .26, fwd = ty === "heavy" ? .5 : ty === "thrust" ? .12 : .36;
-        rot = side * (back * wind - fwd * st); lg = S.lg(kk) + (S.p ? S.p(kk) * .55 : 0) + (ty === "thrust" ? .25 * st : .12 * st);
-        if (ty === "heavy") { ly = .7 * wind; sx = 1 + .2 * st; sy = 1 - .16 * st; } else { sx = 1 + .1 * st; sy = 1 - .06 * st; } }
-      if (!pxSw.gh && kk >= imp && FM.length < 170) { pxSw.gh = 1; for (let g = 0; g < 2; g++) { const gt = tx.clone(); gt.needsUpdate = true; gt.userData.own = 1; const gm = tmpMat(new THREE.SpriteMaterial({map:gt, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, color:0xcfefff}));
-          const gs = new THREE.Sprite(gm); gs.renderOrder = 5.4; FM.push({mesh:gs, t:0, dur:.16 + g * .06, op:.5 - g * .2, gs, gl:g, ca, sa}); scene.add(gs); } } }
-    else if (a.atk >= 0 && (a.row === "gun" || a.row === "bow" || a.row === "throw2" || a.row === "atk")) { const kk = Math.min(1, a.atk / (ACT_T[a.row] || .4)), rc = Math.sin(Math.min(1, kk * 4) * Math.PI) * (1 - kk);
-      lg = -.28 * rc; rot = side * .14 * rc; sx = 1 - .05 * rc; sy = 1 + .04 * rc; }
-    if (flip) { left = !left; tx.repeat.set(left ? -cu : cu, rv); tx.offset.set((left ? col2 + 1 : col2) * cu, 1 - (row2 + 1) * rv); }
-    const mv = P.mv && !pxSw ? Math.abs(Math.sin(a.wt * 12 * Math.PI / 6)) : 0, br = P.mv ? 0 : Math.sin(t * 3) * .015;
-    PXB.center.set(left ? 1 - X.ax : X.ax, 3 / X.ch); PXB.scale.set(X.cw * k * (1 + mv * .04) * sx, X.ch * k * (1 - mv * .05 + br) * sy, 1); m.rotation = rot;
-    sp.getWorldPosition(PXB.position); sp.getWorldScale(_pxws); PXB.scale.multiply(_pxws.divide(sp.scale)); PXB.position.x += ca * lg; PXB.position.z += sa * lg; PXB.position.y += mv * .22 + ly;
-    for (const f of FM) if (f.gs && !f.placed) { f.placed = 1; f.gs.material.map.repeat.copy(tx.repeat); f.gs.material.map.offset.copy(tx.offset); f.gs.center.copy(PXB.center); f.gs.scale.copy(PXB.scale).multiplyScalar(1 + .08 * f.gl);
-      f.gs.material.rotation = rot; f.gs.position.copy(PXB.position); f.gs.position.x += f.ca * (.35 + .3 * f.gl); f.gs.position.z += f.sa * (.35 + .3 * f.gl); }
-    PXB.renderOrder = 5.5; PXB.visible = true; sp.visible = false; return;
-  }
-  if (mode === "a") {
-    const X = PXA[id], tx = ACT_TX[id] || (ACT_TX[id] = pxLd(X.uri)), u = 1 / 6, k = 3 / X.fh; col = Math.max(0, Math.min(5, col | 0));
-    tx.repeat.set(left ? -u : u, u); tx.offset.set((left ? col + 1 : col) * u, 1 - (row + 1) * u);
-    if (m.map !== tx) { m.map = tx; m.needsUpdate = true; }
+  pxHoldOn = mode === "h";
+  if (!mode) { PXB.visible = false; sp.visible = true; if (alive && a.cell) { const Hs = PXHAND.ch[pxSheetKey()], hp = Hs && Hs[a.cell[0]] && Hs[a.cell[0]][a.cell[1]]; if (hp) PXHANDW = handWorld(sp, a.A.cw, a.A.ch, hp, a.cl, true); } return; }
+  const m = PXB.material; m.color.setHex(0xffffff); m.rotation = 0;
+  if (mode === "h") { // đứng yên: dáng cầm vũ khí vẽ tay (vũ khí đã vẽ sẵn trong tay)
+    const X = PXH[id], tx = HOLD_TX[id], cu = 1 / X.cols, rv = 1 / X.rows, c2 = hc % X.cols, r2 = (hc / X.cols) | 0, k = 3 / X.fh, br = Math.sin(t * 3) * .015;
+    tx.repeat.set(left ? -cu : cu, rv); tx.offset.set((left ? c2 + 1 : c2) * cu, 1 - (r2 + 1) * rv); if (m.map !== tx) { m.map = tx; m.needsUpdate = true; }
+    PXB.center.set(left ? 1 - X.ax : X.ax, 3 / X.ch); PXB.scale.set(X.cw * k, X.ch * k * (1 + br), 1);
+  } else if (mode === "a") {
+    const X = PXA[id], tx = ACT_TX[id], u = 1 / 6, k = 3 / X.fh; col = Math.max(0, Math.min(5, col | 0));
+    tx.repeat.set(left ? -u : u, u); tx.offset.set((left ? col + 1 : col) * u, 1 - (row + 1) * u); if (m.map !== tx) { m.map = tx; m.needsUpdate = true; }
     PXB.center.set(.5, 3 / X.ch); PXB.scale.set(X.cw * k, X.ch * k, 1);
   } else {
     const G = PXG[id], ct = (performance.now() - (P.castS || 0)) / 1000, i = Math.min(5, Math.floor(ct / .5 * 6)), kk = id + i, f = G.fr[i], tx = GONG_TX[kk] || (GONG_TX[kk] = pxLd(f.uri));
     if (m.map !== tx) { m.map = tx; m.needsUpdate = true; }
-    const H = 3 / G.r * (1 + .04 * Math.sin(ct * 40)), gl = P.fx < 0; tx.repeat.set(gl ? -1 : 1, 1); tx.offset.set(gl ? 1 : 0, 0); PXB.center.set(.5, G.cy); PXB.scale.set(H * f.a, H, 1);
+    const Hh = 3 / G.r * (1 + .04 * Math.sin(ct * 40)), gl = P.fx < 0; tx.repeat.set(gl ? -1 : 1, 1); tx.offset.set(gl ? 1 : 0, 0); PXB.center.set(.5, G.cy); PXB.scale.set(Hh * f.a, Hh, 1);
   }
+  sp.position.x = sp.position.z = 0; sp.material.rotation = 0;
   sp.getWorldPosition(PXB.position); sp.getWorldScale(_pxws); PXB.scale.multiply(_pxws.divide(sp.scale)); PXB.renderOrder = mode === "g" ? 8 : 5.5; PXB.visible = true; sp.visible = false;
+  if (mode === "a" && row < 5) { const hp = PXHAND.act[id] && PXHAND.act[id][row][col]; if (hp) PXHANDW = handWorld(PXB, PXA[id].cw, PXA[id].ch, hp, left, false); }
 }
 // ---------- Kỹ năng: gồng chiêu (chậm thời gian + cut-in chân dung) rồi bung chiêu nhiều nhịp ----------
 const SKC = {lop:"#ff8a2a", ban:"#ff5fa8", hot:"#b05cff", gym:"#7dff5a", bo:"#ffd23f", me:"#ff5a3a", anh:"#3fe8ff"};
@@ -1954,7 +1944,7 @@ function syncVisuals(dt) {
   R.turnRate = dA * Math.min(1, dt * 12) / Math.max(dt, 1e-4); R.lean = (R.lean || 0) + (clamp(-R.turnRate * .02, -.12, .12) - (R.lean || 0)) * Math.min(1, dt * 8);
   R.body.rotation.y = Math.PI / 2 - faceA; R.body.position.y = bob;
   if (R.spr) { R.spr.position.y = bob; R.spr.userData.face(P.fx < 0); R.spr.children.forEach(c => c.material.rotation = P.mv ? .05 * Math.sin(P.t * 9) : 0); const ak = P.act ? Math.sin(Math.min(1, P.act.t / P.act.d) * Math.PI) : 0; R.spr.scale.set(1 + .03 * ak, 1 + .07 * ak, 1); }
-  if (R.anim) animateAnim(dt); pxHeldTick(dt); pxBodyTick(dt); wskTick(dt);
+  if (R.anim) animateAnim(dt); pxBodyTick(dt); pxHeldTick(dt); wskTick(dt);
   if (R.rig) animateRig(dt);
   if (R.model) animateModel(dt);
   if (R.held && R.held.userData.face) R.held.userData.face(P.fx < 0);
