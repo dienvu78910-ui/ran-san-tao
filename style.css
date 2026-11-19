@@ -145,3 +145,14 @@ body:not(.appmode) .cv3d{aspect-ratio:auto;width:100%;height:100%}
 .cutin.big .cb{top:38%;height:34%}
 /* v21: nút kỹ năng vũ khí */
 .tbtn.wsk,body .pbtn.tbtn.wsk{right:max(120px,calc(env(safe-area-inset-right) + 102px));bottom:max(164px,calc(env(safe-area-inset-bottom) + 142px));width:54px;height:54px;font-size:1.2rem;background:rgba(80,200,255,.92);color:#10223d;font-weight:900}
+/* v23: kỹ năng vũ khí – tối nền + băng tên chiêu */
+.wdim{position:absolute;inset:0;z-index:44;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 22%,rgba(8,4,20,.78) 100%);animation:wdim .9s ease forwards}
+.wdim::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,var(--sc) 0,transparent 45%);opacity:.18;mix-blend-mode:screen}
+@keyframes wdim{0%{opacity:0}18%,62%{opacity:1}100%{opacity:0}}
+.wci{position:absolute;left:50%;top:25%;z-index:46;pointer-events:none;display:flex;align-items:center;gap:12px;padding:8px 26px 8px 12px;transform:translateX(-50%) skewX(-10deg);
+  background:linear-gradient(90deg,transparent,rgba(20,10,35,.92) 14%,rgba(20,10,35,.92) 86%,transparent);border-top:3px solid var(--sc);border-bottom:3px solid var(--sc);box-shadow:0 0 30px var(--sc);animation:wci 1.5s cubic-bezier(.2,1.2,.3,1) forwards}
+.wci img{height:64px;image-rendering:pixelated;filter:drop-shadow(0 0 10px var(--sc));transform:skewX(10deg)}
+.wci div{display:flex;flex-direction:column;transform:skewX(10deg)}
+.wci small{font:800 12px/1 Nunito,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--sc)}
+.wci b{font:400 clamp(20px,3.6vw,36px)/1.05 Bungee,Impact,sans-serif;color:#fff;-webkit-text-stroke:2px #1a0f2b;paint-order:stroke;text-shadow:0 0 14px var(--sc)}
+@keyframes wci{0%{opacity:0;transform:translateX(-30%) skewX(-10deg) scale(1.3)}12%{opacity:1;transform:translateX(-50%) skewX(-10deg) scale(1)}78%{opacity:1}100%{opacity:0;transform:translateX(-62%) skewX(-10deg)}}
