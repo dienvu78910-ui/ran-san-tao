@@ -255,3 +255,6 @@ body.djon{overflow:hidden}
 .djvm{position:absolute;right:0;bottom:0;width:min(62vh,58vw);aspect-ratio:1;background-size:400% 300%;background-repeat:no-repeat;pointer-events:none;will-change:transform}
 .dj .dsd img{width:200px;height:300px;object-fit:contain;image-rendering:auto}
 .djtm img,.dsg img,.dbt img,.djtab img,.den img{image-rendering:auto;object-position:center top}
+.dbc button img{display:block;height:38px;max-width:100%;object-fit:contain;margin:0 0 6px}
+.djsel{background:linear-gradient(90deg,rgba(10,14,22,.94) 0,rgba(10,14,22,.78) 55%,rgba(10,14,22,.35)),var(--bg1) center/cover no-repeat}
+.djend,.djpause{background:linear-gradient(rgba(10,14,22,.72),rgba(10,14,22,.86)),var(--bg2) center/cover no-repeat}
