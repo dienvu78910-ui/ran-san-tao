@@ -251,3 +251,7 @@ body.djon{overflow:hidden}
 @media (pointer:coarse){.djbot{bottom:8px;transform:translateX(-50%) scale(.8);transform-origin:bottom}.djab{display:none}.djammo{bottom:auto;top:150px;right:12px;transform:scale(.8);transform-origin:top right}.djmini{width:150px;height:116px}}
 .modes{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .play.fpsplay{background:linear-gradient(135deg,#ff4655,#bd3944);color:#fff;letter-spacing:.06em;box-shadow:0 4px 0 #7a1f28}
+
+.djvm{position:absolute;right:0;bottom:0;width:min(62vh,58vw);aspect-ratio:1;background-size:400% 300%;background-repeat:no-repeat;pointer-events:none;will-change:transform}
+.dj .dsd img{width:200px;height:300px;object-fit:contain;image-rendering:auto}
+.djtm img,.dsg img,.dbt img,.djtab img,.den img{image-rendering:auto;object-position:center top}

@@ -8,7 +8,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import * as SkeletonUtils from "three/addons/utils/SkeletonUtils.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 // Ảnh của game nằm trong assets/anh*.json (tách ra để mỗi tệp nhỏ hơn 25 MB khi đẩy lên GitHub)
-const IP = await (async () => { const L = ['./anh1.json','./anh2.json','./anh3.json','./anh4.json'];
+const IP = await (async () => { const L = ['./anh1.json','./anh2.json','./anh3.json','./anh4.json','./anh5.json'];
   const err = msg => { const d = document.createElement("div"); d.style.cssText = "position:fixed;inset:20px;z-index:99;background:#2b1b3d;color:#fff;padding:24px;border-radius:16px;font:16px/1.5 sans-serif;overflow:auto"; d.innerHTML = msg; document.body.append(d); };
   if (location.protocol === "file:") { err("<b>Không mở trực tiếp index.html được.</b><br>Hãy mở game qua đường link GitHub Pages (Settings → Pages), hoặc dùng bản APK."); throw new Error("file://"); }
   try { return (await Promise.all(L.map(async u => { let r = await fetch(new URL(u, import.meta.url)); if (!r.ok) r = await fetch(new URL(u.replace("./assets/", "./"), import.meta.url)); if (!r.ok) throw new Error(u + " (" + r.status + ")"); return r.json(); }))).flat(); }
@@ -2049,6 +2049,8 @@ resize();
 if (SV.chap > SV.cl) SV.chap = 0; menuBg();
 document.body.style.background = `url(${IMG.mount.uri}) center bottom / 100% auto no-repeat fixed, var(--sun)`;
 setChar(SV.sel); renderMenu(); loadBoard(); requestAnimationFrame(frame);
+// ===================== ĐỘT KÍCH 5v5 – dữ liệu tranh vẽ đặc vụ & súng cầm tay =====================
+const PXV = {"v":{"lop":{"uri":IP[1926],"cw":192,"ch":182,"cols":8,"rows":7,"fh":150,"n":52,"ok":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},"ban":{"uri":IP[1927],"cw":210,"ch":180,"cols":8,"rows":7,"fh":150,"n":52,"ok":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},"hot":{"uri":IP[1928],"cw":204,"ch":178,"cols":8,"rows":7,"fh":150,"n":52,"ok":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},"gym":{"uri":IP[1929],"cw":178,"ch":233,"cols":8,"rows":7,"fh":150,"n":52,"ok":[1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},"bo":{"uri":IP[1930],"cw":195,"ch":161,"cols":8,"rows":7,"fh":150,"n":52,"ok":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},"me":{"uri":IP[1931],"cw":185,"ch":173,"cols":8,"rows":7,"fh":150,"n":52,"ok":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},"anh":{"uri":IP[1932],"cw":208,"ch":169,"cols":8,"rows":7,"fh":150,"n":52,"ok":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]}},"i":{"lop":{"face":IP[1933],"side":IP[1934],"dead":IP[1935],"splash":IP[1936]},"ban":{"face":IP[1937],"side":IP[1938],"dead":IP[1939],"splash":IP[1940]},"hot":{"face":IP[1941],"side":IP[1942],"dead":IP[1943],"splash":IP[1944]},"gym":{"face":IP[1945],"side":IP[1946],"dead":IP[1947],"splash":IP[1948]},"bo":{"face":IP[1949],"side":IP[1950],"dead":IP[1951],"splash":IP[1952]},"me":{"face":IP[1953],"side":IP[1954],"dead":IP[1955],"splash":IP[1956]},"anh":{"face":IP[1957],"side":IP[1958],"dead":IP[1959],"splash":IP[1960]}},"vm":{"phan":IP[1961],"but":IP[1962],"na":IP[1963],"bang":IP[1964]}};
 // ===================== ĐỘT KÍCH 5v5 – bắn súng chiến thuật góc nhìn thứ nhất (lấy cảm hứng từ thể loại tactical shooter) =====================
 let FPS_ON = false;
 const FPS = (() => {
@@ -2216,18 +2218,20 @@ function makeTextures() {
 const SPRV = "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }";
 const SPRF = "uniform sampler2D map; uniform vec2 uo; uniform vec2 ur; uniform vec3 tint; uniform float solid; uniform float op; varying vec2 vUv; void main(){ vec4 c = texture2D(map, uo + vUv * ur); if (c.a < .5) discard; vec3 col = mix(c.rgb * tint, tint, solid); gl_FragColor = vec4(col, op); }";
 const SHEET = {};
-function sheetTex(key) { if (SHEET[key]) return SHEET[key]; const d = PXD.ch[key] || PXD.ch.lop, t = new THREE.TextureLoader().load(d.uri); t.colorSpace = THREE.SRGBColorSpace; t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; return SHEET[key] = {t, d}; }
+function sheetTex(key) { if (SHEET[key]) return SHEET[key]; const nv = PXV.v[key], d = nv || PXD.ch[key] || PXD.ch.lop, t = new THREE.TextureLoader().load(d.uri); t.colorSpace = THREE.SRGBColorSpace;
+  if (nv) { t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearFilter; } else t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; return SHEET[key] = {t, d, nv:!!nv}; }
 function makeAgentMesh(a) {
   const S = sheetTex(a.skin), d = S.d, k = BODYH / d.fh, w = d.cw * k, hh = d.ch * k, geo = new THREE.PlaneGeometry(w, hh); geo.translate(0, hh / 2 - 3 / d.ch * hh, 0);
-  const mk = (solid, tint, depth) => new THREE.ShaderMaterial({uniforms:{map:{value:S.t}, uo:{value:new THREE.Vector2()}, ur:{value:new THREE.Vector2(1 / 6, 1 / 4)}, tint:{value:new THREE.Color(tint)}, solid:{value:solid}, op:{value:1}},
+  const mk = (solid, tint, depth) => new THREE.ShaderMaterial({uniforms:{map:{value:S.t}, uo:{value:new THREE.Vector2()}, ur:{value:new THREE.Vector2(1 / (d.cols || 6), 1 / (d.rows || 4))}, tint:{value:new THREE.Color(tint)}, solid:{value:solid}, op:{value:1}},
     vertexShader:SPRV, fragmentShader:SPRF, transparent:!depth, depthTest:depth, depthWrite:depth});
   const body = new THREE.Mesh(geo, mk(0, 0xffffff, true)), out = new THREE.Mesh(geo, mk(1, 0xff3344, true)), xr = new THREE.Mesh(geo, mk(1, 0xff3344, false));
   out.scale.set(1.07, 1.04, 1); out.position.z = -.02; out.renderOrder = 1; body.renderOrder = 2; xr.renderOrder = 50; xr.material.uniforms.op.value = .55; xr.visible = false;
-  const g = new THREE.Group(); g.add(out, body, xr); SC.add(g); a.mesh = g; a.mb = body; a.mo = out; a.mx = xr;
+  const g = new THREE.Group(); g.add(out, body, xr); SC.add(g); a.mesh = g; a.mb = body; a.mo = out; a.mx = xr; a.sd = S.nv ? d : null;
   // bảng tên đồng đội
   const tag = new THREE.Sprite(new THREE.SpriteMaterial({map:cvTex(256, 48, (c) => { c.font = "800 28px Nunito, sans-serif"; c.textAlign = "center"; c.fillStyle = "rgba(0,0,0,.45)"; c.fillRect(18, 6, 220, 36); c.fillStyle = "#7ff3e2"; c.fillText(a.name, 128, 34); }), depthTest:false, transparent:true}));
   tag.scale.set(1.1, .2, 1); tag.position.y = BODYH + .3; tag.material.sizeAttenuation = true; tag.renderOrder = 60; g.add(tag); a.tag = tag;
 }
+function setAgentIdx(a, i, flip) { const d = a.sd, c = i % d.cols, rw = (i / d.cols) | 0; for (const m of [a.mb, a.mo, a.mx]) { const u = m.material.uniforms; u.uo.value.set((flip ? c + 1 : c) / d.cols, 1 - (rw + 1) / d.rows); u.ur.value.set((flip ? -1 : 1) / d.cols, 1 / d.rows); } }
 function setAgentFrame(a, row, col, flip) { for (const m of [a.mb, a.mo, a.mx]) { const u = m.material.uniforms; u.uo.value.set((flip ? col + 1 : col) / 6, 1 - (row + 1) / 4); u.ur.value.set(flip ? -1 / 6 : 1 / 6, 1 / 4); } }
 
 function buildWorld() {
@@ -2484,7 +2488,7 @@ function tryFire(a, dt) {
   if (a.bot) sp = 0;
   const pel = w.pel || 1; let hitAny = null;
   for (let i = 0; i < pel; i++) { const d = a.bot ? a.bot.shotDir(sp) : aimDir(a, w.pel ? w.sp[0] : sp, recP, recY); const h = fireShot(a, iw.id, d, {silent:pel > 1 && i % 3}); hitAny = hitAny || h; }
-  if (w.mag) iw.mag--; a.fireT = 1 / (w.rate * stimM); a.rec += 1; a.recT = .12 + .9 / w.rate; a.shotT = .1;
+  if (w.mag) iw.mag--; a.fireT = 1 / (w.rate * stimM); a.fa = .18; a.rec += 1; a.recT = .12 + .9 / w.rate; a.shotT = .1;
   sfx(w.kind === "knife" ? "knife" : w.quiet ? "quiet" : w.kind === "blades" ? "knife" : w.kind === "beam" ? "flash" : w.kind, a.isPlayer ? undefined : a.x, a.isPlayer ? undefined : a.z, a.isPlayer ? .55 : 1);
   if (a.isPlayer && VM) { VM.kick = Math.min(1, VM.kick + (w.kind === "sniper" ? 1 : w.kind === "knife" ? .9 : .5)); VM.fl.visible = w.kind !== "knife" && w.kind !== "blades"; VM.flT = .045; HUDS.punch = (HUDS.punch || 0) + (w.rec ? w.rec[0] * .25 : 0) + (w.kind === "sniper" ? 1.5 : 0); if (zoomed && w.kind === "sniper") a.zoom = false; }
   if (a.ultW && iw.mag <= 0) { a.ultW = null; if (a.isPlayer) buildViewModel(a.inv[a.cur].id, a); }
@@ -2598,7 +2602,7 @@ function useAbility(a, i) {
   else if (a.ch[i] <= 0) { if (a.isPlayer) sfx("deny"); return false; }
   if (M.phase === "buy" && !["trap", "turret", "wall", "smoke", "stim"].includes(ab.k)) { if (a.isPlayer) { flashMsg("Chưa thể dùng trong giai đoạn mua", 1.4); sfx("deny"); } return false; }
   const ok = castAb(a, ab.k); if (!ok) return false;
-  if (i === 3) a.ult = 0; else a.ch[i]--; if (a.isPlayer) HUDS.abFlash = {i, t:.4};
+  if (i === 3) a.ult = 0; else a.ch[i]--; a.thrT = .35; if (a.isPlayer) HUDS.abFlash = {i, t:.4};
   return true;
 }
 function castAb(a, k) {
@@ -2796,7 +2800,7 @@ function buildUI() {
   ROOT = el("div", "dj" + (TT ? " touch" : "")); ROOT.id = "dj"; document.body.append(ROOT); document.body.classList.add("djon");
   CANVAS = R3.domElement; CANVAS.className = "djcv"; ROOT.append(CANVAS);
   ROOT.insertAdjacentHTML("beforeend", `
-  <div class="djflash"></div><div class="djdmg"></div><div class="djsmoke"></div><div class="djscope"></div>
+  <div class="djvm"></div><div class="djflash"></div><div class="djdmg"></div><div class="djsmoke"></div><div class="djscope"></div>
   <div class="djx"><i></i><i></i><i></i><i></i><b></b></div><div class="djhitm"></div>
   <div class="djtop"><div class="djtm l"></div><div class="djsc"><b class="s1">0</b><div class="djclock">1:40</div><b class="s2">0</b></div><div class="djtm r"></div></div>
   <canvas class="djmini" width="210" height="162"></canvas>
@@ -2810,16 +2814,18 @@ function buildUI() {
   <div class="djtouch"><div class="tj"><i></i></div><button data-k="fire" class="tf">BẮN</button><button data-k="jump" class="tb t1">⤒</button><button data-k="crouch" class="tb t2">⤓</button><button data-k="reload" class="tb t3">R</button>
    <button data-k="use" class="tb t4">F</button><button data-k="swap" class="tb t5">⇄</button><button data-k="buy" class="tb t6">MUA</button><button data-k="zoom" class="tb t7">⊕</button><button data-k="menu" class="tb t8">☰</button>
    <button data-k="a0" class="ta a0">C</button><button data-k="a1" class="ta a1">Q</button><button data-k="a2" class="ta a2">E</button><button data-k="a3" class="ta a3">X</button></div>`);
-  UI = {}; for (const k of ["djflash", "djdmg", "djsmoke", "djscope", "djx", "djhitm", "djtop", "djmini", "djkf", "djmsg", "djban", "djbot", "djhp", "djab", "djammo", "djprog", "djdead", "djdir", "djbuy", "djtab", "djpause", "djsel", "djend", "djtouch", "djclock"]) UI[k] = ROOT.querySelector("." + k);
+  UI = {}; for (const k of ["djvm", "djflash", "djdmg", "djsmoke", "djscope", "djx", "djhitm", "djtop", "djmini", "djkf", "djmsg", "djban", "djbot", "djhp", "djab", "djammo", "djprog", "djdead", "djdir", "djbuy", "djtab", "djpause", "djsel", "djend", "djtouch", "djclock"]) UI[k] = ROOT.querySelector("." + k);
   UI.mctx = UI.djmini.getContext("2d");
   if (!TT) UI.djtouch.remove(); else setupTouch();
 }
-const face = id => PXD.face[id] || "";
+const face = id => (PXV.i[id] && PXV.i[id].face) || PXD.face[id] || "";
+const faceD = id => (PXV.i[id] && PXV.i[id].dead) || face(id);
+const splash = id => (PXV.i[id] && PXV.i[id].splash) || face(id);
 function showSelect() {
   const box2 = UI.djsel; box2.hidden = false; let pick = SV.sel in AG ? SV.sel : "lop";
   const draw = () => { const A = AG[pick];
     box2.innerHTML = `<div class="dsl"><h2>CHỌN ĐẶC VỤ</h2><p class="sub">Đột Kích 5v5 – Giảng Đường Hoa Lư · Đấu tới ${SET.len} hiệp · Bot: ${DIFF[SET.diff].n}</p>
-      <div class="dsd"><img src="${face(pick)}"><div><h3 style="color:${A.col}">${agName(pick)}</h3><em>${ROLE[A.role]}</em>
+      <div class="dsd"><img src="${splash(pick)}"><div><h3 style="color:${A.col}">${agName(pick)}</h3><em>${ROLE[A.role]}</em>
       ${A.ab.map((ab, i) => `<p><kbd>${KEYS[i]}</kbd><b>${ab.n}</b>${i === 3 ? ` <small>(${ab.ult} điểm)</small>` : ab.free ? " <small>(miễn phí)</small>" : ` <small>(${ab.cost}¢)</small>`}<br><span>${ab.d}</span></p>`).join("")}</div></div>
       <div class="dsg">${AGIDS.map(id => `<button data-id="${id}" class="${id === pick ? "on" : ""}"><img src="${face(id)}"><span>${agName(id)}</span></button>`).join("")}</div>
       <div class="dso"><label>Độ khó bot <select data-o="diff">${DIFF.map((d, i) => `<option value="${i}" ${i == SET.diff ? "selected" : ""}>${d.n}</option>`).join("")}</select></label>
@@ -2870,7 +2876,7 @@ function hudTick(dt) {
   const a = PL, us = a.side, them = us === "atk" ? "def" : "atk";
   UI.djtop.querySelector(".s1").textContent = M.score[us]; UI.djtop.querySelector(".s2").textContent = M.score[them];
   UI.djclock.textContent = M.phase === "post" ? "💣 " + fmt(M.spikeT) : M.phase === "buy" ? "MUA " + fmt(M.t) : fmt(M.t); UI.djclock.className = "djclock" + (M.phase === "post" ? " sp" : "");
-  const ports = side => AGS.filter(x => x.side === side).map(x => `<img class="${x.alive ? "" : "d"}" src="${face(x.cid)}">`).join("");
+  const ports = side => AGS.filter(x => x.side === side).map(x => `<img class="${x.alive ? "" : "d"}" src="${x.alive ? face(x.cid) : faceD(x.cid)}">`).join("");
   const pk = AGS.map(x => +x.alive).join("") + M.round; if (UI.pk !== pk) { UI.pk = pk; UI.djtop.querySelector(".l").innerHTML = ports(us); UI.djtop.querySelector(".r").innerHTML = ports(them); }
   const hp = UI.djhp; hp.querySelector(".hp").textContent = Math.ceil(a.hp); hp.querySelector(".ar").textContent = a.armor ? "🛡 " + a.armor : ""; hp.className = "djhp" + (a.hp < 35 ? " low" : "");
   const iw = cur(a), w = W[iw.id]; UI.djammo.querySelector(".mag").textContent = w.mag ? iw.mag : "∞"; UI.djammo.querySelector(".res").textContent = w.mag ? "/ " + iw.res : ""; UI.djammo.querySelector(".wn").textContent = w.n + (a.spike ? " · 💣 BOM" : ""); UI.djammo.querySelector(".cr").textContent = "¢ " + a.money;
@@ -2972,7 +2978,7 @@ function playerTick(dt) {
 }
 function agentTick(a, dt) {
   a.fireT = Math.max(0, a.fireT - dt); a.swap = Math.max(0, a.swap - dt); a.shotT = Math.max(0, (a.shotT || 0) - dt);
-  for (const k of ["blind", "stun", "slow", "detain", "reveal", "stim"]) a[k] = Math.max(0, a[k] - dt);
+  a.thrT = Math.max(0, (a.thrT || 0) - dt); a.fa = Math.max(0, (a.fa || 0) - dt); for (const k of ["blind", "stun", "slow", "detain", "reveal", "stim"]) a[k] = Math.max(0, a[k] - dt);
   if (a.recT > 0) a.recT -= dt; else a.rec = Math.max(0, a.rec - dt * 9);
   if (a.reload > 0) { a.reload -= dt; if (a.reload <= 0) { a.reload = 0; finishReload(a); } }
   if (a.heal > 0 && a.alive) { const h = Math.min(a.heal, 12 * dt); a.heal -= h; a.hp = Math.min(100, a.hp + h); }
@@ -2983,6 +2989,18 @@ function agentVisual(a, dt) {
   const m = a.mesh; if (a.isPlayer) { m.visible = false; return; }
   m.visible = true; m.position.set(a.x, a.y, a.z); m.rotation.y = Math.atan2(CAM.position.x - a.x, CAM.position.z - a.z);
   const toCam = Math.atan2(CAM.position.z - a.z, CAM.position.x - a.x), rel = angDiff(a.yaw, toCam + Math.PI / 2), flip = rel > 0;
+  if (a.sd) { const d = a.sd, tc = Math.atan2(CAM.position.z - a.z, CAM.position.x - a.x), rel = Math.abs(angDiff(a.yaw, tc)), dir = Math.min(4, Math.round(rel / (Math.PI / 4)));
+    const fx = Math.cos(a.yaw), fz = Math.sin(a.yaw), Lx = -Math.cos(tc), Lz = -Math.sin(tc), flip = (fx * -Lz + fz * Lx) < 0; let i;
+    const aim = a.shotT > 0 || (a.bot && a.bot.tgt && a.bot.tgt.alive) || (a.isPlayer && MOUSE);
+    if (!a.alive) i = 40 + Math.min(3, Math.floor(a.deadT * 7));
+    else if (a.plantT > 0) i = 44 + (Math.floor(performance.now() / 400) % 2); else if (a.defT > 0) i = 46 + (Math.floor(performance.now() / 400) % 2);
+    else if (a.thrT > 0) i = a.thrT > .18 ? 48 : 49;
+    else if (aim || a.crouch > .5) i = 20 + dir * 4 + (a.crouch > .5 ? 2 : 0) + (a.shotT > .04 ? 1 : 0);
+    else if (a.mv > .6) i = dir * 4 + 1 + Math.floor(a.anim * 1.5) % 3; else i = dir * 4;
+    if (!d.ok[i]) i = d.ok[20 + dir * 4] ? 20 + dir * 4 : 0;
+    setAgentIdx(a, i, flip); m.scale.set(1, 1, 1);
+    const foe = a.side !== PL.side; a.mo.visible = foe && a.alive; a.tag.visible = !foe && a.alive; a.mx.visible = foe && a.alive && a.reveal > 0;
+    a.mb.material.uniforms.tint.value.setHex(a.detain > 0 ? 0xffb0e0 : a.stun > 0 ? 0xffd0a0 : 0xffffff); return; }
   let row = 0, col = Math.floor(performance.now() / 160 + a.name.length) % 6;
   if (!a.alive) { row = 3; col = Math.min(5, 2 + Math.floor(a.deadT * 8)); }
   else if (a.shotT > 0 || a.plantT > 0 || a.defT > 0) { row = 2; col = a.plantT > 0 || a.defT > 0 ? 3 : 4 + (Math.floor(performance.now() / 60) % 2); }
@@ -3000,7 +3018,13 @@ function camTick(dt) {
   if (a === PL) CAM.position.set(a.x, eyeY(a) + bob, a.z); else CAM.position.set(a.x - Math.cos(a.yaw) * 2.6, eyeY(a) + .7, a.z - Math.sin(a.yaw) * 2.6);
   CAM.rotation.set(a.pitch + HUDS.punch * D2R * (a === PL ? 1 : 0), -a.yaw - Math.PI / 2, (HUDS.stun > 0 || a.stun > 0) && a === PL ? Math.sin(performance.now() / 120) * .03 : 0);
   const w = W[cur(PL).id], tf = PL.alive && PL.zoom && w.zoom ? w.zoom : SET.fov; CAM.fov += (tf - CAM.fov) * Math.min(1, dt * 18); CAM.updateProjectionMatrix();
-  if (VM) { VM.g.visible = PL.alive && !(PL.zoom && w.kind === "sniper"); const v = VM; v.kick = Math.max(0, v.kick - dt * 7); v.flT = (v.flT || 0) - dt; v.fl.visible = v.flT > 0; if (v.fl.visible) v.fl.material.rotation = Math.random() * 6;
+  const vid = cur(PL).id, vmu = PXV.vm[vid], show2 = !!(vmu && PL.alive), el2 = UI.djvm;
+  if (el2) { el2.style.display = show2 ? "" : "none"; if (show2) { if (el2.dataset.id !== vid) { el2.dataset.id = vid; el2.style.backgroundImage = `url(${vmu})`; }
+    let f; const now = performance.now() / 1000;
+    if (PL.swap > 0) f = PL.swap > .35 ? 2 : 3; else if (PL.reload > 0) f = 8 + Math.min(3, Math.floor((1 - PL.reload / w.reload) * 4)); else if (PL.fa > 0) f = 4 + Math.min(3, Math.floor((1 - PL.fa / .18) * 4)); else f = Math.floor(now / .7) % 2;
+    el2.style.backgroundPosition = `${(f % 4) * 100 / 3}% ${Math.floor(f / 4) * 50}%`;
+    const mvb = PL.mv / 6.75, kick = PL.fa > .12 ? 1 : 0; el2.style.transform = `translate(${Math.sin(now * 9) * 6 * mvb + kick * 6}px, ${Math.abs(Math.cos(now * 9)) * 8 * mvb + kick * 10 + PL.crouch * 6}px)`; } }
+  if (VM) { VM.g.visible = PL.alive && !(PL.zoom && w.kind === "sniper") && !show2; const v = VM; v.kick = Math.max(0, v.kick - dt * 7); v.flT = (v.flT || 0) - dt; v.fl.visible = v.flT > 0; if (v.fl.visible) v.fl.material.rotation = Math.random() * 6;
     const sw = PL.swap > 0 ? PL.swap : 0, rl = PL.reload > 0 ? Math.sin(Math.min(1, 1 - PL.reload / w.reload) * Math.PI) : 0, mvb = PL.mv / 6.75, t = performance.now() / 1000;
     v.g.position.set(.24 + Math.sin(t * 9) * .012 * mvb, -.25 - Math.abs(Math.cos(t * 9)) * .015 * mvb - sw * .5 - rl * .12 - PL.crouch * .01, -.42 + v.kick * .09);
     v.g.rotation.set(v.kick * (v.k === "sniper" ? .25 : .12) - rl * .5 + (v.k === "knife" && PL.fireT > 0 ? -Math.sin(PL.fireT * 7) * .8 : 0), rl * .3 + .1 + (v.k === "knife" && PL.fireT > 0 ? Math.sin(PL.fireT * 7) * .9 : 0), rl * .6);
