@@ -2143,16 +2143,16 @@ function clearWalk(ax, az, bx, bz) { const L = Math.hypot(bx - ax, bz - az), n =
 // ---------------- Vũ khí ----------------
 // dmg: [đầu, thân, chân] ; rate: phát/giây ; sp: [độ tản cơ bản, khi chạy, khi nhảy] (độ) ; rec: [nảy dọc/phát, số phát leo, lắc ngang]
 const W = {
-  knife:{n:"Thước Kẻ", slot:3, cost:0, kind:"knife", dmg:[50, 50, 50], rate:2.2, mag:0, auto:true, mob:1.1},
-  but:{n:"Bút Bi", slot:2, cost:0, kind:"pistol", dmg:[78, 26, 22], rate:6.75, mag:12, res:36, reload:1.75, sp:[.4, 2.2, 4], rec:[.35, 3, .2], fall:[[30, .85]], mob:1},
-  na:{n:"Ná Thun Lặng", slot:2, cost:500, kind:"pistol", dmg:[105, 30, 25], rate:6.75, mag:15, res:45, reload:1.5, sp:[.3, 2, 4], rec:[.3, 4, .2], fall:[[30, .85]], mob:1, quiet:1},
-  bang:{n:"Bàn Thắng", slot:2, cost:800, kind:"pistol", dmg:[159, 55, 46], rate:4, mag:6, res:24, reload:2.25, sp:[.25, 2.6, 5], rec:[1.4, 1, .4], fall:[[30, .85]], mob:1},
-  phan:{n:"Máy Bắn Phấn", slot:1, cost:1600, kind:"smg", dmg:[78, 26, 22], rate:13.3, mag:30, res:90, reload:2.25, sp:[.4, 1.1, 4], rec:[.16, 10, .5], fall:[[20, .85]], mob:1, auto:true},
-  chong:{n:"Shotgun Cửa Lớp", slot:1, cost:1850, kind:"shotgun", dmg:[34, 17, 14], pel:12, rate:3.5, mag:7, res:21, reload:2.2, sp:[3.6, 4, 6], rec:[1, 1, .4], fall:[[10, .6], [16, .35]], mob:1, auto:true},
-  phuong:{n:"Súng Trường Phượng", slot:1, cost:2900, kind:"rifle", dmg:[156, 39, 33], rate:11, mag:30, res:90, reload:2.5, sp:[.2, 5, 8], rec:[.3, 9, .6], fall:[[15, .9], [30, .8]], mob:.95, auto:true, zoom:55},
-  sen:{n:"Súng Trường Sen", slot:1, cost:2900, kind:"rifle", dmg:[160, 40, 34], rate:9.75, mag:25, res:75, reload:2.5, sp:[.25, 5, 8], rec:[.36, 8, .7], mob:.95, auto:true, zoom:55},
-  tamcoc:{n:"Ống Nhòm Tam Cốc", slot:1, cost:950, kind:"sniper", dmg:[202, 101, 85], rate:1.5, mag:5, res:10, reload:2.5, sp:[2, 4, 8], rec:[2, 1, 0], mob:.92, zoom:35, zsp:0},
-  trangan:{n:"Bắn Tỉa Tràng An", slot:1, cost:4700, kind:"sniper", dmg:[255, 150, 127], rate:.6, mag:5, res:10, reload:3.7, sp:[5, 8, 12], rec:[3, 1, 0], mob:.85, zoom:22, zsp:0},
+  knife:{n:"Thước Kẻ", slot:3, cost:0, kind:"knife", dmg:[50, 50, 50], back:110, rate:2.2, mag:0, auto:true, mob:1.1, pen:0},
+  but:{n:"Bút Bi", slot:2, cost:0, kind:"pistol", dmg:[86, 28, 22], rate:6.75, mag:12, res:36, reload:1.75, sp:[.4, 2.2, 4], rec:[.35, 3, .2], fall:[[25, .83]], mob:1, pen:.45},
+  na:{n:"Ná Thun Lặng", slot:2, cost:500, kind:"pistol", dmg:[82, 26, 21], rate:6.75, mag:15, res:45, reload:1.5, sp:[.3, 2, 4], rec:[.3, 4, .2], fall:[[30, .88]], mob:1, quiet:1, pen:.45},
+  bang:{n:"Bàn Thắng", slot:2, cost:800, kind:"pistol", dmg:[152, 51, 40], rate:4, mag:6, res:24, reload:2.25, sp:[.25, 2.6, 5], rec:[1.4, 1, .4], fall:[[30, .85]], mob:1, pen:.9},
+  phan:{n:"Máy Bắn Phấn", slot:1, cost:1050, kind:"smg", dmg:[67, 25, 20], rate:13.3, mag:30, res:90, reload:2.25, sp:[.4, 1.1, 4], rec:[.16, 10, .5], fall:[[20, .85]], mob:1, auto:true, pen:1.2},
+  chong:{n:"Shotgun Cửa Lớp", slot:1, cost:950, kind:"shotgun", dmg:[24, 21, 18], pel:12, rate:3.5, mag:7, res:21, reload:2.2, sp:[3.6, 4, 6], rec:[1, 1, .4], fall:[[10, .6], [16, .35]], mob:1, auto:true, pen:.3},
+  phuong:{n:"Súng Trường Phượng", slot:1, cost:2900, kind:"rifle", dmg:[150, 38, 32], rate:9.75, mag:30, res:90, reload:2.5, sp:[.2, 5, 8], rec:[.3, 9, .6], fall:[[15, .9], [30, .8]], mob:.95, auto:true, zoom:55, pen:2.3},
+  sen:{n:"Súng Trường Sen", slot:1, cost:2900, kind:"rifle", dmg:[132, 33, 27], rate:11.5, mag:25, res:75, reload:2.4, sp:[.25, 5, 8], rec:[.33, 8, .7], mob:.95, auto:true, zoom:55, pen:2.3},
+  tamcoc:{n:"Ống Nhòm Tam Cốc", slot:1, cost:1100, kind:"sniper", dmg:[210, 100, 78], rate:1.5, mag:5, res:10, reload:2.5, sp:[2, 4, 8], rec:[2, 1, 0], mob:.92, zoom:35, zsp:0, pen:2.6},
+  trangan:{n:"Bắn Tỉa Tràng An", slot:1, cost:4700, kind:"sniper", dmg:[250, 142, 110], rate:.6, mag:5, res:10, reload:3.7, sp:[5, 8, 12], rec:[3, 1, 0], mob:.85, zoom:22, zsp:0, pen:3.5},
   blades:{n:"Lốp Xoáy", slot:4, cost:0, kind:"blades", dmg:[150, 50, 50], rate:3, mag:5, res:0, sp:[0, .2, .5], rec:[0, 0, 0], mob:1},
   beam:{n:"Tia Sét Xuyên Tường", slot:4, cost:0, kind:"beam", dmg:[80, 80, 80], rate:.9, mag:3, res:0, sp:[0, 0, 0], rec:[0, 0, 0], mob:.9},
 };
@@ -2292,7 +2292,9 @@ let FLASHT = null;
 
 // ---------------- Hiệu ứng ----------------
 const FX = [];
-function addFx(o, life, upd) { SC.add(o); FX.push({o, t:0, life, upd}); }
+const FX_MAX = 240, SEQ_MAX = 36;
+function dropFx(f) { SC.remove(f.o); f.o.geometry && !f.o.isSprite && f.o.geometry.dispose(); f.o.material && f.o.material.dispose(); }
+function addFx(o, life, upd) { SC.add(o); if (FX.length >= FX_MAX) dropFx(FX.shift()); FX.push({o, t:0, life, upd}); }
 function tracer(ax, ay, az, bx, by, bz, color = 0xfff2b0) {
   const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(ax, ay, az), new THREE.Vector3(bx, by, bz)]), l = new THREE.Line(g, new THREE.LineBasicMaterial({color, transparent:true, opacity:.9}));
   addFx(l, .07, (f, k) => { l.material.opacity = .9 * (1 - k); });
@@ -2305,7 +2307,7 @@ function boomFx(x, y, z, r, color) { const s = new THREE.Mesh(new THREE.SphereGe
 const FXTX = {}, SEQ = [];
 function fxTexF(k, i) { const key = k + i; if (FXTX[key]) return FXTX[key]; const t = new THREE.TextureLoader().load(PXV.fx[k][i].uri); t.colorSpace = THREE.SRGBColorSpace; return FXTX[key] = t; }
 function seq(k, x, y, z, w, life, o = {}) { const F = PXV.fx && PXV.fx[k]; if (!F || !SC) return null;
-  const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:fxTexF(k, 0), transparent:true, depthWrite:false, alphaTest:.02})); sp.center.set(.5, o.cy ?? .14); sp.position.set(x, y, z); sp.renderOrder = o.ro ?? 3; SC.add(sp);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:fxTexF(k, 0), transparent:true, depthWrite:false, alphaTest:.02})); sp.center.set(.5, o.cy ?? .14); sp.position.set(x, y, z); sp.renderOrder = o.ro ?? 3; SC.add(sp); if (SEQ.length >= SEQ_MAX) { const q = SEQ.shift(); SC.remove(q.sp); q.sp.material.dispose(); }
   const pk = F.find(q => q.s === 1) || F[0], s = {k, sp, w, t:0, life, F, pa:pk.a, loop:o.loop, intro:o.intro ?? Math.max(1, Math.round(F.length * .35)), outro:o.outro ?? 3, from:o.from || 0}; SEQ.push(s); return s; }
 function tickSeq(dt) { for (let i = SEQ.length - 1; i >= 0; i--) { const s = SEQ[i]; s.t += dt; const n = s.F.length, I = s.intro, O = s.outro; let f;
     if (!s.loop) f = s.from + Math.floor(s.t / s.life * (n - s.from));
@@ -2321,7 +2323,7 @@ function au() { if (!AC) { try { AC = new (window.AudioContext || window.webkitA
 function sfx(kind, x, z, vol = 1) {
   const A = au(); if (!A || !PL) return; let pan = 0, dv = 1;
   if (x !== undefined) { const dx = x - PL.x, dz = z - PL.z, d = Math.hypot(dx, dz); dv = 1 / (1 + d / 9); const ang = Math.atan2(dz, dx) - (PL.yaw); pan = clamp(-Math.sin(ang + Math.PI / 2) * .9, -1, 1); if (!los(PL.x, EYE, PL.z, x, 1.4, z, false)) dv *= .5; }
-  const v = vol * dv * (SET.vol); if (v < .01) return; const t0 = A.currentTime, out = A.createGain(), p = A.createStereoPanner ? A.createStereoPanner() : null; out.gain.value = v; if (p) { p.pan.value = pan; out.connect(p); p.connect(A.destination); } else out.connect(A.destination);
+  const v = vol * dv * SET.vol * (kind === "step" ? SET.vf : SET.vs); if (v < .01) return; const t0 = A.currentTime, out = A.createGain(), p = A.createStereoPanner ? A.createStereoPanner() : null; out.gain.value = v; if (p) { p.pan.value = pan; out.connect(p); p.connect(A.destination); } else out.connect(A.destination);
   const noise = (dur, f, q, g0, type = "bandpass") => { const s = A.createBufferSource(); s.buffer = NOISE; const fl = A.createBiquadFilter(); fl.type = type; fl.frequency.value = f; fl.Q.value = q; const g = A.createGain(); g.gain.setValueAtTime(g0, t0); g.gain.exponentialRampToValueAtTime(.001, t0 + dur); s.connect(fl); fl.connect(g); g.connect(out); s.start(t0); s.stop(t0 + dur + .02); };
   const tone = (f0, f1, dur, g0, type = "sine", delay = 0) => { const o = A.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t0 + delay); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t0 + delay + dur); const g = A.createGain(); g.gain.setValueAtTime(.0001, t0 + delay); g.gain.linearRampToValueAtTime(g0, t0 + delay + .005); g.gain.exponentialRampToValueAtTime(.001, t0 + delay + dur); o.connect(g); g.connect(out); o.start(t0 + delay); o.stop(t0 + delay + dur + .02); };
   if (kind === "rifle") { noise(.22, 1400, .7, .9); noise(.12, 3800, 1, .4); tone(160, 50, .14, .8, "triangle"); }
@@ -2348,11 +2350,13 @@ function sfx(kind, x, z, vol = 1) {
 }
 
 // ---------------- Trạng thái trận ----------------
-const SET = Object.assign({sens:1, vol:.8, diff:1, len:13, fov:78}, JSON.parse(localStorage.getItem("djSet") || "{}"));
+const SET = Object.assign({sens:1, vol:.8, vs:1, vf:1, diff:1, len:13, fov:78}, JSON.parse(localStorage.getItem("djSet") || "{}"));
 const saveSet = () => localStorage.setItem("djSet", JSON.stringify(SET));
 let M = null, PL = null, AGS = [], PROJ = [], ZONES = [], OBJS = [], DROPS = [];
 const ROUND_T = 100, BUY_T = 25, SPIKE_T = 45, PLANT_T = 4, DEFUSE_T = 7, END_T = 6;
-const DIFF = [{n:"Dễ", react:[.45, .75], err:2.2, hs:.12}, {n:"Thường", react:[.26, .46], err:1.15, hs:.25}, {n:"Khó", react:[.16, .3], err:.6, hs:.42}];
+// react: thời gian phản xạ; err: sai số ngắm (độ); hs: tỉ lệ nhắm đầu; ab: tần suất dùng kỹ năng; cover: tỉ lệ tìm chỗ nấp khi nạp đạn/máu thấp; bait: tỉ lệ gỡ bom giả; eco: biết tiết kiệm
+const DIFF = [{n:"Dễ", react:[.5, .8], err:2.4, hs:.1, ab:.45, cover:0, bait:0, eco:0}, {n:"Thường", react:[.27, .46], err:1.15, hs:.25, ab:.8, cover:.5, bait:.25, eco:1}, {n:"Khó", react:[.16, .3], err:.6, hs:.42, ab:1.15, cover:.9, bait:.5, eco:1}];
+const VER = "v29";
 
 function newAgent(cid, team, isPlayer, name) {
   const a = {cid, skin:AG[cid] ? cid : "lop", team, isPlayer, name, x:0, z:0, y:0, vy:0, vx:0, vz:0, yaw:0, pitch:0, hp:100, armor:0, alive:true, crouch:0, walk:false,
@@ -2365,7 +2369,8 @@ const enemies = a => AGS.filter(b => b.side !== a.side);
 const cur = a => a.ultW ? a.ultW : a.inv[a.cur];
 
 function startMatch(cid) {
-  M = {score:{atk:0, def:0}, round:0, phase:"buy", t:BUY_T, spike:null, plantedAt:null, lossStreak:{atk:0, def:0}, half:false, win:SET.len, log:[], over:false, msg:"", msgT:0, kf:[], plan:null, info:{}};
+  const quick = +SET.len === 5;
+  M = {score:{atk:0, def:0}, round:0, phase:"buy", t:BUY_T, spike:null, plantedAt:null, lossStreak:{atk:0, def:0}, half:false, quick, win:quick ? 3 : 13, halfR:quick ? 2 : 12, maxR:quick ? 5 : 24, clutch:{}, log:[], over:false, msg:"", msgT:0, kf:[], plan:null, info:{}};
   AGS = []; const pside = Math.random() < .5 ? "atk" : "def", others = AGIDS.filter(i => i !== cid).sort(() => Math.random() - .5), names = BOTN.slice().sort(() => Math.random() - .5);
   PL = newAgent(cid, "T1", true, (SV.name || "Bạn")); PL.side = pside; AGS.push(PL);
   for (let i = 0; i < 4; i++) { const b = newAgent(others[i], "T1", false, names[i]); b.side = pside; AGS.push(b); }
@@ -2375,10 +2380,12 @@ function startMatch(cid) {
 }
 function sideSpawn(a, i) { const cells = SPAWN[a.side === "atk" ? "a" : "d"], c = cells[(i * 7 + (Math.random() * 4 | 0)) % cells.length]; const p = cellW(c[0], c[1]); a.x = p.x + rnd(-.6, .6); a.z = p.z + rnd(-.6, .6); a.yaw = a.side === "atk" ? -Math.PI / 2 : Math.PI / 2; a.pitch = 0; }
 function newRound(first) {
-  M.round++; M.phase = "buy"; M.t = BUY_T; M.spike = null; M.plantedAt = null; M.info = {}; M.endWhy = "";
-  const half = Math.floor((M.win - 1)), ot = M.score.atk >= M.win - 1 && M.score.def >= M.win - 1;
-  if (M.round === half + 1 && !first) { for (const a of AGS) { a.side = a.side === "atk" ? "def" : "atk"; a.money = 800; a.inv[1] = null; a.inv[2] = {id:"but", mag:12, res:36}; a.armor = 0; a.ult = 0; a.ch = [0, 0, 0]; } M.lossStreak = {atk:0, def:0}; const t = M.score.atk; M.score.atk = M.score.def; M.score.def = t; flashMsg("ĐỔI BÊN", 3); }
-  if (ot) for (const a of AGS) a.money = Math.max(a.money, 5000);
+  if (M.spike && M.spike.m) SC.remove(M.spike.m); M.round++; M.phase = "buy"; M.t = BUY_T; M.spike = null; M.plantedAt = null; M.info = {}; M.endWhy = "";
+  const half = M.halfR, ot = !M.quick && M.round > M.maxR;
+  const swapSides = full => { for (const a of AGS) { a.side = a.side === "atk" ? "def" : "atk"; if (full) { a.money = 800; a.inv[1] = null; a.inv[2] = {id:"but", mag:12, res:36}; a.armor = 0; a.ult = 0; a.ch = [0, 0, 0]; } } M.lossStreak = {atk:0, def:0}; const t = M.score.atk; M.score.atk = M.score.def; M.score.def = t; };
+  if (M.round === half + 1 && !first) { swapSides(true); flashMsg("ĐỔI BÊN", 3); }
+  if (ot) { if (M.round > M.maxR + 1) swapSides(false); M.ot = true; for (const a of AGS) { a.money = 5000; a.ult = Math.max(a.ult, 0); } }
+  BARR && SC.remove(BARR); BARR = null; ORBS.forEach(o => SC.remove(o.m)); ORBS = [];
   clearSeq(); SMOKES.forEach(s => SC.remove(s.m)); SMOKES = []; ZONES.forEach(z => z.m && SC.remove(z.m)); ZONES = []; DYW.forEach(w => SC.remove(w.m)); DYW = []; OBJS.forEach(o => SC.remove(o.m)); OBJS = []; PROJ.forEach(p => SC.remove(p.m)); PROJ = []; DROPS.forEach(d => SC.remove(d.m)); DROPS = [];
   if (M.spikeM) { SC.remove(M.spikeM); M.spikeM = null; }
   const team = {atk:0, def:0};
@@ -2387,28 +2394,61 @@ function newRound(first) {
     a.alive = true; a.hp = 100; a.blind = a.stun = a.slow = a.detain = a.reveal = a.dash = a.stim = a.heal = 0; a.ultW = null; a.spike = false; a.plantT = a.defT = 0; a.vy = 0; a.y = 0; a.reload = 0; a.rec = 0;
     for (const s of [1, 2]) if (a.inv[s]) { a.inv[s].mag = W[a.inv[s].id].mag; a.inv[s].res = W[a.inv[s].id].res; }
     a.cur = a.inv[1] ? 1 : 2; AG[a.cid].ab.forEach((ab, i) => { if (i < 3 && ab.free) a.ch[i] = Math.max(a.ch[i], 1); });
-    sideSpawn(a, team[a.side]++); a.mesh.visible = !a.isPlayer; a.dmgBy = {}; if (a.bot) Object.assign(a.bot, {path:[], pi:0, goal:null, tgt:null, react:0, last:null, think:0, hold:null, ab:0, heard:null, plantSpot:null, role:null});
+    sideSpawn(a, team[a.side]++); a.mesh.visible = !a.isPlayer; a.dmgBy = {}; a.bought = []; a.rk = 0; a.orbT = 0; if (a.bot) Object.assign(a.bot, {path:[], pi:0, goal:null, tgt:null, react:0, last:null, think:0, hold:null, ab:0, heard:null, plantSpot:null, role:null, route:null, clear:null, pp:null, execUsed:false, rot:null, retreat:0, bait:0, baited:false, cov:null});
   }
   const atks = teamOf("atk"); const carrier = atks[Math.random() * atks.length | 0]; carrier.spike = true;
   if (PL.alive) buildViewModel(cur(PL).id, PL);
-  botsBuy(); planRound(); M.kf = []; flashMsg(M.round === 1 || M.round === half + 1 ? (PL.side === "atk" ? "BÊN CÔNG – mang bom tới A hoặc B" : "BÊN THỦ – giữ hai khu A và B") : "GIAI ĐOẠN MUA (B)", 3);
+  M.clutch = {}; buildBarrier(); spawnOrbs();
+  botsBuy(); planRound(); M.kf = []; if (M.ot && M.round === M.maxR + 1) setTimeout(() => flashMsg("HIỆP PHỤ – thắng cách biệt 2 hiệp", 3), 3100); flashMsg(M.round === 1 || M.round === half + 1 ? (PL.side === "atk" ? "BÊN CÔNG – mang bom tới A hoặc B" : "BÊN THỦ – giữ hai khu A và B") : "GIAI ĐOẠN MUA (B)", 3);
   if (PL.side === "atk" && PL.spike) setTimeout(() => flashMsg("Bạn đang cầm BOM – tới khu A/B, giữ F để đặt", 3), 3100);
 }
 function flashMsg(s, t = 2.2) { M.msg = s; M.msgT = t; }
+// rào chắn hiển thị quanh khu xuất phát trong giai đoạn mua
+let BARR = null, BARRMAT = null, ORBS = [];
+function buildBarrier() {
+  if (!SC) return; if (!BARRMAT) { const t = cvTex(64, 64, c => { c.fillStyle = "rgba(255,70,85,.18)"; c.fillRect(0, 0, 64, 64); c.strokeStyle = "rgba(255,120,130,.75)"; c.lineWidth = 6; for (let i = -64; i < 128; i += 22) { c.beginPath(); c.moveTo(i, 64); c.lineTo(i + 64, 0); c.stroke(); } c.fillStyle = "rgba(255,200,205,.9)"; c.fillRect(0, 60, 64, 4); });
+    t.wrapS = t.wrapT = THREE.RepeatWrapping; BARRMAT = new THREE.MeshBasicMaterial({map:t, transparent:true, opacity:.8, side:THREE.DoubleSide, depthWrite:false}); }
+  BARR = new THREE.Group(); const H = 3;
+  for (const k of ["a", "d"]) { const [x0, z0, x1, z1] = SPAWN_RECT[k]; const open = (x, z) => passable(x, z);
+    const wall = (cx, cz, horiz) => { const g = new THREE.PlaneGeometry(CS, H), m = new THREE.Mesh(g, BARRMAT); m.position.set(horiz ? (cx + .5) * CS : cx * CS, H / 2, horiz ? cz * CS : (cz + .5) * CS); if (!horiz) m.rotation.y = Math.PI / 2; BARR.add(m); };
+    for (let x = x0; x <= x1; x++) { if (open(x, z0 - 1) && open(x, z0)) wall(x, z0, true); if (open(x, z1 + 1) && open(x, z1)) wall(x, z1 + 1, true); }
+    for (let z = z0; z <= z1; z++) { if (open(x0 - 1, z) && open(x0, z)) wall(x0, z, false); if (open(x1 + 1, z) && open(x1, z)) wall(x1 + 1, z, false); } }
+  SC.add(BARR);
+}
+// quả cầu điểm tối thượng: giữ F 1 giây để nhặt (+1 điểm)
+const ORB_SPOTS = [[21, 15], [5, 21], [38, 21]];
+function spawnOrbs() { if (!SC) return; const pick = ORB_SPOTS.slice().sort(() => Math.random() - .5).slice(0, 2);
+  for (const c of pick) { const p = cellW(...c), m = new THREE.Mesh(new THREE.OctahedronGeometry(.28), new THREE.MeshBasicMaterial({color:0x9ffcff, transparent:true, opacity:.9, blending:THREE.AdditiveBlending})); m.position.set(p.x, 1.1, p.z); SC.add(m); ORBS.push({x:p.x, z:p.z, m}); } }
+function orbNear(a) { return ORBS.find(o => Math.hypot(o.x - a.x, o.z - a.z) < 1.3); }
 
 // ---------------- Kinh tế ----------------
-function give(a, id) { const w = W[id]; const old = a.inv[w.slot]; if (old && old.id !== "but" && w.slot === 1) dropWeapon(a, old, a.x + Math.cos(a.yaw) * .8, a.z + Math.sin(a.yaw) * .8); a.inv[w.slot] = {id, mag:w.mag, res:w.res}; a.cur = w.slot; a.swap = .6; if (a.isPlayer) buildViewModel(id, a); }
+function give(a, id) { const w = W[id]; const old = a.inv[w.slot], ob = old && (a.bought || []).find(q => q.what === old.id);
+  if (ob) { a.money = Math.min(9000, a.money + ob.cost); a.bought = a.bought.filter(q => q !== ob); a.inv[w.slot] = ob.prev; }
+  else if (old && old.id !== "but" && w.slot === 1) dropWeapon(a, old, a.x + Math.cos(a.yaw) * .8, a.z + Math.sin(a.yaw) * .8); a.inv[w.slot] = {id, mag:w.mag, res:w.res}; a.cur = w.slot; a.swap = .6; if (a.isPlayer) buildViewModel(id, a); }
 function buy(a, what) {
   if (M.phase !== "buy" || !a.alive) return false;
-  if (W[what]) { const w = W[what], has = a.inv[w.slot]; if ((has && has.id === what) || a.money < w.cost) return false; a.money -= w.cost; give(a, what); return true; }
-  if (ARMOR[what]) { const r = ARMOR[what]; if (a.armor >= r.v || a.money < r.cost) return false; a.money -= r.cost; a.armor = r.v; return true; }
-  if (what.startsWith("ab")) { const i = +what[2], ab = AG[a.cid].ab[i]; if (!ab || ab.ult || a.ch[i] >= ab.max || a.money < ab.cost) return false; a.money -= ab.cost; a.ch[i]++; return true; }
+  a.bought = a.bought || [];
+  if (W[what]) { const w = W[what], has = a.inv[w.slot]; if (has && has.id === what) return false; const ob = has && a.bought.find(q => q.what === has.id), money = a.money + (ob ? ob.cost : 0); if (money < w.cost) return false;
+    const prev = ob ? ob.prev : has && w.slot === 2 ? {...has} : null; give(a, what); a.money -= w.cost; a.bought.push({what, cost:w.cost, prev}); return true; }
+  if (ARMOR[what]) { const r = ARMOR[what], ob = a.bought.find(q => ARMOR[q.what]), base = ob ? ob.prev : a.armor, money = a.money + (ob ? ob.cost : 0); if (base >= r.v || (ob && ob.what === what) || money < r.cost) return false;
+    if (ob) { a.money += ob.cost; a.bought = a.bought.filter(q => q !== ob); } a.money -= r.cost; a.bought.push({what, cost:r.cost, prev:base}); a.armor = r.v; return true; }
+  if (what.startsWith("ab")) { const i = +what[2], ab = AG[a.cid].ab[i]; if (!ab || ab.ult || a.ch[i] >= ab.max || a.money < ab.cost) return false; a.money -= ab.cost; a.ch[i]++; a.bought.push({what, cost:ab.cost}); return true; }
   return false;
+}
+// bán lại món đã mua trong hiệp này (hoàn 100% khi còn giai đoạn mua)
+function sell(a, what) {
+  if (M.phase !== "buy" || !a.alive || !a.bought) return false; let j = -1; for (let i = a.bought.length - 1; i >= 0; i--) if (a.bought[i].what === what) { j = i; break; } if (j < 0) return false; const ob = a.bought[j];
+  if (W[what]) { const w = W[what]; if (!a.inv[w.slot] || a.inv[w.slot].id !== what) return false; a.inv[w.slot] = ob.prev; if (!a.inv[a.cur]) a.cur = a.inv[1] ? 1 : 2; if (a.isPlayer) buildViewModel(cur(a).id, a); }
+  else if (ARMOR[what]) a.armor = ob.prev; else { const i = +what[2]; if (a.ch[i] <= 0) return false; a.ch[i]--; }
+  a.money = Math.min(9000, a.money + ob.cost); a.bought.splice(j, 1); return true;
 }
 function botsBuy() {
   for (const a of AGS) { if (a.isPlayer) continue;
-    const pistol = M.round === 1 || M.round === Math.floor(M.win - 1) + 1, m = a.money, teamAvg = teamOf(a.side).reduce((s, b) => s + b.money, 0) / 5;
+    const pistol = M.round === 1 || M.round === M.halfR + 1, m = a.money, teamAvg = teamOf(a.side).reduce((s, b) => s + b.money, 0) / 5, Dd = DIFF[SET.diff];
+    const mp = M.score.atk === M.win - 1 || M.score.def === M.win - 1 || M.round === M.halfR || M.ot; // hiệp quyết định → mua hết
     if (pistol) { if (Math.random() < .5) buy(a, "light"); else if (Math.random() < .5) buy(a, "na"); }
+    else if (Dd.eco && !mp && teamAvg < 2400 && !a.inv[1]) { if (m >= 3900 && Math.random() < .3) buy(a, "light"); /* tiết kiệm (eco) cả đội */ }
+    else if (mp && m < 3900 && !a.inv[1]) { buy(a, m >= 1450 ? (Math.random() < .5 ? "phan" : "chong") : "bang"); if (a.money >= 400) buy(a, "light"); }
     else if (teamAvg >= 3600 || m >= 4200) { if (!a.inv[1]) buy(a, a.money >= 5700 && Math.random() < .2 ? "trangan" : Math.random() < .5 ? "sen" : "phuong"); buy(a, "heavy"); if (a.armor < 50) buy(a, "light"); }
     else if (m >= 2400 && teamAvg >= 2200) { buy(a, Math.random() < .6 ? "phan" : "chong"); buy(a, "light"); }
     else if (m >= 1400 && Math.random() < .3) { buy(a, "bang"); }
@@ -2417,17 +2457,19 @@ function botsBuy() {
 }
 function roundEnd(winSide, why) {
   if (M.phase === "end") return; M.phase = "end"; M.t = END_T; M.endWhy = why;
-  const lose = winSide === "atk" ? "def" : "atk"; M.score[winSide]++; M.lossStreak[winSide] = 0; M.lossStreak[lose] = Math.min(2, M.lossStreak[lose] + 1);
-  for (const a of AGS) { a.money = Math.min(9000, a.money + (a.side === winSide ? 3000 : 1900 + 500 * (M.lossStreak[lose] - 1))); if (a.side === "atk" && M.plantedAt && a.side !== winSide) a.money = Math.min(9000, a.money + 300); }
+  const lose = winSide === "atk" ? "def" : "atk"; M.score[winSide]++; M.lossStreak[winSide] = 0; M.lossStreak[lose] = Math.min(4, M.lossStreak[lose] + 1);
+  // thắng +3000 · thua 1900 → 2400 → 2900 → 3400 (tiền đặt bom +300 đã cộng lúc đặt)
+  for (const a of AGS) a.money = Math.min(9000, a.money + (a.side === winSide ? 3000 : 1900 + 500 * (M.lossStreak[lose] - 1)));
+  const cl = M.clutch[winSide]; if (cl && cl.a.alive && cl.vs >= 2) { M.kf.unshift({txt:`🔥 CLUTCH 1v${cl.vs} – ${cl.a.name}`, us:cl.a.side === PL.side, t:7}); flashMsg(`CLUTCH 1v${cl.vs}!`, 2.5); }
   const won = PL.side === winSide; sfx(won ? "round" : "lose");
   M.banner = {t:won ? "THẮNG HIỆP" : "THUA HIỆP", s:why, c:won ? "#45e3c4" : "#ff4b5c", life:END_T};
-  const us = PL.side, sc = M.score;
-  if (sc[us] + 0 >= M.win || sc[us === "atk" ? "def" : "atk"] >= M.win) { const ot = M.score.atk >= M.win - 1 && M.score.def >= M.win - 1; }
 }
 function checkMatchOver() {
-  const us = PL.side, them = us === "atk" ? "def" : "atk", a = M.score[us], b = M.score[them], W2 = M.win;
-  if ((a >= W2 || b >= W2) && Math.abs(a - b) >= 2 || (a >= W2 && b < W2 - 1) || (b >= W2 && a < W2 - 1) || a >= W2 + 3 || b >= W2 + 3) return a > b ? "win" : "lose";
-  return null;
+  // Tiêu chuẩn: ai tới 13 trước (tối đa 24 hiệp); 12–12 → hiệp phụ, thắng cách 2; sau 6 hiệp phụ là hiệp đột tử. Nhanh: tới 3, tối đa 5 hiệp.
+  const us = PL.side, them = us === "atk" ? "def" : "atk", a = M.score[us], b = M.score[them], W2 = M.win, res = a > b ? "win" : "lose";
+  if (M.quick) return a >= W2 || b >= W2 ? res : null;
+  if (a >= W2 - 1 && b >= W2 - 1) { if (Math.abs(a - b) >= 2) return res; if (M.round >= M.maxR + 6 && a !== b) return res; return null; }
+  return a >= W2 || b >= W2 ? res : null;
 }
 
 // ---------------- Bắn ----------------
@@ -2447,20 +2489,30 @@ function rayAgent(ox, oy, oz, d, b, maxd) {
   if (d.y < 0) { const t = (H - oy) / d.y; if (t > 0 && t < maxd) { const x = ox + d.x * t - b.x, z = oz + d.z * t - b.z; if (x * x + z * z < RAD * RAD) return {t, zone:0, y:H}; } }
   return null;
 }
+// xuyên vật thể: chỉ thùng gỗ/tường kỹ năng (không xuyên tường chính), mỗi lần xuyên giảm sát thương
+function penTrace(ox, oy, oz, d, maxd, pen) {
+  let t0 = traceSolid(ox, oy, oz, d.x, d.y, d.z, maxd), mul = 1, first = t0, n = 0;
+  while (pen > 0 && t0 < maxd && n < 2) { const x = ox + d.x * t0, z = oz + d.z * t0, y = oy + d.y * t0; if (SOL(x, z) === "#" || y < .02) break;
+    let t = t0; while (t < maxd && t - t0 <= pen && solidAt(ox + d.x * t, oy + d.y * t, oz + d.z * t)) t += .06; const thick = t - t0; if (thick > pen || t >= maxd) break;
+    mul *= clamp(1 - thick / pen * .55, .35, .8); n++; t0 = traceSolid(ox + d.x * t, oy + d.y * t, oz + d.z * t, d.x, d.y, d.z, maxd - t) + t; }
+  return {t:t0, first, mul, n};
+}
 function fireShot(a, wid, d, opt = {}) {
   const w = W[wid], ox = a.x, oy = eyeY(a) - .05, oz = a.z, maxd = wid === "knife" ? 2.2 : 120;
-  const tw = w.kind === "beam" ? maxd : traceSolid(ox, oy, oz, d.x, d.y, d.z, maxd);
+  const pt = w.kind === "beam" || wid === "knife" ? null : penTrace(ox, oy, oz, d, maxd, w.pen || 0), tw = w.kind === "beam" ? maxd : pt ? pt.t : traceSolid(ox, oy, oz, d.x, d.y, d.z, maxd);
   let best = null;
   for (const b of AGS) { if (b === a || !b.alive || b.side === a.side) continue; const h = rayAgent(ox, oy, oz, d, b, w.kind === "beam" ? maxd : tw); if (h && (!best || h.t < best.h.t)) best = {b, h}; if (h && w.kind === "beam") hurt(b, a, wid, 80, 1); }
   for (const o of OBJS) if (o.hp && o.side !== a.side) { const dx = o.x - ox, dz = o.z - oz, t = dx * d.x + dz * d.z; if (t > 0 && t < tw && Math.hypot(ox + d.x * t - o.x, oz + d.z * t - o.z) < .5 && oy + d.y * t < .9) { o.hp -= w.dmg[1]; if (o.hp <= 0) killObj(o); } }
-  for (const ww of DYW) if (ww.hp) { const t = tw; const hx = ox + d.x * t, hz = oz + d.z * t; if (dywHit(hx + d.x * .1, hz + d.z * .1) === ww) { ww.hp -= w.dmg[1]; if (ww.hp <= 0) { SC.remove(ww.m); DYW = DYW.filter(q => q !== ww); } } }
+  for (const ww of DYW) if (ww.hp) { const t = pt ? pt.first : tw; const hx = ox + d.x * t, hz = oz + d.z * t; if (dywHit(hx + d.x * .1, hz + d.z * .1) === ww) { ww.hp -= w.dmg[1]; if (ww.hp <= 0) { SC.remove(ww.m); DYW = DYW.filter(q => q !== ww); } } }
   const endT = w.kind === "beam" ? maxd : best ? best.h.t : tw;
   if (!opt.silent && wid !== "knife") { const tx = ox + d.x * endT, ty = oy + d.y * endT, tz = oz + d.z * endT;
     if (w.kind === "beam") { const g = new THREE.Mesh(new THREE.CylinderGeometry(.18, .18, endT, 8), new THREE.MeshBasicMaterial({color:0x8fd8ff, transparent:true, blending:THREE.AdditiveBlending})); g.position.set((ox + tx) / 2, (oy + ty) / 2, (oz + tz) / 2); g.lookAt(tx, ty, tz); g.rotateX(Math.PI / 2); addFx(g, .5, (f, k) => g.material.opacity = 1 - k); }
     else if (a.isPlayer ? Math.random() < .5 : true) tracer(ox + d.x * 1.2, oy - (a.isPlayer ? .15 : 0) + d.y * 1.2, oz + d.z * 1.2, tx, ty, tz, a.side === PL.side ? 0xfff2b0 : 0xffb0a0);
-    if (!best && endT < maxd - .1) impact(ox + d.x * (endT - .03), oy + d.y * (endT - .03), oz + d.z * (endT - .03), false); }
+    if (!best && endT < maxd - .1) impact(ox + d.x * (endT - .03), oy + d.y * (endT - .03), oz + d.z * (endT - .03), false);
+    if (pt && pt.n && pt.first < endT) impact(ox + d.x * (pt.first - .03), oy + d.y * (pt.first - .03), oz + d.z * (pt.first - .03), false); }
   if (best && w.kind !== "beam") { let dmg = w.dmg[best.h.zone]; if (w.fall) for (const [dist, mul] of w.fall) if (best.h.t > dist) dmg = Math.round(w.dmg[best.h.zone] * mul);
-    if (wid === "knife") { const back = Math.abs(angDiff(best.b.yaw, a.yaw)) < .9; dmg = back ? 100 : 50; }
+    if (pt && pt.n && best.h.t > pt.first) { dmg = Math.round(dmg * pt.mul); if (a.isPlayer) HUDS.wb = .4; }
+    if (wid === "knife") { const back = Math.abs(angDiff(best.b.yaw, a.yaw)) < .9; dmg = back ? w.back : w.dmg[0]; }
     hurt(best.b, a, wid, dmg, best.h.zone === 0); impact(ox + d.x * best.h.t, best.h.y, oz + d.z * best.h.t, true); return best; }
   return null;
 }
@@ -2475,14 +2527,16 @@ function hurt(b, a, wid, dmg, head) {
 }
 function kill(b, a, wid, head) {
   b.alive = false; b.hp = 0; b.deadT = 0; b.d++; b.ult = Math.min(9, b.ult + 1); if (a && a !== b && a.side !== b.side) { a.k++; a.ult = Math.min(9, a.ult + 1); a.money = Math.min(9000, a.money + 200); }
-  for (const n in b.dmgBy) { const as = AGS.find(x => x.name === n); if (as && as !== a && as.side !== b.side && b.dmgBy[n] >= 50) as.as++; }
+  for (const n in b.dmgBy) { const as = AGS.find(x => x.name === n); if (as && as !== a && as.side !== b.side && b.dmgBy[n] >= 50) { as.as++; as.money = Math.min(9000, as.money + 100); } }
+  if (a && a !== b && a.side !== b.side) { a.rk = (a.rk || 0) + 1; if (a.rk === 5) { M.kf.unshift({txt:`⭐ ACE – ${a.name}`, us:a.side === PL.side, t:7}); flashMsg("ACE – " + a.name, 2.5); } }
   M.kf.unshift({a:a ? a.name : "?", ac:a ? a.side === PL.side : false, w:W[wid] ? W[wid].n : wid === "fire" ? "Lửa" : wid === "boom" ? "Nổ" : "Kỹ năng", b:b.name, bc:b.side === PL.side, head, t:6}); if (M.kf.length > 5) M.kf.pop();
   if (a && a.isPlayer) sfx("kill"); if (b.spike) { b.spike = false; M.spike = {x:b.x, z:b.z, dropped:true}; }
   if (b.inv[1]) { dropWeapon(b, b.inv[1], b.x, b.z); b.inv[1] = null; } b.ultW = null; b.plantT = b.defT = 0;
   if (b.isPlayer) { HUDS.killer = a ? a.name + " – " + (W[wid] ? W[wid].n : "kỹ năng") : ""; HUDS.spec = 0; if (VM) VM.g.visible = false; }
   sfx("hit", b.x, b.z, .4);
   // hết người
-  const s = b.side, alive = AGS.filter(x => x.side === s && x.alive).length;
+  const s = b.side, aliveL = AGS.filter(x => x.side === s && x.alive), alive = aliveL.length;
+  if (alive === 1 && !M.clutch[s] && M.phase !== "end") { const vs = AGS.filter(x => x.side !== s && x.alive).length; if (vs >= 2) M.clutch[s] = {a:aliveL[0], vs}; }
   if (!alive && M.phase === "live") { if (s === "atk" && M.plantedAt) {} else roundEnd(s === "atk" ? "def" : "atk", "Tiêu diệt toàn đội"); }
 }
 function dropWeapon(a, inv, x, z) { const w = W[inv.id]; const m = new THREE.Mesh(new THREE.BoxGeometry(w.kind === "sniper" ? 1.1 : .8, .12, .18), new THREE.MeshLambertMaterial({color:0x2c2f36, emissive:0x223344})); m.position.set(x, .1, z); m.rotation.y = rnd(0, 6); SC.add(m); DROPS.push({inv:{...inv}, x, z, m}); }
@@ -2493,7 +2547,8 @@ function tryFire(a, dt) {
   if (a.fireT > 0) return false;
   if (w.mag && iw.mag <= 0) { startReload(a); return false; }
   const spd = Math.hypot(a.vx, a.vz), stimM = a.stim > 0 ? 1.15 : 1, zoomed = a.zoom && w.zoom;
-  let sp = w.kind === "knife" ? 0 : w.sp[0] + (spd > 2.2 ? w.sp[1] * Math.min(1, spd / 6) : 0) + (a.y > .05 ? w.sp[2] : 0); if (a.crouch > .5) sp *= .8; if (zoomed) sp = w.zsp !== undefined ? w.zsp + (spd > 2.2 ? w.sp[1] : 0) : sp * .7; if (a.stun > 0) sp += 3;
+  // tốc độ < 1.2 (đã dừng/counter-strafe) → chính xác như đứng yên; Shift đi bộ chỉ chịu ~40% phạt di chuyển
+  let sp = w.kind === "knife" ? 0 : w.sp[0] + (spd > 1.2 ? w.sp[1] * clamp((spd - 1.2) / 5.5, 0, 1) * (a.walk ? .4 : 1) : 0) + (a.y > .05 ? w.sp[2] : 0); if (a.crouch > .5) sp *= w.kind === "sniper" ? .6 : w.kind === "shotgun" ? 1 : .75; if (zoomed) sp = w.zsp !== undefined ? w.zsp + (spd > 2.2 ? w.sp[1] : 0) : sp * .7; if (a.stun > 0) sp += 3;
   const ri = Math.min(a.rec, w.rec ? w.rec[1] : 0), recP = w.rec ? ri * w.rec[0] : 0, recY = w.rec && a.rec > w.rec[1] ? Math.sin(a.rec * 1.7) * w.rec[2] * (a.rec - w.rec[1]) * .5 : 0;
   if (a.rec >= 1 && w.kind !== "sniper" && w.kind !== "pistol") sp += Math.min(1.6, a.rec * .12);
   if (a.bot) sp = 0;
@@ -2524,7 +2579,7 @@ function moveAgent(a, wx, wz, dt, wantSpeed) {
   if (a.plantT > 0 || a.defT > 0) sp = 0;
   const air = a.y > .02, acc = air ? 12 : 60, tx = wx * sp, tz = wz * sp;
   const k = Math.min(1, acc * dt / Math.max(.1, Math.hypot(tx - a.vx, tz - a.vz) || 1));
-  a.vx += (tx - a.vx) * Math.min(1, acc * dt / 6.75); a.vz += (tz - a.vz) * Math.min(1, acc * dt / 6.75);
+  const cs = !air && (tx * a.vx + tz * a.vz) < 0 ? 1.8 : 1; a.vx += (tx - a.vx) * Math.min(1, acc * cs * dt / 6.75); a.vz += (tz - a.vz) * Math.min(1, acc * cs * dt / 6.75);
   if (a.dash > 0) { a.dash -= dt; }
   collide(a, a.x + a.vx * dt, a.z + a.vz * dt);
   if (air || a.vy) { a.vy -= 17 * dt; a.y += a.vy * dt; if (a.y <= 0) { a.y = 0; a.vy = 0; } }
@@ -2656,7 +2711,10 @@ function castAb(a, k) {
 // ---------------- Bom ----------------
 function tickSpike(dt) {
   if (M.phase !== "live" && M.phase !== "post") return;
-  if (M.spike && M.spike.dropped) { for (const a of AGS) if (a.alive && a.side === "atk" && Math.hypot(a.x - M.spike.x, a.z - M.spike.z) < 1.2) { a.spike = true; M.spike = null; if (a.isPlayer) flashMsg("Đã nhặt BOM", 1.5); break; } }
+  if (M.spike && M.spike.dropped) { const S = M.spike; if (!S.m && SC) { S.m = new THREE.Group(); S.m.add(box(.45, .3, .45, 0x333a44, 0, .15, 0)); const l = new THREE.Mesh(new THREE.SphereGeometry(.1, 8, 6), new THREE.MeshBasicMaterial({color:0xffcc33})); l.position.y = .36; S.m.add(l); S.m.position.set(S.x, 0, S.z); SC.add(S.m); }
+    S.np = Math.max(0, (S.np || 0) - dt); S.m && (S.m.rotation.y += dt * 1.5);
+    for (const a of AGS) if (a.alive && a.side === "atk" && !(S.np > 0 && S.by === a) && Math.hypot(a.x - S.x, a.z - S.z) < 1.2) { a.spike = true; S.m && SC.remove(S.m); M.spike = null; if (a.isPlayer) flashMsg("Đã nhặt BOM", 1.5); else if (a.side === PL.side) flashMsg(a.name + " đã nhặt BOM", 1.5); break; } }
+  for (const o of ORBS) o.m.rotation.y += dt * 2;
   if (M.plantedAt) {
     M.spikeT -= dt; const p = M.plantedAt; M.beep = (M.beep || 0) - dt; if (M.beep <= 0) { M.beep = M.spikeT > 20 ? 1 : M.spikeT > 10 ? .5 : M.spikeT > 5 ? .25 : .12; sfx("beep", p.x, p.z, 1); if (M.spikeM) M.spikeM.children[1].material.color.setHex(0xff2222); }
     else if (M.spikeM && M.beep < .06) M.spikeM.children[1].material.color.setHex(0x550000);
@@ -2668,13 +2726,15 @@ function plantDone(a) {
   const g = new THREE.Group(); g.add(box(.5, .35, .5, 0x333a44, 0, .18, 0)); const l = new THREE.Mesh(new THREE.SphereGeometry(.12, 8, 6), new THREE.MeshBasicMaterial({color:0xff2222})); l.position.y = .42; g.add(l); g.position.set(a.x, 0, a.z); SC.add(g); M.spikeM = g;
   flashMsg("BOM ĐÃ ĐƯỢC ĐẶT TẠI " + M.plantedAt.site, 3); sfx("plant", a.x, a.z, 1);
 }
+function dropSpike(a) { if (!a.spike || !a.alive) return false; a.spike = false; let x = a.x + Math.cos(a.yaw) * 1.4, z = a.z + Math.sin(a.yaw) * 1.4; if (SOL(x, z) !== ".") { x = a.x; z = a.z; } M.spike = {x, z, dropped:true, np:1.5, by:a}; if (a.isPlayer) flashMsg("Đã thả BOM", 1.2); return true; }
 function defuseDone(a) { a.ult = Math.min(9, a.ult + 1); roundEnd("def", "Đã gỡ bom"); if (M.spikeM) M.spikeM.children[1].material.color.setHex(0x33ff66); }
 // hành động giữ F: đặt / gỡ / nhặt súng
 function interact(a, hold, dt) {
   if (!a.alive) return;
-  if (!hold) { if (a.plantT > 0 || a.defT > 0) { if (a.defT >= DEFUSE_T / 2) a.defHalf = true; } a.plantT = 0; a.defT = 0; return; }
+  if (!hold) { if (a.plantT > 0 || a.defT > 0) { if (a.defT >= DEFUSE_T / 2) a.defHalf = true; } a.plantT = 0; a.defT = 0; a.orbT = 0; return; }
   if (a.side === "atk" && a.spike && M.phase === "live" && (zoneAt(a.x, a.z) === "A" || zoneAt(a.x, a.z) === "B") && a.y < .05) { a.plantT += dt; if (a.plantT >= PLANT_T) { a.plantT = 0; plantDone(a); } return; }
   if (a.side === "def" && M.plantedAt && M.phase === "post" && Math.hypot(a.x - M.plantedAt.x, a.z - M.plantedAt.z) < 1.6) { if (!a.defT && a.defHalf) a.defT = DEFUSE_T / 2; a.defT += dt; if (a.defT >= DEFUSE_T) { a.defT = 0; defuseDone(a); } return; }
+  const ob = (M.phase === "live" || M.phase === "post") && orbNear(a); if (ob) { a.orbT += dt; if (a.orbT >= 1) { a.orbT = 0; a.ult = Math.min(9, a.ult + 1); SC.remove(ob.m); ORBS = ORBS.filter(q => q !== ob); if (a.isPlayer) { flashMsg("+1 điểm tối thượng", 1.4); sfx("buy"); } } return; }
 }
 function pickupNear(a) { let best = null, bd = 1.6; for (const d of DROPS) { const dd = Math.hypot(d.x - a.x, d.z - a.z); if (dd < bd) { bd = dd; best = d; } } if (!best) return false;
   const w = W[best.inv.id]; if (a.inv[w.slot]) dropWeapon(a, a.inv[w.slot], a.x, a.z); a.inv[w.slot] = best.inv; SC.remove(best.m); DROPS = DROPS.filter(q => q !== best); a.cur = w.slot; a.swap = .6; if (a.isPlayer) { buildViewModel(best.inv.id, a); sfx("buy"); } return true; }
@@ -2691,7 +2751,9 @@ function planRound() {
   const defs = teamOf("def").filter(a => a.bot), order = [["A", 0], ["B", 0], ["A", 1], ["B", 1], ["mid", 0], ["A", 2], ["B", 2]]; let oi = 0;
   const hasPlayerDef = PL.side === "def"; if (hasPlayerDef) oi = Math.random() < .5 ? 0 : 1;
   for (const b of defs) { const [k, j] = order[oi++ % order.length]; b.bot.role = k; b.bot.hold = HOLDS[k][j]; }
-  const atks = teamOf("atk").filter(a => a.bot); atks.forEach((b, i) => { b.bot.role = i === 3 && Math.random() < .6 ? "lurk" : "main"; b.bot.off = [rnd(-1.2, 1.2), rnd(-1.2, 1.2)]; });
+  // tách đội: 35% hiệp chia 2 hướng (một nửa đi đường còn lại vào cùng khu), có thể kèm 1 người lẻn (lurk) giữ hướng còn lại
+  const split = Math.random() < .35; M.plan.split = split;
+  const atks = teamOf("atk").filter(a => a.bot); atks.forEach((b, i) => { b.bot.role = i === 3 && Math.random() < .6 ? "lurk" : "main"; b.bot.off = [rnd(-1.2, 1.2), rnd(-1.2, 1.2)]; b.bot.route = split && i % 2 ? ROUTES[site][ROUTES[site][0] === route ? 1 : 0] : route; });
 }
 function setAim(b, x, y, z) { const dx = x - b.x, dz = z - b.z, dy = y - eyeY(b); b.bot.ty = Math.atan2(dz, dx); b.bot.tp = Math.atan2(dy, Math.hypot(dx, dz)); }
 function snapAim(b) { b.yaw = b.bot.ty; b.pitch = b.bot.tp; }
@@ -2744,14 +2806,16 @@ function botTick(b, dt) {
   // di chuyển
   let mx = 0, mz = 0, speed = 6.75; b.walk = false;
   const inFight = B.tgt && B.tgt.alive;
-  if (inFight) { const k = W[cur(b).id].kind; if (k === "smg" || k === "shotgun" || k === "knife" || b.reload > 0) { B.strafe -= dt; if (B.strafe <= 0) { B.strafe = rnd(.25, .6); B.sd = Math.random() < .5 ? -1 : 1; } mx = Math.cos(b.yaw + Math.PI / 2) * B.sd; mz = Math.sin(b.yaw + Math.PI / 2) * B.sd; if (k === "knife") { mx = Math.cos(b.yaw); mz = Math.sin(b.yaw); } }
+  const Dd2 = DIFF[SET.diff]; if (inFight && !B.retreat && (b.reload > 0 || b.hp < 35) && !B.action && Math.random() < Dd2.cover * dt * 3) { B.retreat = rnd(1, 1.8); }
+  if (B.retreat > 0) { B.retreat = Math.max(0, B.retreat - dt); const e = B.tgt || B.last; if (e) { const ax = b.x - e.x, az = b.z - e.z, L = Math.hypot(ax, az) || 1; mx = ax / L + Math.cos(b.yaw + Math.PI / 2) * .5 * (B.sd || 1); mz = az / L + Math.sin(b.yaw + Math.PI / 2) * .5 * (B.sd || 1); const L2 = Math.hypot(mx, mz) || 1; mx /= L2; mz /= L2; } b.crouch = 0; }
+  else if (inFight) { const k = W[cur(b).id].kind; if (k === "smg" || k === "shotgun" || k === "knife" || b.reload > 0) { B.strafe -= dt; if (B.strafe <= 0) { B.strafe = rnd(.25, .6); B.sd = Math.random() < .5 ? -1 : 1; } mx = Math.cos(b.yaw + Math.PI / 2) * B.sd; mz = Math.sin(b.yaw + Math.PI / 2) * B.sd; if (k === "knife") { mx = Math.cos(b.yaw); mz = Math.sin(b.yaw); } }
     b.crouch = (b.rec > 5 && Math.random() < .02) ? 1 : b.crouch > 0 && b.rec > 3 ? 1 : 0; }
   else if (B.path.length && B.pi < B.path.length && !B.action) { b.crouch = 0; const p = B.path[B.pi], dx = p.x - b.x, dz = p.z - b.z, L = Math.hypot(dx, dz);
     if (L < .45) B.pi++; else { mx = dx / L; mz = dz / L; B.mvYaw = Math.atan2(dz, dx); }
     if (B.slowApproach && B.goal && Math.hypot(B.goal.x - b.x, B.goal.z - b.z) < 9) { speed = 3.6; b.walk = true; }
     B.stuck = (B.stuck || 0) + (b.mv < .8 ? dt : -dt); if (B.stuck > 1.2) { B.stuck = 0; if (B.goal) { B.path = pathTo(b.x, b.z, B.goal.x + rnd(-1, 1), B.goal.z + rnd(-1, 1)); B.pi = 0; } } }
   else { b.crouch = 0; B.mvYaw = undefined; }
-  if (B.action === "plant" || B.action === "defuse") { mx = mz = 0; }
+  if (B.action === "plant" || B.action === "defuse" || B.action === "orb") { mx = mz = 0; }
   moveAgent(b, mx, mz, dt, speed);
   interact(b, !!B.action && !inFight, dt);
 }
@@ -2760,7 +2824,7 @@ function botDecide(b) {
   if (M.phase === "buy") { if (b.side === "def" && B.hold) { const h = B.hold, fp = cellW(...h.f); setAim(b, fp.x, 1.3, fp.z); } return; }
   const known = M.know && M.know[b.side];
   // dùng kỹ năng
-  B.ab -= .1;
+  B.ab -= .1 * DIFF[SET.diff].ab;
   if (B.ab <= 0) { B.ab = rnd(.8, 1.6);
     if (B.tgt) { const d = Math.hypot(B.tgt.x - b.x, B.tgt.z - b.z);
       if (d < 22 && Math.random() < .35 && botAbility(b, ["stunline", "bigstun", "rocket", "blades", "beam"])) return;
@@ -2771,12 +2835,14 @@ function botDecide(b) {
     if (post && b.side === "def" && M.plantedAt && Math.hypot(M.plantedAt.x - b.x, M.plantedAt.z - b.z) < 30 && AGS.filter(x => x.side === "atk" && x.alive).length >= 2 && Math.random() < .3) { if (botAbility(b, ["detain", "orbital"])) return; }
     if (b.side === "def" && live && B.hold && M.t > ROUND_T - 8 && Math.hypot(cellW(...B.hold.c).x - b.x, cellW(...B.hold.c).z - b.z) < 3) { const fp = cellW(...B.hold.f); setAim(b, fp.x, 0, fp.z); snapAim(b); b.pitch = -.4; if (botAbility(b, ["trap", "turret"])) return; b.pitch = .15; if (Math.random() < .4 && botAbility(b, ["recon"])) return; }
   }
+  // cầu tối thượng gần và không giao tranh → nhặt
+  if (!B.tgt && ORBS.length && b.ult < AG[b.cid].ab[3].ult) { const o = ORBS.find(q => Math.hypot(q.x - b.x, q.z - b.z) < 7); if (o && !(o.claim && o.claim !== b && o.claim.alive)) { o.claim = b; goTo(b, o.x, o.z); if (Math.hypot(o.x - b.x, o.z - b.z) < 1) B.action = "orb"; return; } }
   // bom rơi
   if (b.side === "atk" && M.spike && M.spike.dropped) { const near = teamOf("atk").filter(a => a.alive && a.bot).sort((p, q) => Math.hypot(p.x - M.spike.x, p.z - M.spike.z) - Math.hypot(q.x - M.spike.x, q.z - M.spike.z))[0]; if (near === b) { goTo(b, M.spike.x, M.spike.z); return; } }
   if (b.side === "atk") {
     if (live) {
-      const route = pl.route, stage = cellW(...route.stage), entry = cellW(...route.entry);
-      const atks = teamOf("atk").filter(a => a.alive), near = atks.filter(a => Math.hypot(a.x - stage.x, a.z - stage.z) < 8).length;
+      const route = B.route || pl.route, stage = cellW(...route.stage), entry = cellW(...route.entry);
+      const atks = teamOf("atk").filter(a => a.alive), near = atks.filter(a => { const r = (a.bot && a.bot.route) || pl.route, sg = cellW(...r.stage); return Math.hypot(a.x - sg.x, a.z - sg.z) < 8; }).length;
       if (pl.stage === "gather" && (near >= atks.length - 1 || M.t < pl.execT || (known && known.site === pl.site))) { pl.stage = "exec"; M.execAt = M.t; }
       if (B.role === "lurk" && pl.stage === "gather") { const o = ROUTES[pl.site === "A" ? "B" : "A"][0]; const p = cellW(...o.stage); goTo(b, p.x, p.z); if (Math.hypot(p.x - b.x, p.z - b.z) < 3) B.face = cellW(...o.entry); return; }
       if (pl.stage === "gather") { goTo(b, stage.x + B.off[0], stage.z + B.off[1]); if (Math.hypot(stage.x - b.x, stage.z - b.z) < 4) B.face = entry; return; }
@@ -2794,7 +2860,10 @@ function botDecide(b) {
       goTo(b, B.pp.x, B.pp.z); B.face = {x:p.x, z:p.z}; return; }
   } else {
     if (post && M.plantedAt) { const p = M.plantedAt, defs = teamOf("def").filter(a => a.alive && a.bot), me = defs.sort((x, y) => Math.hypot(x.x - p.x, x.z - p.z) - Math.hypot(y.x - p.x, y.z - p.z))[0] === b;
-      if (me || defs.length === 1 || M.spikeT < 12) { goTo(b, p.x, p.z); B.slowApproach = true; if (Math.hypot(p.x - b.x, p.z - b.z) < 1.2 && !B.tgt) { const atkSeen = AGS.some(e => e.side === "atk" && e.alive && visibleTo(b, e)); if (!atkSeen || M.spikeT < DEFUSE_T + .5) B.action = "defuse"; } }
+      if (me || defs.length === 1 || M.spikeT < 12) { goTo(b, p.x, p.z); B.slowApproach = true; if (Math.hypot(p.x - b.x, p.z - b.z) < 1.2 && !B.tgt) { const atkSeen = AGS.some(e => e.side === "atk" && e.alive && visibleTo(b, e)), atkAlive = AGS.some(e => e.side === "atk" && e.alive);
+          if (B.bait > 0) { B.bait -= .1; B.action = B.bait > .6 ? "defuse" : null; }
+          else if (!B.baited && atkAlive && M.spikeT > DEFUSE_T + 4 && Math.random() < DIFF[SET.diff].bait) { B.baited = true; B.bait = 1.6; B.action = "defuse"; }
+          else if (!atkSeen || M.spikeT < DEFUSE_T + .5) B.action = "defuse"; } }
       else { const a = Math.atan2(b.z - p.z, b.x - p.x); goTo(b, p.x + Math.cos(a) * 6, p.z + Math.sin(a) * 6); B.slowApproach = true; } return; }
     if (live) {
       // xoay vòng khi có tin địch ở khu khác
@@ -2815,7 +2884,7 @@ function buildUI() {
   ROOT.insertAdjacentHTML("beforeend", `
   <div class="djvm"></div><div class="djflash"></div><div class="djdmg"></div><div class="djsmoke"></div><div class="djscope"></div>
   <div class="djx"><i></i><i></i><i></i><i></i><b></b></div><div class="djhitm"></div>
-  <div class="djtop"><div class="djtm l"></div><div class="djsc"><b class="s1">0</b><div class="djclock">1:40</div><b class="s2">0</b></div><div class="djtm r"></div></div>
+  <div class="djtop"><div class="djtm l"></div><div class="djsc"><b class="s1">0</b><div class="djcw"><div class="djclock">1:40</div><small class="djrn">HIỆP 1</small></div><b class="s2">0</b></div><div class="djtm r"></div></div>
   <canvas class="djmini" width="210" height="162"></canvas>
   <div class="djkf"></div>
   <div class="djmsg"></div><div class="djban"><b></b><span></span></div>
@@ -2837,12 +2906,12 @@ const splash = id => (PXV.i[id] && PXV.i[id].splash) || face(id);
 function showSelect() {
   const box2 = UI.djsel; box2.hidden = false; let pick = SV.sel in AG ? SV.sel : "lop";
   const draw = () => { const A = AG[pick];
-    box2.innerHTML = `<div class="dsl"><h2>CHỌN ĐẶC VỤ</h2><p class="sub">Đột Kích 5v5 – Giảng Đường Hoa Lư · Đấu tới ${SET.len} hiệp · Bot: ${DIFF[SET.diff].n}</p>
+    box2.innerHTML = `<div class="dsl"><h2>CHỌN ĐẶC VỤ</h2><p class="sub">Đột Kích 5v5 – Giảng Đường Hoa Lư · ${+SET.len === 5 ? "Nhanh: tới 3 (5 hiệp)" : "Tiêu chuẩn: tới 13 (24 hiệp + hiệp phụ)"} · Bot: ${DIFF[SET.diff].n} · ${VER}</p>
       <div class="dsd"><img src="${splash(pick)}"><div><h3 style="color:${A.col}">${agName(pick)}</h3><em>${ROLE[A.role]}</em>
       ${A.ab.map((ab, i) => `<p><kbd>${KEYS[i]}</kbd><b>${ab.n}</b>${i === 3 ? ` <small>(${ab.ult} điểm)</small>` : ab.free ? " <small>(miễn phí)</small>" : ` <small>(${ab.cost}¢)</small>`}<br><span>${ab.d}</span></p>`).join("")}</div></div>
       <div class="dsg">${AGIDS.map(id => `<button data-id="${id}" class="${id === pick ? "on" : ""}"><img src="${face(id)}"><span>${agName(id)}</span></button>`).join("")}</div>
       <div class="dso"><label>Độ khó bot <select data-o="diff">${DIFF.map((d, i) => `<option value="${i}" ${i == SET.diff ? "selected" : ""}>${d.n}</option>`).join("")}</select></label>
-      <label>Thể thức <select data-o="len"><option value="13" ${SET.len == 13 ? "selected" : ""}>Tiêu chuẩn (13 hiệp)</option><option value="5" ${SET.len == 5 ? "selected" : ""}>Nhanh (5 hiệp)</option></select></label></div>
+      <label>Thể thức <select data-o="len"><option value="13" ${SET.len != 5 ? "selected" : ""}>Tiêu chuẩn (tới 13)</option><option value="5" ${SET.len == 5 ? "selected" : ""}>Nhanh (tới 3 · 5 hiệp)</option></select></label></div>
       <div class="dsb"><button class="ghost" data-x="1">← Trang chủ</button><button class="lock">KHOÁ ĐẶC VỤ</button></div></div>`;
     box2.querySelectorAll(".dsg button").forEach(b => b.onclick = () => { pick = b.dataset.id; sfx("buy"); draw(); });
     box2.querySelectorAll("select").forEach(s => s.onchange = () => { SET[s.dataset.o] = +s.value; saveSet(); draw(); });
@@ -2851,26 +2920,31 @@ function showSelect() {
 }
 function renderBuy() {
   const a = PL, b = UI.djbuy;
-  b.innerHTML = `<div class="dbh"><b>CỬA HÀNG</b><span>💰 ${a.money}</span><small>Thời gian mua: ${Math.ceil(M.t)}s · B để đóng</small></div><div class="dbg">` +
+  b.innerHTML = `<div class="dbh"><b>CỬA HÀNG</b><span>💰 ${a.money}</span><small>Thời gian mua: ${Math.ceil(M.t)}s · bấm lại món vừa mua (hoặc chuột phải) để BÁN hoàn 100% · B để đóng</small></div><div class="dbg">` +
     SHOP.map(([cat, ids]) => `<div class="dbc"><h4>${cat}</h4>${ids.map(id => { const w = W[id], own = a.inv[w.slot] && a.inv[w.slot].id === id; return `<button data-b="${id}" class="${own ? "own" : a.money < w.cost ? "no" : ""}">${PXV.ic[id] ? `<img src="${PXV.ic[id]}">` : ""}<b>${w.n}</b><span>${w.cost}</span><small>${w.dmg[1]} thân · ${w.dmg[0]} đầu${w.auto ? " · tự động" : ""}</small></button>`; }).join("")}</div>`).join("") +
     `<div class="dbc"><h4>Giáp</h4>${Object.entries(ARMOR).map(([k, r]) => `<button data-b="${k}" class="${a.armor >= r.v ? "own" : a.money < r.cost ? "no" : ""}">${PXV.ic[k] ? `<img src="${PXV.ic[k]}">` : ""}<b>${r.n}</b><span>${r.cost}</span><small>+${r.v} giáp</small></button>`).join("")}</div>
      <div class="dbc"><h4>Kỹ năng</h4>${AG[a.cid].ab.slice(0, 3).map((ab, i) => `<button data-b="ab${i}" class="${a.ch[i] >= ab.max ? "own" : a.money < ab.cost ? "no" : ""}"><b>${KEYS[i]} · ${ab.n}</b><span>${ab.cost || "free"}</span><small>${a.ch[i]}/${ab.max}</small></button>`).join("")}</div></div>
      <div class="dbt">${teamOf(a.side).map(t => `<span><img src="${face(t.cid)}">${t.name}<b>${t.money}</b>${t.inv[1] ? W[t.inv[1].id].n : ""}</span>`).join("")}</div>`;
-  b.querySelectorAll("[data-b]").forEach(x => x.onclick = e => { e.stopPropagation(); if (buy(a, x.dataset.b)) sfx("buy"); else sfx("deny"); renderBuy(); });
+  const sold = id => (a.bought || []).some(q => q.what === id);
+  b.querySelectorAll("[data-b]").forEach(x => { const id = x.dataset.b; if (sold(id)) { x.classList.add("sell"); x.title = "Bấm để bán lại"; }
+    x.onclick = e => { e.stopPropagation(); const own = x.classList.contains("own"); if (own && sold(id) ? sell(a, id) : buy(a, id)) sfx("buy"); else sfx("deny"); renderBuy(); };
+    x.oncontextmenu = e => { e.preventDefault(); e.stopPropagation(); if (sell(a, id)) sfx("buy"); else sfx("deny"); renderBuy(); }; });
 }
 function toggleBuy(on) { BUYOPEN = on ?? !BUYOPEN; if (BUYOPEN && (M.phase !== "buy" || !PL.alive)) BUYOPEN = false; UI.djbuy.hidden = !BUYOPEN; if (BUYOPEN) { renderBuy(); if (document.pointerLockElement) document.exitPointerLock(); } else requestLock(); }
 function renderTab() {
-  const row = a => `<tr class="${a.alive ? "" : "dead"} ${a.isPlayer ? "me" : ""}"><td><img src="${face(a.cid)}"></td><td>${a.name}</td><td>${a.k}</td><td>${a.d}</td><td>${a.as}</td><td>${a.side === PL.side ? a.money : ""}</td><td>${a.ult}/${AG[a.cid].ab[3].ult}</td></tr>`;
+  const row = a => `<tr class="${a.alive ? "" : "dead"} ${a.isPlayer ? "me" : ""}"><td><img src="${face(a.cid)}"></td><td>${a.name}</td><td>${a.k}</td><td>${a.d}</td><td>${a.as}</td><td>${a.side === PL.side ? a.money : ""}</td><td>${a.alive ? (a.armor ? "🛡" + a.armor : "–") : "✖"}</td><td>${a.ult}/${AG[a.cid].ab[3].ult}</td></tr>`;
   const mine = AGS.filter(a => a.team === "T1").sort((p, q) => q.k - p.k), th = AGS.filter(a => a.team !== "T1").sort((p, q) => q.k - p.k);
-  UI.djtab.innerHTML = `<table><tr><th></th><th>ĐỘI BẠN</th><th>H</th><th>C</th><th>HT</th><th>¢</th><th>Ult</th></tr>${mine.map(row).join("")}<tr class="sp"><th></th><th>ĐỐI THỦ</th><th>H</th><th>C</th><th>HT</th><th></th><th>Ult</th></tr>${th.map(row).join("")}</table>`;
+  UI.djtab.innerHTML = `<div class="djtabh">HIỆP ${M.round}${M.ot ? " · HIỆP PHỤ" : ""} · ${M.score[PL.side]} – ${M.score[PL.side === "atk" ? "def" : "atk"]} · ${PL.side === "atk" ? "Bên CÔNG" : "Bên THỦ"}</div><table><tr><th></th><th>ĐỘI BẠN</th><th>H</th><th>C</th><th>HT</th><th>¢</th><th>Giáp</th><th>Ult</th></tr>${mine.map(row).join("")}<tr class="sp"><th></th><th>ĐỐI THỦ</th><th>H</th><th>C</th><th>HT</th><th></th><th></th><th>Ult</th></tr>${th.map(row).join("")}</table>`;
 }
 function showPause(on) {
   PAUSED = on; UI.djpause.hidden = !on; if (!on) { requestLock(); return; }
   UI.djpause.innerHTML = `<div class="dps"><h2>TẠM DỪNG</h2><label>Độ nhạy chuột <input type="range" min="0.2" max="3" step="0.05" value="${SET.sens}" data-s="sens"><b>${(+SET.sens).toFixed(2)}</b></label>
-   <label>Góc nhìn (FOV) <input type="range" min="65" max="100" step="1" value="${SET.fov}" data-s="fov"><b>${SET.fov}</b></label><label>Âm lượng <input type="range" min="0" max="1" step="0.05" value="${SET.vol}" data-s="vol"><b>${Math.round(SET.vol * 100)}%</b></label>
-   <div class="keys">WASD di chuyển · Shift đi chậm (không gây tiếng) · Ctrl ngồi · Space nhảy · Chuột trái bắn · Chuột phải ngắm · R nạp đạn · 1/2/3 đổi vũ khí · C Q E X kỹ năng · F đặt/gỡ bom (giữ), nhặt súng · B cửa hàng · Tab bảng điểm</div>
+   <label>Góc nhìn (FOV) <input type="range" min="65" max="100" step="1" value="${SET.fov}" data-s="fov"><b>${SET.fov}</b></label><label>Âm lượng tổng <input type="range" min="0" max="1" step="0.05" value="${SET.vol}" data-s="vol"><b>${Math.round(SET.vol * 100)}%</b></label>
+   <label>Hiệu ứng (súng, kỹ năng) <input type="range" min="0" max="1" step="0.05" value="${SET.vs}" data-s="vs"><b>${Math.round(SET.vs * 100)}%</b></label>
+   <label>Tiếng bước chân <input type="range" min="0" max="1.5" step="0.05" value="${SET.vf}" data-s="vf"><b>${Math.round(SET.vf * 100)}%</b></label>
+   <div class="keys">WASD di chuyển · Shift đi chậm (không gây tiếng) · Ctrl ngồi · Space nhảy · G thả bom · Chuột trái bắn · Chuột phải ngắm · R nạp đạn · 1/2/3 đổi vũ khí · C Q E X kỹ năng · F đặt/gỡ bom (giữ), nhặt súng · B cửa hàng · Tab bảng điểm</div>
    <div class="row"><button class="go">Tiếp tục</button><button class="ghost quit">Thoát trận</button></div></div>`;
-  UI.djpause.querySelectorAll("input").forEach(i => i.oninput = () => { SET[i.dataset.s] = +i.value; saveSet(); i.nextElementSibling.textContent = i.dataset.s === "vol" ? Math.round(SET.vol * 100) + "%" : i.dataset.s === "sens" ? (+i.value).toFixed(2) : i.value; });
+  UI.djpause.querySelectorAll("input").forEach(i => i.oninput = () => { SET[i.dataset.s] = +i.value; saveSet(); i.nextElementSibling.textContent = ["vol", "vs", "vf"].includes(i.dataset.s) ? Math.round(SET[i.dataset.s] * 100) + "%" : i.dataset.s === "sens" ? (+i.value).toFixed(2) : i.value; });
   UI.djpause.querySelector(".go").onclick = () => showPause(false); UI.djpause.querySelector(".quit").onclick = exit;
 }
 function showEnd(res) {
@@ -2889,6 +2963,7 @@ function hudTick(dt) {
   const a = PL, us = a.side, them = us === "atk" ? "def" : "atk";
   UI.djtop.querySelector(".s1").textContent = M.score[us]; UI.djtop.querySelector(".s2").textContent = M.score[them];
   UI.djclock.textContent = M.phase === "post" ? "💣 " + fmt(M.spikeT) : M.phase === "buy" ? "MUA " + fmt(M.t) : fmt(M.t); UI.djclock.className = "djclock" + (M.phase === "post" ? " sp" : "");
+  if (!UI.djrn) UI.djrn = ROOT.querySelector(".djrn"); const rn = `HIỆP ${M.round}${M.ot ? " · PHỤ" : ""} · ${PL.side === "atk" ? "CÔNG" : "THỦ"}`; if (UI.djrn.textContent !== rn) UI.djrn.textContent = rn;
   const ports = side => AGS.filter(x => x.side === side).map(x => `<img class="${x.alive ? "" : "d"}" src="${x.alive ? face(x.cid) : faceD(x.cid)}">`).join("");
   const pk = AGS.map(x => +x.alive).join("") + M.round; if (UI.pk !== pk) { UI.pk = pk; UI.djtop.querySelector(".l").innerHTML = ports(us); UI.djtop.querySelector(".r").innerHTML = ports(them); }
   const hp = UI.djhp; hp.querySelector(".hp").textContent = Math.ceil(a.hp); hp.querySelector(".ar").textContent = a.armor ? "🛡 " + a.armor : ""; hp.className = "djhp" + (a.hp < 35 ? " low" : "");
@@ -2900,7 +2975,7 @@ function hudTick(dt) {
   UI.djx.style.setProperty("--g", gap + "px"); UI.djx.style.display = a.alive && !(a.zoom && w.kind === "sniper") ? "" : "none";
   UI.djscope.style.display = a.alive && a.zoom && w.kind === "sniper" ? "block" : "none";
   HUDS.hit = Math.max(0, HUDS.hit - dt); UI.djhitm.style.opacity = HUDS.hit > 0 ? 1 : 0; UI.djhitm.className = "djhitm" + (HUDS.hitHead ? " hd" : "");
-  HUDS.dmg = Math.max(0, HUDS.dmg - dt * 2); UI.djdmg.style.opacity = HUDS.dmg * .8 + (a.alive && a.hp < 35 ? .25 : 0);
+  HUDS.dmg = Math.max(0, HUDS.dmg - dt * 2); UI.djdmg.style.opacity = HUDS.dmg * .8 + (a.alive && a.hp < 35 ? .25 : 0); HUDS.wb = Math.max(0, (HUDS.wb || 0) - dt); UI.djx.dataset.wb = HUDS.wb > 0 && HUDS.hit > 0 ? "XUYÊN VẬT CẢN" : "";
   if (HUDS.dmg > .3) { UI.djdir.style.opacity = HUDS.dmg; UI.djdir.style.transform = `translate(-50%,-50%) rotate(${(HUDS.dmgDir - a.yaw) / D2R + 90}deg)`; } else UI.djdir.style.opacity = 0;
   UI.djflash.style.opacity = Math.min(1, a.blind * 1.1);
   const inSmoke = SMOKES.some(s => s.grow > .5 && Math.hypot(s.x - a.x, s.z - a.z) < s.r * .85); UI.djsmoke.style.opacity = inSmoke ? .92 : 0;
@@ -2908,15 +2983,15 @@ function hudTick(dt) {
   M.msgT -= dt; UI.djmsg.textContent = M.msgT > 0 ? M.msg : ""; UI.djmsg.style.opacity = Math.min(1, M.msgT * 2);
   if (M.banner) { M.banner.life -= dt; UI.djban.style.display = M.banner.life > 0 ? "" : "none"; UI.djban.querySelector("b").textContent = M.banner.t; UI.djban.querySelector("b").style.color = M.banner.c; UI.djban.querySelector("span").textContent = M.banner.s; } else UI.djban.style.display = "none";
   // tiến trình đặt / gỡ
-  const pr = a.plantT > 0 ? [a.plantT / PLANT_T, "ĐANG ĐẶT BOM..."] : a.defT > 0 ? [a.defT / DEFUSE_T, "ĐANG GỠ BOM..." + (a.defT >= DEFUSE_T / 2 ? " (đã qua nửa)" : "")] : a.reload > 0 ? [1 - a.reload / W[iw.id].reload, "NẠP ĐẠN"] : null;
+  const pr = a.plantT > 0 ? [a.plantT / PLANT_T, "ĐANG ĐẶT BOM..."] : a.defT > 0 ? [a.defT / DEFUSE_T, "ĐANG GỠ BOM..." + (a.defT >= DEFUSE_T / 2 ? " (đã qua mốc 3.5s)" : "")] : a.orbT > 0 ? [a.orbT, "ĐANG NHẶT CẦU..."] : a.reload > 0 ? [1 - a.reload / W[iw.id].reload, "NẠP ĐẠN"] : null;
   UI.djprog.style.display = pr ? "" : "none"; if (pr) { UI.djprog.querySelector("i").style.width = (pr[0] * 100) + "%"; UI.djprog.querySelector("span").textContent = pr[1]; }
   // nhắc
-  let hint = ""; if (a.alive) { if (a.spike && M.phase === "live" && (zoneAt(a.x, a.z) === "A" || zoneAt(a.x, a.z) === "B")) hint = "Giữ F để ĐẶT BOM"; else if (a.side === "def" && M.plantedAt && M.phase === "post" && Math.hypot(a.x - M.plantedAt.x, a.z - M.plantedAt.z) < 1.6) hint = "Giữ F để GỠ BOM"; else if (DROPS.some(d => Math.hypot(d.x - a.x, d.z - a.z) < 1.6)) hint = "F: nhặt súng"; else if (M.phase === "buy") hint = "B: mở cửa hàng"; }
+  let hint = ""; if (a.alive) { if (a.spike && M.phase === "live" && (zoneAt(a.x, a.z) === "A" || zoneAt(a.x, a.z) === "B")) hint = "Giữ F để ĐẶT BOM"; else if (a.side === "def" && M.plantedAt && M.phase === "post" && Math.hypot(a.x - M.plantedAt.x, a.z - M.plantedAt.z) < 1.6) hint = "Giữ F để GỠ BOM"; else if (DROPS.some(d => Math.hypot(d.x - a.x, d.z - a.z) < 1.6)) hint = "F: nhặt súng"; else if (orbNear(a) && M.phase !== "buy") hint = "Giữ F để nhặt cầu tối thượng (+1)"; else if (M.phase === "buy") hint = "B: mở cửa hàng" + (a.spike ? " · bạn cầm BOM (G để thả)" : ""); else if (a.spike) hint = "Đang cầm BOM · G để thả cho đồng đội"; }
   if (HUDS.revealed > 0) { HUDS.revealed -= dt; hint = "⚠ BẠN ĐÃ BỊ PHÁT HIỆN"; }
   UI.djbot.dataset.hint = hint;
   // bảng hạ gục
-  M.kf.forEach(k => k.t -= dt); M.kf = M.kf.filter(k => k.t > 0); const kfk = M.kf.map(k => k.a + k.b + k.t.toFixed(0)).join();
-  if (UI.kfk !== kfk) { UI.kfk = kfk; UI.djkf.innerHTML = M.kf.map(k => `<div><b class="${k.ac ? "us" : "th"}">${k.a}</b><span>${k.w}${k.head ? " ◎" : ""}</span><b class="${k.bc ? "us" : "th"}">${k.b}</b></div>`).join(""); }
+  M.kf.forEach(k => k.t -= dt); M.kf = M.kf.filter(k => k.t > 0); const kfk = M.kf.map(k => (k.txt || k.a + k.b) + k.t.toFixed(0)).join();
+  if (UI.kfk !== kfk) { UI.kfk = kfk; UI.djkf.innerHTML = M.kf.map(k => k.txt ? `<div class="sp ${k.us ? "us" : "th"}">${k.txt}</div>` : `<div><b class="${k.ac ? "us" : "th"}">${k.a}</b><span>${k.w}${k.head ? " ◎" : ""}</span><b class="${k.bc ? "us" : "th"}">${k.b}</b></div>`).join(""); }
   // chết / theo dõi
   if (!a.alive) { const al = AGS.filter(x => x.side === a.side && x.alive); UI.djdead.style.display = ""; UI.djdead.innerHTML = `<b>BẠN ĐÃ NGÃ</b>${HUDS.killer ? `<span>Bị hạ bởi ${HUDS.killer}</span>` : ""}${al.length ? `<small>Đang theo dõi: ${al[(HUDS.spec || 0) % al.length].name} · bấm để đổi</small>` : ""}`; } else UI.djdead.style.display = "none";
   if (TABON) renderTab(); UI.djtab.hidden = !TABON;
@@ -2924,9 +2999,13 @@ function hudTick(dt) {
   drawMini();
 }
 function drawMini() {
-  const c = UI.mctx, S = 210 / (MW * CS); c.clearRect(0, 0, 210, 162); c.fillStyle = "rgba(10,14,22,.72)"; c.fillRect(0, 0, 210, 162);
-  for (let z = 0; z < MH; z++) for (let x = 0; x < MW; x++) { const g = G[z][x]; if (g === "#") continue; c.fillStyle = ZN[z][x] === "A" ? "rgba(255,179,71,.55)" : ZN[z][x] === "B" ? "rgba(71,214,255,.55)" : g === "c" ? "#56606e" : "#9aa3ae"; c.fillRect(x * CS * S, z * CS * S, CS * S + .5, CS * S + .5); }
-  c.font = "bold 12px sans-serif"; c.fillStyle = "#fff"; c.fillText("A", ZC.A.x * S - 4, ZC.A.z * S + 4); c.fillText("B", ZC.B.x * S - 4, ZC.B.z * S + 4);
+  const c = UI.mctx, S = 210 / (MW * CS); c.clearRect(0, 0, 210, 162);
+  if (!UI.mbase) { const cv = document.createElement("canvas"); cv.width = 210; cv.height = 162; const q = cv.getContext("2d"); q.fillStyle = "rgba(10,14,22,.72)"; q.fillRect(0, 0, 210, 162);
+    for (let z = 0; z < MH; z++) for (let x = 0; x < MW; x++) { const g = G[z][x]; if (g === "#") continue; q.fillStyle = ZN[z][x] === "A" ? "rgba(255,179,71,.55)" : ZN[z][x] === "B" ? "rgba(71,214,255,.55)" : g === "c" ? "#56606e" : "#9aa3ae"; q.fillRect(x * CS * S, z * CS * S, CS * S + .5, CS * S + .5); }
+    q.font = "bold 12px sans-serif"; q.fillStyle = "#fff"; q.fillText("A", ZC.A.x * S - 4, ZC.A.z * S + 4); q.fillText("B", ZC.B.x * S - 4, ZC.B.z * S + 4); UI.mbase = cv; }
+  c.drawImage(UI.mbase, 0, 0);
+  if (PL.alive) { const fh = Math.atan(Math.tan(CAM.fov * D2R / 2) * CAM.aspect), r = 16 * CS * S; const g = c.createRadialGradient(PL.x * S, PL.z * S, 2, PL.x * S, PL.z * S, r); g.addColorStop(0, "rgba(255,255,255,.45)"); g.addColorStop(1, "rgba(255,255,255,0)"); c.fillStyle = g; c.beginPath(); c.moveTo(PL.x * S, PL.z * S); c.arc(PL.x * S, PL.z * S, r, PL.yaw - fh, PL.yaw + fh); c.closePath(); c.fill(); }
+  for (const o of ORBS) { c.fillStyle = "#9ffcff"; c.beginPath(); c.arc(o.x * S, o.z * S, 2.5, 0, 7); c.fill(); }
   for (const s of SMOKES) { c.fillStyle = "rgba(200,210,225,.85)"; c.beginPath(); c.arc(s.x * S, s.z * S, s.r * S * Math.min(1, s.grow), 0, 7); c.fill(); }
   const sp = M.plantedAt || M.spike; if (sp) { c.fillStyle = M.plantedAt ? "#ff3344" : "#ffcc33"; c.fillRect(sp.x * S - 3, sp.z * S - 3, 6, 6); }
   for (const b of AGS) { if (!b.alive) continue; const mate = b.side === PL.side, seen = !mate && (b.reveal > 0 || AGS.some(m => m.side === PL.side && m.alive && m.bot && m.bot.tgt === b) || (PL.alive && visibleTo(PL, b)));
@@ -2967,7 +3046,7 @@ function onKey(e, down) {
   if (k === "Space") jump(PL); if (k === "KeyR") startReload(PL); if (k === "KeyF") { FKEY = true; pickupNear(PL); }
   if (k === "Digit1") switchTo(PL, 1); if (k === "Digit2") switchTo(PL, 2); if (k === "Digit3") switchTo(PL, 3); if (k === "KeyQ" && e.altKey) {}
   const ai = {KeyC:0, KeyQ:1, KeyE:2, KeyX:3}[k]; if (ai !== undefined) useAbility(PL, ai);
-  if (k === "Digit4" && PL.spike) flashMsg("Giữ F trong khu A/B để đặt bom", 1.5);
+  if (k === "Digit4" && PL.spike) flashMsg("Giữ F trong khu A/B để đặt bom", 1.5); if (k === "KeyG") dropSpike(PL);
 }
 const kd = e => onKey(e, true), ku = e => onKey(e, false);
 function onMouse(e, down) { if (!FPS_ON || !M || e.target.closest && e.target.closest(".djbuy,.djpause,.djsel,.djend,.djtouch")) return;
@@ -3045,7 +3124,7 @@ function camTick(dt) {
 }
 function phaseTick(dt) {
   M.t -= dt;
-  if (M.phase === "buy" && M.t <= 0) { M.phase = "live"; M.t = ROUND_T; flashMsg("BẮT ĐẦU!", 1.3); sfx("round"); if (BUYOPEN) toggleBuy(false); }
+  if (M.phase === "buy" && M.t <= 0) { M.phase = "live"; M.t = ROUND_T; if (BARR) { SC.remove(BARR); BARR = null; } flashMsg("BẮT ĐẦU!", 1.3); sfx("round"); if (BUYOPEN) toggleBuy(false); }
   else if (M.phase === "live" && M.t <= 0) roundEnd("def", "Hết giờ – bên công chưa đặt bom");
   else if (M.phase === "post") { if (!AGS.some(x => x.side === "def" && x.alive) && M.spikeT > 0) { /* bên thủ chết hết sau khi đặt */ roundEnd("atk", "Tiêu diệt bên thủ"); } }
   else if (M.phase === "end" && M.t <= 0) { const r = checkMatchOver(); if (r) showEnd(r); else newRound(false); }
@@ -3066,7 +3145,7 @@ function frame(now) {
   R3.autoClear = true; R3.render(SC, CAM); if (PL && PL.alive && VM) { R3.autoClear = false; R3.clearDepth(); R3.render(VS, VCAM); }
 }
 function resize() { if (!R3) return; const w = innerWidth, h = innerHeight; R3.setSize(w, h, false); CAM.aspect = VCAM.aspect = w / h; CAM.updateProjectionMatrix(); VCAM.updateProjectionMatrix(); }
-function cleanupMatch() { if (!SC) return; clearSeq(); for (const a of AGS) if (a.mesh) SC.remove(a.mesh); AGS = []; SMOKES.forEach(s => SC.remove(s.m)); SMOKES = []; ZONES.forEach(z => z.m && SC.remove(z.m)); ZONES = []; DYW.forEach(w => SC.remove(w.m)); DYW = []; OBJS.forEach(o => SC.remove(o.m)); OBJS = []; PROJ.forEach(p => SC.remove(p.m)); PROJ = []; DROPS.forEach(d => SC.remove(d.m)); DROPS = []; if (M && M.spikeM) SC.remove(M.spikeM); M = null; PL = null; }
+function cleanupMatch() { if (!SC) return; clearSeq(); for (const a of AGS) if (a.mesh) SC.remove(a.mesh); AGS = []; SMOKES.forEach(s => SC.remove(s.m)); SMOKES = []; ZONES.forEach(z => z.m && SC.remove(z.m)); ZONES = []; DYW.forEach(w => SC.remove(w.m)); DYW = []; OBJS.forEach(o => SC.remove(o.m)); OBJS = []; PROJ.forEach(p => SC.remove(p.m)); PROJ = []; DROPS.forEach(d => SC.remove(d.m)); DROPS = []; if (M && M.spikeM) SC.remove(M.spikeM); if (M && M.spike && M.spike.m) SC.remove(M.spike.m); if (BARR) SC.remove(BARR); BARR = null; ORBS.forEach(o => SC.remove(o.m)); ORBS = []; M = null; PL = null; }
 function start() {
   if (FPS_ON) return; FPS_ON = true;
   R3 = new THREE.WebGLRenderer({antialias:true, powerPreference:"high-performance"}); R3.setPixelRatio(Math.min(devicePixelRatio, TT ? 1.25 : 1.75)); R3.outputColorSpace = THREE.SRGBColorSpace;
@@ -3080,12 +3159,12 @@ function start() {
 function exit() {
   FPS_ON = false; cancelAnimationFrame(RAF); if (document.pointerLockElement) document.exitPointerLock();
   removeEventListener("resize", resize); removeEventListener("keydown", kd); removeEventListener("keyup", ku); removeEventListener("mouseup", mu); removeEventListener("mousemove", mm); document.removeEventListener("pointerlockchange", plc);
-  cleanupMatch(); PAUSED = BUYOPEN = TABON = false; MOUSE = false; for (const k in KEY) KEY[k] = false; VM = null;
+  cleanupMatch(); BARRMAT = null; PAUSED = BUYOPEN = TABON = false; MOUSE = false; for (const k in KEY) KEY[k] = false; VM = null;
   if (R3) { R3.dispose(); R3.forceContextLoss && R3.forceContextLoss(); R3 = null; } if (ROOT) ROOT.remove(); ROOT = null; SC = null; document.body.classList.remove("djon");
   try { renderMenu(); } catch (e) {}
 }
 // móc kiểm thử
-window.__dj = {get M() { return M; }, get PL() { return PL; }, get AGS() { return AGS; }, start, exit, startMatch:id => { UI.djsel.hidden = true; startMatch(id); }, buy:id => buy(PL, id), fire:on => { MOUSE = on; }, look, key:(k, on) => { KEY[k] = on; }, ab:i => useAbility(PL, i), skip:() => { M.t = .01; }, get W() { return W; }, setPL:(x, z, yaw) => { PL.x = x; PL.z = z; PL.yaw = yaw; }, ZC, cellW, pause:on => { PAUSED = on; }, endRound:side => roundEnd(side, "test"), fkey:on => { FKEY = on; }};
+window.__dj = {sell:id => sell(PL, id), drop:() => dropSpike(PL), get ORBS() { return ORBS; }, get BARR() { return BARR; }, penTrace, check:() => checkMatchOver(), roundEnd:(w, y) => roundEnd(w, y || "test"), newRound:() => newRound(false), SET, DIFF, VER, get M() { return M; }, get PL() { return PL; }, get AGS() { return AGS; }, start, exit, startMatch:id => { UI.djsel.hidden = true; startMatch(id); }, buy:id => buy(PL, id), fire:on => { MOUSE = on; }, look, key:(k, on) => { KEY[k] = on; }, ab:i => useAbility(PL, i), skip:() => { M.t = .01; }, get W() { return W; }, setPL:(x, z, yaw) => { PL.x = x; PL.z = z; PL.yaw = yaw; }, ZC, cellW, pause:on => { PAUSED = on; }, endRound:side => roundEnd(side, "test"), fkey:on => { FKEY = on; }};
 return {start, exit, get on() { return FPS_ON; }};
 })();
 

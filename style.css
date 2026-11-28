@@ -258,3 +258,12 @@ body.djon{overflow:hidden}
 .dbc button img{display:block;height:38px;max-width:100%;object-fit:contain;margin:0 0 6px}
 .djsel{background:linear-gradient(90deg,rgba(10,14,22,.94) 0,rgba(10,14,22,.78) 55%,rgba(10,14,22,.35)),var(--bg1) center/cover no-repeat}
 .djend,.djpause{background:linear-gradient(rgba(10,14,22,.72),rgba(10,14,22,.86)),var(--bg2) center/cover no-repeat}
+
+/* v29 */
+.djcw{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.06)}.djcw .djclock{background:none;padding-bottom:2px}
+.djrn{font:800 10px/1 Nunito,sans-serif;letter-spacing:1px;color:#cfd8e3;padding:0 8px 5px;white-space:nowrap}
+.djkf .sp{background:linear-gradient(90deg,rgba(255,200,60,.9),rgba(255,120,60,.65));color:#1a1206;font-weight:900;padding:4px 10px;border-radius:3px;justify-content:center}
+.djkf .sp.th{background:linear-gradient(90deg,rgba(255,70,85,.9),rgba(120,20,40,.7));color:#fff}
+.djbuy button.sell{outline:2px dashed #45e3c4;outline-offset:-3px}
+.djx[data-wb]:not([data-wb=""])::after{content:attr(data-wb);position:absolute;left:50%;top:28px;transform:translateX(-50%);font:900 11px Nunito,sans-serif;color:#ffd166;letter-spacing:1px;white-space:nowrap}
+.djtabh{text-align:center;font:900 14px Nunito,sans-serif;padding:6px 6px 8px;color:#ffd166;letter-spacing:1px}
